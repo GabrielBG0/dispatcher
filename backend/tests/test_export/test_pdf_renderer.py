@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from pypdf import PdfReader
+
 from app.export.pdf_renderer import KanjiPageData, KanjiPageWord, render_html, render_pdf
 
 SAMPLE_PAGE = KanjiPageData(
@@ -54,3 +56,24 @@ def test_render_pdf_produces_a_real_pdf_file(tmp_path: Path):
     data = output_path.read_bytes()
     assert data[:5] == b"%PDF-"
     assert len(data) > 1000
+
+
+def test_render_pdf_produces_one_physical_page_per_kanji(tmp_path: Path):
+    # Real-world scale check: this caught a false alarm during manual
+    # testing where a naive `file`-command page-count heuristic misreported
+    # a correctly-paginated 50-page PDF as only 8 pages. pypdf reads the
+    # actual page tree, so this is the trustworthy check.
+    other = KanjiPageData(
+        kanji="私", meanings="I, me", kun_yomi="わたし", on_yomi="シ", stroke_paths=["M1,1"], words=[]
+    )
+    third = KanjiPageData(
+        kanji="時", meanings="time, hour", kun_yomi="とき", on_yomi="ジ", stroke_paths=["M1,1", "M2,2"], words=[]
+    )
+    output_path = tmp_path / "multi.pdf"
+    render_pdf([SAMPLE_PAGE, other, third], output_path)
+
+    reader = PdfReader(output_path)
+    assert len(reader.pages) == 3
+    assert "愛" in reader.pages[0].extract_text()
+    assert "私" in reader.pages[1].extract_text()
+    assert "時" in reader.pages[2].extract_text()

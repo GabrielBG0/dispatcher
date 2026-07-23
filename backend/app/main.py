@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -6,8 +8,14 @@ from app.config import settings
 from app.db import create_all
 
 
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    create_all()
+    yield
+
+
 def create_app() -> FastAPI:
-    app = FastAPI(title="dispatcher")
+    app = FastAPI(title="dispatcher", lifespan=_lifespan)
 
     app.add_middleware(
         CORSMiddleware,
@@ -15,10 +23,6 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    @app.on_event("startup")
-    def _startup() -> None:
-        create_all()
 
     @app.get("/api/health")
     def health() -> dict[str, str]:

@@ -26,19 +26,34 @@ def upsert_vocab_rows(db: Session, rows: list[ParsedVocabRow], source: str) -> U
     """Natural key is (kanji_form, hiragana_form, meaning) -- see plan for why:
     (kanji_form, hiragana_form) alone collides on genuine homonyms/distinct
     senses in the real N3 vocab list, so meaning is part of the key.
+
+    Blank-meaning rows are a special case: Jisho enrichment fills in
+    `meaning` on the existing row after import, which changes the natural
+    key. Re-importing the same source file afterward would otherwise see no
+    match (the key it's looking for, with an empty meaning, no longer
+    exists) and insert a duplicate blank-meaning row alongside the
+    already-enriched one. A blank meaning carries no information that could
+    distinguish a genuine new sense, so any incoming blank-meaning row is
+    matched against (kanji_form, hiragana_form) alone, regardless of
+    whatever meaning the existing row now has.
     """
     stats = UpsertStats()
 
-    existing = {
-        (v.kanji_form, v.hiragana_form, v.meaning): v
-        for v in db.query(Vocab).all()
-    }
+    existing_rows = db.query(Vocab).all()
+    existing_by_triple = {(v.kanji_form, v.hiragana_form, v.meaning): v for v in existing_rows}
+    existing_kf_hf: set[tuple[str, str]] = {(v.kanji_form, v.hiragana_form) for v in existing_rows}
 
     for row in rows:
-        key = (row.kanji_form, row.hiragana_form, row.meaning)
-        if key in existing:
-            stats.skipped_existing += 1
-            continue
+        if not row.meaning:
+            kf_hf = (row.kanji_form, row.hiragana_form)
+            if kf_hf in existing_kf_hf:
+                stats.skipped_existing += 1
+                continue
+        else:
+            triple = (row.kanji_form, row.hiragana_form, row.meaning)
+            if triple in existing_by_triple:
+                stats.skipped_existing += 1
+                continue
 
         db.add(
             Vocab(
@@ -50,7 +65,8 @@ def upsert_vocab_rows(db: Session, rows: list[ParsedVocabRow], source: str) -> U
                 source=source,
             )
         )
-        existing[key] = None  # placeholder to avoid re-inserting dupes within this same batch
+        existing_by_triple[(row.kanji_form, row.hiragana_form, row.meaning)] = None
+        existing_kf_hf.add((row.kanji_form, row.hiragana_form))
         stats.inserted += 1
 
     db.commit()

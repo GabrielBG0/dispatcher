@@ -22,11 +22,12 @@ def test_vocab_upsert_keeps_distinct_senses_dedupes_true_duplicates(db_session):
     parsed = parse_vocab_list(VOCAB_PATH)
     stats = upsert_vocab_rows(db_session, parsed.rows, source="jlpt_n3_vocabulary.xls")
 
-    # 3701 parsed rows, but 30 are true (kanji_form, hiragana_form, meaning)
-    # duplicates in the source file (confirmed by direct inspection) -- those
-    # collapse to their first occurrence.
-    assert stats.inserted == 3671
-    assert stats.skipped_existing == 30
+    # 3701 parsed rows: 30 are true (kanji_form, hiragana_form, meaning)
+    # duplicates, plus 13 more where the same word/reading appears twice --
+    # once with a meaning, once blank (an incomplete duplicate listing, not
+    # a distinct sense; confirmed by direct inspection). Both collapse.
+    assert stats.inserted == 3701 - 30 - 13
+    assert stats.skipped_existing == 30 + 13
 
     row_count = db_session.query(Vocab).count()
     assert row_count == stats.inserted
@@ -38,6 +39,36 @@ def test_vocab_upsert_keeps_distinct_senses_dedupes_true_duplicates(db_session):
         "(noun) disagreeable, detestable, unpleasant, reluctant",
         "(noun) no, the noes",
     }
+
+
+def test_vocab_upsert_after_enrichment_does_not_recreate_blank_row(db_session):
+    # Regression test: found via manual browser testing. Enrichment fills
+    # in a previously-blank `meaning`, which changes the natural key. A
+    # naive re-import of the same unchanged source file must not then see
+    # "no match" and insert a duplicate blank-meaning row alongside the
+    # now-enriched one.
+    parsed = parse_vocab_list(VOCAB_PATH)
+    upsert_vocab_rows(db_session, parsed.rows, source="jlpt_n3_vocabulary.xls")
+
+    blank_row = db_session.query(Vocab).filter(Vocab.meaning == "").first()
+    assert blank_row is not None
+    kanji_form, hiragana_form = blank_row.kanji_form, blank_row.hiragana_form
+
+    # Simulate Jisho enrichment filling in the meaning on the existing row.
+    blank_row.meaning = "to become clear (enriched)"
+    db_session.commit()
+
+    # Re-import the same, unchanged source file.
+    second = upsert_vocab_rows(db_session, parsed.rows, source="jlpt_n3_vocabulary.xls")
+
+    matching_rows = (
+        db_session.query(Vocab)
+        .filter(Vocab.kanji_form == kanji_form, Vocab.hiragana_form == hiragana_form)
+        .all()
+    )
+    assert len(matching_rows) == 1  # not duplicated
+    assert matching_rows[0].meaning == "to become clear (enriched)"  # enrichment preserved
+    assert second.inserted == 0
 
 
 def test_vocab_upsert_is_idempotent(db_session):
