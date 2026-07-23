@@ -17,6 +17,7 @@ from app.models.kanji_coverage import KanjiCoverage
 from app.models.kanji_schedule import KanjiSchedule
 from app.models.study_config import StudyConfig
 from app.models.vocab import Vocab
+from app.selection.classify import classify_word_kanji, orphan_kanji_count
 from app.selection.select_batch import select_batch
 from app.selection.types import SelectionConfig, SelectionResult, VocabCandidate
 
@@ -128,6 +129,128 @@ def get_eligible_replacements(db: Session, batch_n: int) -> list[ReplacementCand
         ReplacementCandidate(vocab_id=c.id, kanji_form=c.kanji_form, hiragana_form=c.hiragana_form)
         for c in eligible
     ]
+
+
+@dataclass
+class BatchWordDetail:
+    vocab_id: int
+    kanji_form: str
+    hiragana_form: str
+    meaning: str
+    is_target_linked: bool
+    needs_kanji_reading: bool
+    covers_target_kanji: list[str]
+
+
+@dataclass
+class BatchDetail:
+    batch_number: int
+    status: str
+    weekly_target_used: int
+    target_kanji: list[str]
+    target_kanji_coverage: dict[str, list[int]]
+    words: list[BatchWordDetail]
+
+
+def get_batch_detail(db: Session, batch_n: int) -> BatchDetail:
+    batch = db.get(Batch, batch_n)
+    if batch is None:
+        raise BatchServiceError(f"batch {batch_n} does not exist")
+
+    schedule = _load_schedule(db)
+    target_kanji = {k for k, b in schedule.items() if b == batch_n}
+
+    vocab_rows = db.query(Vocab).filter(Vocab.assigned_batch == batch_n).all()
+    words: list[BatchWordDetail] = []
+    coverage_map: dict[str, list[int]] = {k: [] for k in target_kanji}
+
+    for v in vocab_rows:
+        chars = extract_kanji(v.kanji_form)
+        covers = sorted(chars & target_kanji)
+        for k in covers:
+            coverage_map[k].append(v.id)
+        words.append(
+            BatchWordDetail(
+                vocab_id=v.id,
+                kanji_form=v.kanji_form,
+                hiragana_form=v.hiragana_form,
+                meaning=v.meaning,
+                is_target_linked=bool(covers),
+                needs_kanji_reading=v.needs_kanji_reading,
+                covers_target_kanji=covers,
+            )
+        )
+
+    return BatchDetail(
+        batch_number=batch_n,
+        status=batch.status,
+        weekly_target_used=batch.weekly_target_used,
+        target_kanji=sorted(target_kanji),
+        target_kanji_coverage=coverage_map,
+        words=words,
+    )
+
+
+def _require_draft_batch(db: Session, batch_n: int) -> Batch:
+    batch = db.get(Batch, batch_n)
+    if batch is None:
+        raise BatchServiceError(f"batch {batch_n} does not exist")
+    if batch.status != "draft":
+        raise BatchServiceError(f"batch {batch_n} is not a draft (status={batch.status}); edits are locked")
+    return batch
+
+
+def remove_word(db: Session, batch_n: int, vocab_id: int) -> None:
+    _require_draft_batch(db, batch_n)
+    vocab = db.query(Vocab).filter(Vocab.id == vocab_id, Vocab.assigned_batch == batch_n).one_or_none()
+    if vocab is None:
+        raise BatchServiceError(f"vocab {vocab_id} is not assigned to batch {batch_n}")
+    vocab.status = "available"
+    vocab.assigned_batch = None
+    vocab.needs_kanji_reading = False
+    db.commit()
+
+
+def add_word(db: Session, batch_n: int, vocab_id: int) -> None:
+    _require_draft_batch(db, batch_n)
+    eligible_ids = {c.vocab_id for c in get_eligible_replacements(db, batch_n)}
+    if vocab_id not in eligible_ids:
+        raise BatchServiceError(f"vocab {vocab_id} is not eligible for batch {batch_n} (skip-ahead guard)")
+
+    schedule = _load_schedule(db)
+    coverage = _load_coverage(db)
+    target_kanji = {k for k, b in schedule.items() if b == batch_n}
+    known_kanji = coverage | target_kanji
+
+    vocab = db.get(Vocab, vocab_id)
+    candidate = VocabCandidate(
+        id=vocab.id,
+        kanji_form=vocab.kanji_form,
+        hiragana_form=vocab.hiragana_form,
+        kanji_chars=frozenset(extract_kanji(vocab.kanji_form)),
+    )
+    classes = classify_word_kanji(candidate, known_kanji, schedule, batch_n)
+    covers_target = bool(candidate.kanji_chars & target_kanji)
+
+    vocab.status = "assigned"
+    vocab.assigned_batch = batch_n
+    vocab.needs_kanji_reading = covers_target and orphan_kanji_count(classes) == 0
+    db.commit()
+
+
+def toggle_reading(db: Session, batch_n: int, vocab_id: int) -> bool:
+    _require_draft_batch(db, batch_n)
+    vocab = db.query(Vocab).filter(Vocab.id == vocab_id, Vocab.assigned_batch == batch_n).one_or_none()
+    if vocab is None:
+        raise BatchServiceError(f"vocab {vocab_id} is not assigned to batch {batch_n}")
+    vocab.needs_kanji_reading = not vocab.needs_kanji_reading
+    db.commit()
+    return vocab.needs_kanji_reading
+
+
+def swap_word(db: Session, batch_n: int, old_vocab_id: int, new_vocab_id: int) -> None:
+    remove_word(db, batch_n, old_vocab_id)
+    add_word(db, batch_n, new_vocab_id)
 
 
 def finalize_batch(db: Session, batch_n: int) -> None:

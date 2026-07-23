@@ -151,6 +151,135 @@ def test_finalize_rejects_non_draft_batch(db_session):
         batch_service.finalize_batch(db_session, batch_n=1)
 
 
+def test_get_batch_detail_reflects_persisted_assignments(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    _seed_kanji(db_session, "犬", 1)
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    detail = batch_service.get_batch_detail(db_session, batch_n=1)
+
+    assert detail.status == "draft"
+    assert sorted(detail.target_kanji) == sorted(["犬", "愛"])
+    assert len(detail.words) == 1
+    assert detail.words[0].kanji_form == "愛犬"
+    assert detail.words[0].is_target_linked is True
+
+
+def test_remove_word_returns_it_to_available(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one().id
+
+    batch_service.remove_word(db_session, batch_n=1, vocab_id=vocab_id)
+
+    vocab = db_session.get(Vocab, vocab_id)
+    assert vocab.status == "available"
+    assert vocab.assigned_batch is None
+    assert vocab.needs_kanji_reading is False
+
+
+def test_add_word_rejects_future_kanji_word(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "行", 1)
+    _seed_kanji(db_session, "旅", 9)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(
+        Vocab(kanji_form="旅行", hiragana_form="りょこう", meaning="travel", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "旅行").one().id
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.add_word(db_session, batch_n=1, vocab_id=vocab_id)
+
+
+def test_add_word_sets_needs_reading_correctly(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    _seed_kanji(db_session, "犬", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one().id
+
+    batch_service.add_word(db_session, batch_n=1, vocab_id=vocab_id)
+
+    vocab = db_session.get(Vocab, vocab_id)
+    assert vocab.status == "assigned"
+    assert vocab.assigned_batch == 1
+    assert vocab.needs_kanji_reading is True
+
+
+def test_toggle_reading_flips_flag(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one().id
+    original = db_session.get(Vocab, vocab_id).needs_kanji_reading
+
+    new_value = batch_service.toggle_reading(db_session, batch_n=1, vocab_id=vocab_id)
+
+    assert new_value != original
+    assert db_session.get(Vocab, vocab_id).needs_kanji_reading == new_value
+
+
+def test_swap_word_removes_old_and_adds_new(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    old_word = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+        status="assigned", assigned_batch=1, needs_kanji_reading=True,
+    )
+    new_word = Vocab(
+        kanji_form="愛猫", hiragana_form="あいねこ", meaning="cat lover", part_of_speech="general", status="available"
+    )
+    db_session.add_all([old_word, new_word])
+    db_session.commit()
+
+    batch_service.swap_word(db_session, batch_n=1, old_vocab_id=old_word.id, new_vocab_id=new_word.id)
+
+    db_session.refresh(old_word)
+    db_session.refresh(new_word)
+    assert old_word.status == "available"
+    assert old_word.assigned_batch is None
+    assert new_word.status == "assigned"
+    assert new_word.assigned_batch == 1
+
+
+def test_edits_rejected_on_finalized_batch(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    batch_service.finalize_batch(db_session, batch_n=1)
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one().id
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.remove_word(db_session, batch_n=1, vocab_id=vocab_id)
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.toggle_reading(db_session, batch_n=1, vocab_id=vocab_id)
+
+
 def test_eligible_replacements_excludes_future_kanji_words(db_session):
     db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
     _seed_kanji(db_session, "行", 1)
