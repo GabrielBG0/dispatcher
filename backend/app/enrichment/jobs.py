@@ -218,6 +218,8 @@ def run_kanjivg_enrichment(
             paths = index.get(row.kanji)
             if paths:
                 row.stroke_data = stroke_paths_to_json(paths)
+            else:
+                job.not_found += 1
             job.completed += 1
             db.commit()
 

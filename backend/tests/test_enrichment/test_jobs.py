@@ -191,6 +191,7 @@ def test_run_kanjivg_enrichment_fills_stroke_data_from_local_archive(session_fac
     status = jobs.get_job(job_id, session_factory=session_factory)
     assert status["status"] == "completed"
     assert status["completed"] == 2
+    assert status["not_found"] == 0
 
     db = session_factory()
     ai = db.query(Kanji).filter(Kanji.kanji == "愛").one()
@@ -199,3 +200,19 @@ def test_run_kanjivg_enrichment_fills_stroke_data_from_local_archive(session_fac
 
     assert len(json.loads(ai.stroke_data)) == 13
     db.close()
+
+
+def test_run_kanjivg_enrichment_tracks_archive_misses(session_factory):
+    db = session_factory()
+    db.add(Kanji(kanji="愛"))
+    db.add(Kanji(kanji="龘"))  # not present in the sample archive fixture
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("kanjivg", total=0, session_factory=session_factory)
+    jobs.run_kanjivg_enrichment(job_id, session_factory=session_factory, archive_path=KANJIVG_FIXTURE)
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["status"] == "completed"
+    assert status["completed"] == 2
+    assert status["not_found"] == 1
