@@ -1,0 +1,153 @@
+"""Idempotent upsert helpers. Re-importing the same file must not duplicate
+rows -- each function is safe to call repeatedly with the same input.
+"""
+
+from dataclasses import dataclass
+
+from sqlalchemy.orm import Session
+
+from app.ingestion.anki_export_parser import ParsedAnkiRow
+from app.ingestion.kanji_schedule_parser import ParsedKanjiScheduleRow
+from app.ingestion.vocab_list_parser import ParsedVocabRow
+from app.models.kanji import Kanji
+from app.models.kanji_coverage import KanjiCoverage
+from app.models.kanji_schedule import KanjiSchedule
+from app.models.vocab import Vocab
+
+
+@dataclass
+class UpsertStats:
+    inserted: int = 0
+    skipped_existing: int = 0
+    updated: int = 0
+
+
+def upsert_vocab_rows(db: Session, rows: list[ParsedVocabRow], source: str) -> UpsertStats:
+    """Natural key is (kanji_form, hiragana_form, meaning) -- see plan for why:
+    (kanji_form, hiragana_form) alone collides on genuine homonyms/distinct
+    senses in the real N3 vocab list, so meaning is part of the key.
+    """
+    stats = UpsertStats()
+
+    existing = {
+        (v.kanji_form, v.hiragana_form, v.meaning): v
+        for v in db.query(Vocab).all()
+    }
+
+    for row in rows:
+        key = (row.kanji_form, row.hiragana_form, row.meaning)
+        if key in existing:
+            stats.skipped_existing += 1
+            continue
+
+        db.add(
+            Vocab(
+                kanji_form=row.kanji_form,
+                hiragana_form=row.hiragana_form,
+                meaning=row.meaning,
+                part_of_speech=row.part_of_speech,
+                status="available",
+                source=source,
+            )
+        )
+        existing[key] = None  # placeholder to avoid re-inserting dupes within this same batch
+        stats.inserted += 1
+
+    db.commit()
+    return stats
+
+
+def _get_or_create_kanji(db: Session, cache: dict[str, Kanji], character: str) -> Kanji:
+    if character in cache:
+        return cache[character]
+
+    kanji = db.query(Kanji).filter(Kanji.kanji == character).one_or_none()
+    if kanji is None:
+        kanji = Kanji(kanji=character)
+        db.add(kanji)
+        db.flush()  # assign kanji.id without a full commit
+
+    cache[character] = kanji
+    return kanji
+
+
+def upsert_kanji_schedule_rows(
+    db: Session, rows: list[ParsedKanjiScheduleRow]
+) -> UpsertStats:
+    """Natural key is the kanji character itself. Re-importing updates the
+    batch_number/difficulty_rank if the schedule file changed, rather than
+    silently ignoring a correction.
+    """
+    stats = UpsertStats()
+    kanji_cache: dict[str, Kanji] = {}
+
+    existing_schedule = {ks.kanji_id: ks for ks in db.query(KanjiSchedule).all()}
+
+    for row in rows:
+        kanji = _get_or_create_kanji(db, kanji_cache, row.kanji)
+        if kanji.difficulty_rank != row.difficulty_rank:
+            kanji.difficulty_rank = row.difficulty_rank
+
+        schedule_entry = existing_schedule.get(kanji.id)
+        if schedule_entry is None:
+            db.flush()  # ensure kanji.id is populated for a brand-new kanji
+            db.add(KanjiSchedule(kanji_id=kanji.id, batch_number=row.batch_number))
+            existing_schedule[kanji.id] = None
+            stats.inserted += 1
+        elif schedule_entry.batch_number != row.batch_number:
+            schedule_entry.batch_number = row.batch_number
+            stats.updated += 1
+        else:
+            stats.skipped_existing += 1
+
+    db.commit()
+    return stats
+
+
+def apply_seen_in_class(db: Session, anki_rows: list[ParsedAnkiRow]) -> UpsertStats:
+    """Marks vocab rows as seen_in_class when any field of an Anki export row
+    exactly matches their kanji_form or hiragana_form, and records every CJK
+    character encountered as pre_n3 kanji coverage.
+
+    Field-generic by design (see anki_export_parser docstring): real column
+    layout is unconfirmed, so this matches on field *content*, not position.
+    """
+    stats = UpsertStats()
+
+    vocab_by_form: dict[str, list[Vocab]] = {}
+    for v in db.query(Vocab).all():
+        vocab_by_form.setdefault(v.kanji_form, []).append(v)
+        vocab_by_form.setdefault(v.hiragana_form, []).append(v)
+
+    all_kanji_chars: set[str] = set()
+    matched_vocab_ids: set[int] = set()
+
+    for row in anki_rows:
+        all_kanji_chars |= row.kanji_chars
+        for field_val in row.fields:
+            if not field_val:
+                continue
+            for v in vocab_by_form.get(field_val, []):
+                if v.id not in matched_vocab_ids and v.status != "seen_in_class":
+                    v.status = "seen_in_class"
+                    matched_vocab_ids.add(v.id)
+                    stats.updated += 1
+
+    kanji_cache: dict[str, Kanji] = {}
+    existing_pre_n3 = {
+        kc.kanji_id
+        for kc in db.query(KanjiCoverage).filter(KanjiCoverage.coverage_source == "pre_n3").all()
+    }
+
+    for char in all_kanji_chars:
+        kanji = _get_or_create_kanji(db, kanji_cache, char)
+        db.flush()
+        if kanji.id in existing_pre_n3:
+            stats.skipped_existing += 1
+            continue
+        db.add(KanjiCoverage(kanji_id=kanji.id, coverage_source="pre_n3", batch_number=None))
+        existing_pre_n3.add(kanji.id)
+        stats.inserted += 1
+
+    db.commit()
+    return stats

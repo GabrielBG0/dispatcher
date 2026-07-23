@@ -1,0 +1,11 @@
+#separator:tab
+#html:true
+#notetype column:1
+#deck column:2
+#tags column:6
+Basic	Genki::Chapter 1	<div>私</div>	<div>わたし</div>	<div>I, me</div>	genki::ch01
+Basic	Genki::Chapter 3	<div>時間</div>	<div>じかん</div>	<div>time</div>	genki::ch03
+Basic	Genki::Chapter 5	<div>学生</div>	<div>がくせい</div>	<div>student</div>	genki::ch05
+
+Basic	Genki::Chapter 7	<div>先生</div>	<div>せんせい</div>	<div>teacher</div>	genki::ch07
+Basic	Genki::Chapter 9		<div>きれい</div>	<div>pretty, clean</div>	genki::ch09
