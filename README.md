@@ -105,7 +105,7 @@ it's safe to re-import after fixing a source file.
 |---|---|---|
 | N3 vocab list | `.xls` | The vocab master list (kanji form, hiragana reading, meaning). Rows with a blank meaning are queued for enrichment. |
 | Kanji weekly schedule | `.xlsx` | Which kanji belong to which week's batch. Drives the target kanji for every batch. |
-| Genki Anki export | `.tsv` | Optional. A prior Anki deck export used to seed the "already seen in class" baseline, so those kanji/words are excluded from selection. Safe to skip if the class hasn't covered anything yet — everything just starts as `available`. |
+| Genki Anki export | `.tsv` or `.txt` | Optional. Builds the "already seen in class" baseline, so those kanji/words are excluded from selection. Parsing is format-agnostic — it works against a real Anki "Notes in Plain Text" export *or* a plain one-item-per-line list — matching vocab rows on exact kanji/hiragana form and recording every CJK character encountered as known (`pre_n3` coverage). `backend/seed/seen_in_class_vocab.txt` and `seen_in_class_kanji.txt` are the real committed baseline (846 words, 251 kanji already covered before N3); re-upload them any time the DB is reset. Safe to skip entirely if the class hasn't covered anything yet — everything just starts as `available`. |
 
 Each upload reports rows parsed, rows inserted/updated/skipped, and any
 per-row warnings (e.g. an unparseable line) inline — nothing fails silently.
