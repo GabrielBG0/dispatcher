@@ -132,6 +132,12 @@ function EnrichmentJobButton({
             {job.status} — {job.completed}/{job.total}
             {job.error ? `: ${job.error}` : ""}
           </small>
+          {job.status === "completed" && job.not_found > 0 && (
+            <div className="warning-box">
+              {job.not_found} of {job.total} item{job.not_found === 1 ? "" : "s"} not found on Jisho — left
+              unenriched, review before finalizing batches.
+            </div>
+          )}
         </div>
       )}
       {error && <div className="error-box">{error}</div>}

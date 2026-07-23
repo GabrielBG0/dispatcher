@@ -15,6 +15,7 @@ export interface EnrichmentJobStatus {
   status: "pending" | "running" | "completed" | "failed";
   total: number;
   completed: number;
+  not_found: number;
   error: string | null;
 }
 

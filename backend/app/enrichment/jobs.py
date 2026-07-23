@@ -5,6 +5,11 @@ connection. Jobs open their own DB session (via `session_factory`, defaulting
 to the app's real SessionLocal) since they run outside a request's session
 lifecycle (FastAPI BackgroundTasks) -- the factory is a parameter so tests
 can point jobs at an isolated DB instead of monkeypatching module state.
+
+Note: vocab/kanji rows are selected by "still blank" (meaning == "" /
+meanings is None), so re-running a job only ever fills gaps -- it will not
+repair a row that was already (mis-)populated by a prior enrichment bug.
+Backfilling those requires a one-off script that clears the bad field first.
 """
 
 from collections.abc import Callable
@@ -36,7 +41,7 @@ _POS_PRIORITY = [
 def create_job(job_type: str, total: int, session_factory: SessionFactory = SessionLocal) -> int:
     db = session_factory()
     try:
-        job = EnrichmentJob(job_type=job_type, status="pending", total=total, completed=0)
+        job = EnrichmentJob(job_type=job_type, status="pending", total=total, completed=0, not_found=0)
         db.add(job)
         db.commit()
         db.refresh(job)
@@ -57,6 +62,7 @@ def get_job(job_id: int, session_factory: SessionFactory = SessionLocal) -> dict
             "status": job.status,
             "total": job.total,
             "completed": job.completed,
+            "not_found": job.not_found,
             "error": job.error,
         }
     finally:
@@ -109,8 +115,12 @@ async def run_vocab_word_enrichment(
                     row.part_of_speech = _pos_from_jisho(match.senses[0].parts_of_speech)
                     row.jlpt_level = match.jlpt[0] if match.jlpt else row.jlpt_level
                     row.source = f"{row.source},jisho".strip(",") if row.source else "jisho"
+                else:
+                    row.source = f"{row.source},jisho_not_found".strip(",") if row.source else "jisho_not_found"
+                    job.not_found += 1
             except Exception:  # noqa: BLE001 - one bad lookup shouldn't abort the whole job
                 row.source = f"{row.source},jisho_error".strip(",") if row.source else "jisho_error"
+                job.not_found += 1
 
             job.completed += 1
             db.commit()
@@ -157,8 +167,10 @@ async def run_kanji_meaning_enrichment(
                     row.meanings = ", ".join(result.meanings) if result.meanings else None
                     row.kun_yomi = "・".join(result.kun_yomi) if result.kun_yomi else None
                     row.on_yomi = "・".join(result.on_yomi) if result.on_yomi else None
+                else:
+                    job.not_found += 1
             except Exception:  # noqa: BLE001
-                pass
+                job.not_found += 1
 
             job.completed += 1
             db.commit()

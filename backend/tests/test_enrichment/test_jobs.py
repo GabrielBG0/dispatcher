@@ -70,6 +70,7 @@ async def test_run_vocab_word_enrichment_fills_blank_meanings(session_factory):
     assert status["status"] == "completed"
     assert status["total"] == 1  # only the blank-meaning row needed enrichment
     assert status["completed"] == 1
+    assert status["not_found"] == 0
 
     db = session_factory()
     ryokou = db.query(Vocab).filter(Vocab.kanji_form == "旅行").one()
@@ -78,6 +79,40 @@ async def test_run_vocab_word_enrichment_fills_blank_meanings(session_factory):
     assert ryokou.jlpt_level == "jlpt-n4"
     jikan = db.query(Vocab).filter(Vocab.kanji_form == "時間").one()
     assert jikan.meaning == "time"  # untouched, already had a meaning
+    db.close()
+
+
+EMPTY_WORDS_RESPONSE = {"meta": {"status": 200}, "data": []}
+
+
+@pytest.mark.asyncio
+async def test_run_vocab_word_enrichment_tracks_jisho_misses(session_factory):
+    # Per the spec, enrichment misses (word not found on Jisho) must surface
+    # as an actionable count, not disappear behind a "completed" status.
+    db = session_factory()
+    db.add(Vocab(kanji_form="謎語", hiragana_form="なぞご", meaning="", part_of_speech="general", status="available"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_words", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=EMPTY_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_vocab_word_enrichment(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["status"] == "completed"
+    assert status["completed"] == 1
+    assert status["not_found"] == 1
+
+    db = session_factory()
+    row = db.query(Vocab).filter(Vocab.kanji_form == "謎語").one()
+    assert row.meaning == ""  # left unenriched, not silently marked done
+    assert "jisho_not_found" in row.source
     db.close()
 
 
@@ -109,12 +144,38 @@ async def test_run_kanji_meaning_enrichment_fills_missing_kanji(session_factory)
         await jobs.run_kanji_meaning_enrichment(job_id, session_factory=session_factory, client=client)
         await client.aclose()
 
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["not_found"] == 0
+
     db = session_factory()
     ai = db.query(Kanji).filter(Kanji.kanji == "愛").one()
     assert ai.meanings == "love, affection"
     assert ai.kun_yomi == "いと.しい"
     assert ai.on_yomi == "アイ"
     db.close()
+
+
+@pytest.mark.asyncio
+async def test_run_kanji_meaning_enrichment_tracks_jisho_misses(session_factory):
+    db = session_factory()
+    db.add(Kanji(kanji="込"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_kanji", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get(url__regex=r"https://jisho\.org/search/.*").mock(
+            return_value=httpx.Response(404)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_kanji_meaning_enrichment(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["status"] == "completed"
+    assert status["completed"] == 1
+    assert status["not_found"] == 1
 
 
 def test_run_kanjivg_enrichment_fills_stroke_data_from_local_archive(session_factory):
