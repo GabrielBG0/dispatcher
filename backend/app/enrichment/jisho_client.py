@@ -136,8 +136,9 @@ class JishoClient:
             else []
         )
 
-        kun_yomi = _extract_readings(soup, "kun_yomi")
-        on_yomi = _extract_readings(soup, "on_yomi")
+        readings_container = soup.select_one(".kanji-details__main-readings")
+        kun_yomi = _extract_readings(readings_container, "kun_yomi")
+        on_yomi = _extract_readings(readings_container, "on_yomi")
 
         if not meanings and not kun_yomi and not on_yomi:
             return None
@@ -145,8 +146,16 @@ class JishoClient:
         return JishoKanjiResult(meanings=meanings, kun_yomi=kun_yomi, on_yomi=on_yomi)
 
 
-def _extract_readings(soup: BeautifulSoup, css_class: str) -> list[str]:
-    dl = soup.select_one(f"dl.{css_class}")
+def _extract_readings(readings_container: BeautifulSoup | None, css_class: str) -> list[str]:
+    # `dl.kun_yomi` / `dl.on_yomi` are NOT unique on the page -- Jisho
+    # reuses these exact class names for the unrelated Radical/Parts rows
+    # elsewhere on the kanji page (confirmed by direct inspection of
+    # jisho.org's HTML). Searching the whole soup grabs the wrong element
+    # silently (it just returns no readings, not an error). Scoping to
+    # `.kanji-details__main-readings` first is what makes this unambiguous.
+    if readings_container is None:
+        return []
+    dl = readings_container.select_one(f"dl.{css_class}")
     if dl is None:
         return []
     dd = dl.select_one(".kanji-details__main-readings-list")

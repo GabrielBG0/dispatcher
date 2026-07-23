@@ -27,6 +27,15 @@ KANJI_HTML = """
 <div class="kanji-details__main-meanings">
       love, affection, favourite
     </div>
+<!-- Regression fixture: real jisho.org pages reuse the exact class
+     "dictionary_entry on_yomi" for the unrelated Radical row (confirmed
+     by direct inspection), appearing BEFORE the real readings container.
+     A selector that isn't scoped to .kanji-details__main-readings will
+     silently grab this one instead and return no readings. -->
+<dl class="dictionary_entry on_yomi">
+  <dt>Radical:</dt>
+  <dd><span class="radical_meaning">heart</span></dd>
+</dl>
 <div class="kanji-details__main-readings">
   <dl class="dictionary_entry kun_yomi">
     <dt>Kun:</dt>
