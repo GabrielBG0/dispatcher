@@ -21,6 +21,11 @@ class ExportServiceError(Exception):
     pass
 
 
+# Caps the per-kanji word list so it can't push the stroke diagram onto a
+# second PDF page; kanji with more vocab than this just show the first 8.
+MAX_WORDS_PER_PAGE = 8
+
+
 def _require_finalized_batch(db: Session, batch_n: int) -> Batch:
     batch = db.get(Batch, batch_n)
     if batch is None:
@@ -97,7 +102,7 @@ def build_kanji_pdf_pages(db: Session, batch_n: int) -> tuple[list[KanjiPageData
             KanjiPageWord(kanji_form=v.kanji_form, hiragana_form=v.hiragana_form, meaning=v.meaning)
             for v, chars in vocab_with_chars
             if kanji.kanji in chars
-        ]
+        ][:MAX_WORDS_PER_PAGE]
         if kanji.stroke_data is None:
             warnings.append(PdfWarning(kanji=kanji.kanji, detail="no KanjiVG stroke data cached"))
         if not kanji.meanings and not kanji.kun_yomi and not kanji.on_yomi:
