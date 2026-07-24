@@ -2,16 +2,21 @@ import { useEffect, useState } from "react";
 import { ApiError } from "../api/client";
 import {
   addWord,
+  bulkRemoveWords,
+  bulkReplaceWords,
   finalizeBatch,
   generateDraft,
   getBatch,
   getEligibleReplacements,
   removeWord,
+  replaceWord,
   swapWord,
   toggleReading,
   unfinalizeBatch,
 } from "../api/batches";
 import type { BatchDetail, GenerateBatchResult, ReplacementCandidate } from "../api/types";
+
+type ConfirmAction = { kind: "remove" | "replace"; vocabIds: number[] };
 
 export default function BatchReviewPage() {
   const [batchN, setBatchN] = useState(1);
@@ -19,9 +24,13 @@ export default function BatchReviewPage() {
   const [generateResult, setGenerateResult] = useState<GenerateBatchResult | null>(null);
   const [replacements, setReplacements] = useState<ReplacementCandidate[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [swapTarget, setSwapTarget] = useState<number | null>(null);
   const [addPickId, setAddPickId] = useState<number | "">("");
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
+  const [justReplacedIds, setJustReplacedIds] = useState<Set<number>>(new Set());
 
   async function load(n: number) {
     setLoading(true);
@@ -43,6 +52,7 @@ export default function BatchReviewPage() {
 
   useEffect(() => {
     setGenerateResult(null);
+    setJustReplacedIds(new Set());
     load(batchN);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchN]);
@@ -52,19 +62,60 @@ export default function BatchReviewPage() {
     try {
       const result = await generateDraft(batchN);
       setGenerateResult(result);
+      setJustReplacedIds(new Set());
       await load(batchN);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to generate draft");
     }
   }
 
-  async function handleRemove(vocabId: number) {
+  function toggleSelected(vocabId: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(vocabId)) next.delete(vocabId);
+      else next.add(vocabId);
+      return next;
+    });
+  }
+
+  function requestRemove(vocabIds: number[]) {
+    setNotice(null);
+    setConfirmAction({ kind: "remove", vocabIds });
+  }
+
+  function requestReplace(vocabIds: number[]) {
+    setNotice(null);
+    setConfirmAction({ kind: "replace", vocabIds });
+  }
+
+  async function runConfirmedAction(exclude: boolean) {
+    if (!confirmAction) return;
+    const { kind, vocabIds } = confirmAction;
+    setConfirmAction(null);
     setError(null);
+    setNotice(null);
     try {
-      await removeWord(batchN, vocabId);
+      if (kind === "remove") {
+        setJustReplacedIds(new Set());
+        if (vocabIds.length === 1) {
+          await removeWord(batchN, vocabIds[0], exclude);
+        } else {
+          await bulkRemoveWords(batchN, vocabIds, exclude);
+        }
+      } else if (vocabIds.length === 1) {
+        const result = await replaceWord(batchN, vocabIds[0], exclude);
+        if (!result.added) setNotice("Removed, but no eligible replacement was available.");
+        setJustReplacedIds(result.added ? new Set([result.added.vocab_id]) : new Set());
+      } else {
+        const { results } = await bulkReplaceWords(batchN, vocabIds, exclude);
+        const missing = results.filter((r) => !r.added).length;
+        if (missing > 0) setNotice(`${missing} of ${results.length} word(s) had no eligible replacement available.`);
+        setJustReplacedIds(new Set(results.filter((r) => r.added).map((r) => r.added!.vocab_id)));
+      }
+      setSelectedIds(new Set());
       await load(batchN);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Failed to remove word");
+      setError(err instanceof ApiError ? err.message : `Failed to ${kind} word(s)`);
     }
   }
 
@@ -83,6 +134,7 @@ export default function BatchReviewPage() {
     try {
       await swapWord(batchN, oldVocabId, newVocabId);
       setSwapTarget(null);
+      setJustReplacedIds(new Set([newVocabId]));
       await load(batchN);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to swap word");
@@ -126,6 +178,11 @@ export default function BatchReviewPage() {
   const fillerCount = (detail?.words.length ?? 0) - targetLinkedCount;
   const assignedIds = new Set(detail?.words.map((w) => w.vocab_id));
   const availableForAdd = replacements.filter((r) => !assignedIds.has(r.vocab_id));
+  const candidateLabel = (r: ReplacementCandidate) =>
+    `${r.kanji_form}（${r.hiragana_form}）${r.usually_kana ? " · usu. kana" : ""}`;
+  const sortedWords = detail
+    ? [...detail.words].sort((a, b) => Number(justReplacedIds.has(b.vocab_id)) - Number(justReplacedIds.has(a.vocab_id)))
+    : [];
 
   return (
     <div>
@@ -152,6 +209,7 @@ export default function BatchReviewPage() {
           {detail && <span className="pill">{detail.status}</span>}
         </div>
         {error && <div className="error-box">{error}</div>}
+        {notice && <div className="warning-box">{notice}</div>}
         {loading && <p>Loading…</p>}
       </section>
 
@@ -218,7 +276,7 @@ export default function BatchReviewPage() {
                   <option value="">Select a word…</option>
                   {availableForAdd.map((r) => (
                     <option key={r.vocab_id} value={r.vocab_id}>
-                      {r.kanji_form}（{r.hiragana_form}）
+                      {candidateLabel(r)}
                     </option>
                   ))}
                 </select>
@@ -228,9 +286,30 @@ export default function BatchReviewPage() {
               </div>
             )}
 
+            {isDraft && selectedIds.size > 0 && (
+              <div className="upload-row">
+                <span className="pill">{selectedIds.size} selected</span>
+                <button onClick={() => requestReplace([...selectedIds])}>Replace selected</button>
+                <button className="danger" onClick={() => requestRemove([...selectedIds])}>
+                  Remove selected
+                </button>
+                <button onClick={() => setSelectedIds(new Set())}>Clear selection</button>
+              </div>
+            )}
+
             <div className="word-list">
-              {detail.words.map((w) => (
-                <div className="word-row" key={w.vocab_id}>
+              {sortedWords.map((w) => (
+                <div
+                  className={`word-row ${justReplacedIds.has(w.vocab_id) ? "just-replaced" : ""}`}
+                  key={w.vocab_id}
+                >
+                  {isDraft && (
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(w.vocab_id)}
+                      onChange={() => toggleSelected(w.vocab_id)}
+                    />
+                  )}
                   <div className="word-main">
                     <div className="word-kanji">
                       {w.kanji_form}
@@ -238,6 +317,8 @@ export default function BatchReviewPage() {
                     </div>
                     <div className="word-meaning">{w.meaning || "(no meaning yet)"}</div>
                   </div>
+                  {w.usually_kana && <span className="pill kana">usu. kana</span>}
+                  {justReplacedIds.has(w.vocab_id) && <span className="pill ok">new</span>}
                   <span className={`pill ${w.is_target_linked ? "ok" : ""}`}>
                     {w.is_target_linked ? `covers ${w.covers_target_kanji.join(", ")}` : "filler"}
                   </span>
@@ -268,7 +349,8 @@ export default function BatchReviewPage() {
                       ) : (
                         <button onClick={() => setSwapTarget(w.vocab_id)}>Swap</button>
                       )}
-                      <button className="danger" onClick={() => handleRemove(w.vocab_id)}>
+                      <button onClick={() => requestReplace([w.vocab_id])}>Replace</button>
+                      <button className="danger" onClick={() => requestRemove([w.vocab_id])}>
                         Remove
                       </button>
                     </div>
@@ -279,6 +361,30 @@ export default function BatchReviewPage() {
             </div>
           </section>
         </>
+      )}
+
+      {confirmAction && (
+        <div className="modal-overlay" onClick={() => setConfirmAction(null)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <h3>
+              {confirmAction.kind === "remove" ? "Remove" : "Replace"} {confirmAction.vocabIds.length}{" "}
+              word{confirmAction.vocabIds.length > 1 ? "s" : ""}?
+            </h3>
+            <p>
+              Should {confirmAction.vocabIds.length > 1 ? "these words" : "this word"} also be excluded from
+              future batches, or just taken out of this one?
+            </p>
+            <div className="modal-actions">
+              <button onClick={() => setConfirmAction(null)}>Cancel</button>
+              <button onClick={() => runConfirmedAction(false)}>
+                {confirmAction.kind === "remove" ? "Remove only" : "Replace only"}
+              </button>
+              <button className="primary" onClick={() => runConfirmedAction(true)}>
+                Exclude from future batches
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {!detail && !loading && (

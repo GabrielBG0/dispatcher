@@ -3,6 +3,7 @@ core. This is the only layer allowed to mix a DB session with calls into
 app.selection -- select_batch itself never touches SQLAlchemy.
 """
 
+import math
 from dataclasses import dataclass
 from datetime import date, timedelta
 
@@ -23,6 +24,12 @@ from app.selection.types import SelectionConfig, SelectionResult, VocabCandidate
 
 BCCWJ_SUBSET_PATH = settings.seed_dir / "bccwj_n3_frequency_subset.tsv"
 
+# Enforced floor on new (not-yet-known) kanji per batch. Many raw source-file
+# batches now contain far fewer real new kanji than their nominal ~50, since
+# a large chunk of the schedule turned out to already be known once the
+# seen-in-class data was corrected.
+KANJI_MINIMUM_PER_BATCH = 23
+
 
 class BatchServiceError(Exception):
     pass
@@ -32,14 +39,79 @@ def _study_end_date(config: StudyConfig) -> date:
     return config.start_date + timedelta(weeks=config.new_card_weeks)
 
 
+def _distribute_evenly(total: int, bins: int) -> list[int]:
+    """Splits `total` into `bins` non-negative chunks that differ by at
+    most one, larger chunks first (e.g. 17 into 2 bins -> [9, 8])."""
+    if bins <= 0:
+        return []
+    base, extra = divmod(total, bins)
+    return [base + 1 if i < extra else base for i in range(bins)]
+
+
 def _load_schedule(db: Session) -> dict[str, int]:
-    rows = db.query(KanjiSchedule).join(Kanji).all()
-    return {row.kanji.kanji: row.batch_number for row in rows}
+    """Repacked teaching schedule, spread over exactly
+    study_config.new_card_weeks batches: not-yet-covered kanji, in original
+    teaching order (imported batch_number, then difficulty_rank), packed
+    into as many KANJI_MINIMUM_PER_BATCH-sized batches as fit, with
+    whatever's left split evenly across the trailing batches (e.g. 339
+    kanji at a 23 floor over 16 weeks gives 14 batches of 23 plus a final
+    two of 9 and 8 -- only those last batches fall below the floor). If
+    there's *more* kanji than new_card_weeks * KANJI_MINIMUM_PER_BATCH can
+    hold at the floor size, everything is instead spread evenly across all
+    new_card_weeks batches (each then comfortably exceeds the floor).
+    Recomputed fresh from current coverage on every call: nothing is
+    persisted, so a schedule re-import can't clobber it and it stays
+    correct as coverage (seen-in-class imports, batch finalization) grows
+    over time.
+    """
+    study_config = db.query(StudyConfig).one_or_none()
+    if study_config is None:
+        raise BatchServiceError("study_config has not been set")
+    total_weeks = study_config.new_card_weeks
+
+    rows = (
+        db.query(KanjiSchedule)
+        .join(Kanji)
+        .order_by(
+            KanjiSchedule.batch_number,
+            Kanji.difficulty_rank.is_(None),
+            Kanji.difficulty_rank,
+            KanjiSchedule.kanji_id,
+        )
+        .all()
+    )
+    coverage = _load_coverage(db)
+    ordered_unknown = [row.kanji.kanji for row in rows if row.kanji.kanji not in coverage]
+
+    full_batches = len(ordered_unknown) // KANJI_MINIMUM_PER_BATCH
+    remainder = len(ordered_unknown) % KANJI_MINIMUM_PER_BATCH
+    remaining_slots = total_weeks - full_batches
+
+    if remaining_slots <= 0:
+        sizes = _distribute_evenly(len(ordered_unknown), total_weeks)
+    else:
+        sizes = [KANJI_MINIMUM_PER_BATCH] * full_batches + _distribute_evenly(remainder, remaining_slots)
+
+    schedule: dict[str, int] = {}
+    idx = 0
+    for batch_n, size in enumerate(sizes, start=1):
+        for kanji in ordered_unknown[idx : idx + size]:
+            schedule[kanji] = batch_n
+        idx += size
+    return schedule
 
 
 def _load_coverage(db: Session) -> set[str]:
     rows = db.query(KanjiCoverage).join(Kanji).all()
     return {row.kanji.kanji for row in rows}
+
+
+def _load_target_kanji(schedule: dict[str, int], coverage: set[str], batch_n: int) -> set[str]:
+    """Kanji the schedule assigns to this batch, minus anything already
+    covered (pre_n3 baseline or a prior finalized batch). Already-known
+    kanji must never force a set-cover word or a reading card.
+    """
+    return {k for k, b in schedule.items() if b == batch_n} - coverage
 
 
 def _load_candidates(db: Session) -> list[VocabCandidate]:
@@ -50,6 +122,7 @@ def _load_candidates(db: Session) -> list[VocabCandidate]:
             kanji_form=v.kanji_form,
             hiragana_form=v.hiragana_form,
             kanji_chars=frozenset(extract_kanji(v.kanji_form)),
+            usually_kana=v.usually_kana,
         )
         for v in rows
     ]
@@ -66,7 +139,15 @@ def generate_draft_batch(db: Session, batch_n: int, today: date) -> SelectionRes
 
     schedule = _load_schedule(db)
     coverage = _load_coverage(db)
-    target_kanji = {k for k, b in schedule.items() if b == batch_n}
+    target_kanji = _load_target_kanji(schedule, coverage, batch_n)
+
+    # Clear any previous draft assignment for this batch *before* loading
+    # candidates -- otherwise a word already in this batch is stuck at
+    # status "assigned" and invisible to its own re-selection pool.
+    db.query(Vocab).filter(Vocab.assigned_batch == batch_n, Vocab.status == "assigned").update(
+        {Vocab.status: "available", Vocab.assigned_batch: None, Vocab.needs_kanji_reading: False}
+    )
+
     candidates = _load_candidates(db)
     frequency_lookup = load_bccwj_frequency_subset(BCCWJ_SUBSET_PATH)
 
@@ -88,12 +169,6 @@ def generate_draft_batch(db: Session, batch_n: int, today: date) -> SelectionRes
     else:
         existing.weekly_target_used = result.weekly_target_used
 
-    # Clear any previous draft assignment for this batch before applying the
-    # new selection (regenerating a draft must not leave stale assignments).
-    db.query(Vocab).filter(Vocab.assigned_batch == batch_n).update(
-        {Vocab.status: "available", Vocab.assigned_batch: None, Vocab.needs_kanji_reading: False}
-    )
-
     selected_by_id = {w.vocab_id: w for w in result.selected}
     if selected_by_id:
         vocab_rows = db.query(Vocab).filter(Vocab.id.in_(selected_by_id.keys())).all()
@@ -112,6 +187,7 @@ class ReplacementCandidate:
     vocab_id: int
     kanji_form: str
     hiragana_form: str
+    usually_kana: bool
 
 
 def get_eligible_replacements(db: Session, batch_n: int) -> list[ReplacementCandidate]:
@@ -121,12 +197,15 @@ def get_eligible_replacements(db: Session, batch_n: int) -> list[ReplacementCand
     reading card would be generated, which the caller decides separately).
     """
     schedule = _load_schedule(db)
-    future_kanji = {k for k, b in schedule.items() if b > batch_n}
+    coverage = _load_coverage(db)
+    future_kanji = {k for k, b in schedule.items() if b > batch_n} - coverage
 
     candidates = _load_candidates(db)
     eligible = [c for c in candidates if not (c.kanji_chars & future_kanji)]
     return [
-        ReplacementCandidate(vocab_id=c.id, kanji_form=c.kanji_form, hiragana_form=c.hiragana_form)
+        ReplacementCandidate(
+            vocab_id=c.id, kanji_form=c.kanji_form, hiragana_form=c.hiragana_form, usually_kana=c.usually_kana
+        )
         for c in eligible
     ]
 
@@ -139,6 +218,7 @@ class BatchWordDetail:
     meaning: str
     is_target_linked: bool
     needs_kanji_reading: bool
+    usually_kana: bool
     covers_target_kanji: list[str]
 
 
@@ -158,7 +238,8 @@ def get_batch_detail(db: Session, batch_n: int) -> BatchDetail:
         raise BatchServiceError(f"batch {batch_n} does not exist")
 
     schedule = _load_schedule(db)
-    target_kanji = {k for k, b in schedule.items() if b == batch_n}
+    coverage = _load_coverage(db)
+    target_kanji = _load_target_kanji(schedule, coverage, batch_n)
 
     vocab_rows = db.query(Vocab).filter(Vocab.assigned_batch == batch_n).all()
     words: list[BatchWordDetail] = []
@@ -177,6 +258,7 @@ def get_batch_detail(db: Session, batch_n: int) -> BatchDetail:
                 meaning=v.meaning,
                 is_target_linked=bool(covers),
                 needs_kanji_reading=v.needs_kanji_reading,
+                usually_kana=v.usually_kana,
                 covers_target_kanji=covers,
             )
         )
@@ -200,26 +282,27 @@ def _require_draft_batch(db: Session, batch_n: int) -> Batch:
     return batch
 
 
-def remove_word(db: Session, batch_n: int, vocab_id: int) -> None:
-    _require_draft_batch(db, batch_n)
+def _take_out_of_batch(db: Session, batch_n: int, vocab_id: int, exclude: bool) -> Vocab | None:
+    """Un-assigns vocab_id from batch_n, if it's actually there. `exclude`
+    sends it to "excluded" (never selected again, for any reason the user
+    chooses) instead of back to "available" (open to selection in a later
+    batch) -- distinct from "seen_in_class", which specifically means
+    "already knew this before starting". Returns None (no-op) if the word
+    isn't assigned to this batch.
+    """
     vocab = db.query(Vocab).filter(Vocab.id == vocab_id, Vocab.assigned_batch == batch_n).one_or_none()
     if vocab is None:
-        raise BatchServiceError(f"vocab {vocab_id} is not assigned to batch {batch_n}")
-    vocab.status = "available"
+        return None
+    vocab.status = "excluded" if exclude else "available"
     vocab.assigned_batch = None
     vocab.needs_kanji_reading = False
-    db.commit()
+    return vocab
 
 
-def add_word(db: Session, batch_n: int, vocab_id: int) -> None:
-    _require_draft_batch(db, batch_n)
-    eligible_ids = {c.vocab_id for c in get_eligible_replacements(db, batch_n)}
-    if vocab_id not in eligible_ids:
-        raise BatchServiceError(f"vocab {vocab_id} is not eligible for batch {batch_n} (skip-ahead guard)")
-
+def _assign_word(db: Session, batch_n: int, vocab_id: int) -> None:
     schedule = _load_schedule(db)
     coverage = _load_coverage(db)
-    target_kanji = {k for k, b in schedule.items() if b == batch_n}
+    target_kanji = _load_target_kanji(schedule, coverage, batch_n)
     known_kanji = coverage | target_kanji
 
     vocab = db.get(Vocab, vocab_id)
@@ -235,7 +318,126 @@ def add_word(db: Session, batch_n: int, vocab_id: int) -> None:
     vocab.status = "assigned"
     vocab.assigned_batch = batch_n
     vocab.needs_kanji_reading = covers_target and orphan_kanji_count(classes) == 0
+
+
+def _best_replacement(db: Session, batch_n: int, exclude_ids: set[int]) -> ReplacementCandidate | None:
+    """Picks the single best eligible replacement for batch_n, in the same
+    preference order as initial generation: a word covering a target kanji
+    that isn't yet covered by anything else in the batch comes first, then
+    fewer orphan kanji, then more common/shorter (see
+    select_batch._sort_key -- duplicated here rather than imported since
+    it's a three-line tie-break and this module intentionally doesn't
+    depend on select_batch's private helpers).
+
+    `exclude_ids` lets a bulk caller avoid picking the same replacement
+    twice across several words being replaced in one operation.
+    """
+    schedule = _load_schedule(db)
+    coverage = _load_coverage(db)
+    target_kanji = _load_target_kanji(schedule, coverage, batch_n)
+    known_kanji = coverage | target_kanji
+
+    assigned = db.query(Vocab).filter(Vocab.assigned_batch == batch_n).all()
+    assigned_ids = {v.id for v in assigned}
+    covered_target: set[str] = set()
+    for v in assigned:
+        covered_target |= extract_kanji(v.kanji_form) & target_kanji
+    uncovered_target = target_kanji - covered_target
+
+    frequency_lookup = load_bccwj_frequency_subset(BCCWJ_SUBSET_PATH)
+
+    best: ReplacementCandidate | None = None
+    best_key: tuple | None = None
+    for r in get_eligible_replacements(db, batch_n):
+        if r.vocab_id in assigned_ids or r.vocab_id in exclude_ids:
+            continue
+        kanji_chars = frozenset(extract_kanji(r.kanji_form))
+        candidate = VocabCandidate(
+            id=r.vocab_id, kanji_form=r.kanji_form, hiragana_form=r.hiragana_form, kanji_chars=kanji_chars
+        )
+        classes = classify_word_kanji(candidate, known_kanji, schedule, batch_n)
+        orphan_count = orphan_kanji_count(classes)
+        freq = frequency_lookup.get(r.kanji_form)
+        rank = freq.core_rank if freq and freq.core_rank is not None else math.inf
+        key = (0 if kanji_chars & uncovered_target else 1, orphan_count, rank, len(r.kanji_form), r.vocab_id)
+        if best_key is None or key < best_key:
+            best_key = key
+            best = r
+    return best
+
+
+def remove_word(db: Session, batch_n: int, vocab_id: int, exclude: bool = False) -> None:
+    _require_draft_batch(db, batch_n)
+    if _take_out_of_batch(db, batch_n, vocab_id, exclude) is None:
+        raise BatchServiceError(f"vocab {vocab_id} is not assigned to batch {batch_n}")
     db.commit()
+
+
+def remove_words(db: Session, batch_n: int, vocab_ids: list[int], exclude: bool = False) -> list[int]:
+    """Bulk remove_word. Silently skips any id not actually assigned to this
+    batch (e.g. stale selection state in the UI) rather than aborting the
+    whole request over one bad id; returns the ids that were actually
+    removed.
+    """
+    _require_draft_batch(db, batch_n)
+    removed = [vid for vid in vocab_ids if _take_out_of_batch(db, batch_n, vid, exclude) is not None]
+    db.commit()
+    return removed
+
+
+def add_word(db: Session, batch_n: int, vocab_id: int) -> None:
+    _require_draft_batch(db, batch_n)
+    eligible_ids = {c.vocab_id for c in get_eligible_replacements(db, batch_n)}
+    if vocab_id not in eligible_ids:
+        raise BatchServiceError(f"vocab {vocab_id} is not eligible for batch {batch_n} (skip-ahead guard)")
+    _assign_word(db, batch_n, vocab_id)
+    db.commit()
+
+
+def replace_word(db: Session, batch_n: int, old_vocab_id: int, exclude: bool = False) -> ReplacementCandidate | None:
+    """Removes old_vocab_id (optionally excluding it from all future
+    batches) and auto-picks the best available replacement in one step.
+    Returns the replacement added, or None if no eligible word remains --
+    the removal happens either way.
+    """
+    _require_draft_batch(db, batch_n)
+    if _take_out_of_batch(db, batch_n, old_vocab_id, exclude) is None:
+        raise BatchServiceError(f"vocab {old_vocab_id} is not assigned to batch {batch_n}")
+
+    # The word just removed is now "available" (or "excluded") itself --
+    # exclude its own id so it can never be picked as its own replacement.
+    replacement = _best_replacement(db, batch_n, exclude_ids={old_vocab_id})
+    if replacement is not None:
+        _assign_word(db, batch_n, replacement.vocab_id)
+    db.commit()
+    return replacement
+
+
+def replace_words(
+    db: Session, batch_n: int, vocab_ids: list[int], exclude: bool = False
+) -> list[tuple[int, ReplacementCandidate | None]]:
+    """Bulk replace_word: removes each id (optionally excluding), picking a
+    distinct auto-selected replacement for each -- a replacement already
+    picked earlier in this same call is never picked again for a later one.
+    Returns (removed_vocab_id, replacement_or_none) pairs in input order.
+    """
+    _require_draft_batch(db, batch_n)
+    # Every id in this batch of removals becomes "available" (or "excluded")
+    # as it's processed, and must never be picked as a replacement for one
+    # of the others -- excluded from the very first pick, not just once its
+    # own turn has been processed.
+    never_pick: set[int] = set(vocab_ids)
+    results: list[tuple[int, ReplacementCandidate | None]] = []
+    for vocab_id in vocab_ids:
+        if _take_out_of_batch(db, batch_n, vocab_id, exclude) is None:
+            continue
+        replacement = _best_replacement(db, batch_n, exclude_ids=never_pick)
+        if replacement is not None:
+            _assign_word(db, batch_n, replacement.vocab_id)
+            never_pick.add(replacement.vocab_id)
+        results.append((vocab_id, replacement))
+    db.commit()
+    return results
 
 
 def toggle_reading(db: Session, batch_n: int, vocab_id: int) -> bool:
@@ -261,7 +463,8 @@ def finalize_batch(db: Session, batch_n: int) -> None:
         raise BatchServiceError(f"batch {batch_n} is not a draft (status={batch.status})")
 
     schedule = _load_schedule(db)
-    target_kanji = {k for k, b in schedule.items() if b == batch_n}
+    coverage = _load_coverage(db)
+    target_kanji = _load_target_kanji(schedule, coverage, batch_n)
 
     kanji_by_char = {k.kanji: k for k in db.query(Kanji).filter(Kanji.kanji.in_(target_kanji)).all()}
     already_covered = {

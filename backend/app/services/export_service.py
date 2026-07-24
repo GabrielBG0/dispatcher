@@ -13,7 +13,7 @@ from app.export.vocab_tsv import VocabExportRow, export_vocab_tsv_combined, expo
 from app.kanji_utils import extract_kanji
 from app.models.batch import Batch
 from app.models.kanji import Kanji
-from app.models.kanji_schedule import KanjiSchedule
+from app.models.kanji_coverage import KanjiCoverage
 from app.models.vocab import Vocab
 
 
@@ -42,6 +42,7 @@ def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str
             hiragana_form=v.hiragana_form,
             meaning=v.meaning,
             part_of_speech=v.part_of_speech,
+            usually_kana=v.usually_kana,
         )
         for v in _batch_vocab_rows(db, batch_n)
     ]
@@ -74,8 +75,16 @@ class PdfWarning:
 def build_kanji_pdf_pages(db: Session, batch_n: int) -> tuple[list[KanjiPageData], list[PdfWarning]]:
     _require_finalized_batch(db, batch_n)
 
+    # The schedule itself is a dynamically repacked view (see
+    # batch_service._load_schedule) that can shift as coverage grows, so a
+    # finalized batch's kanji list is read from the frozen record
+    # finalize_batch wrote at the time it locked the batch in, not
+    # recomputed live.
     target_kanji_rows = (
-        db.query(Kanji).join(KanjiSchedule).filter(KanjiSchedule.batch_number == batch_n).all()
+        db.query(Kanji)
+        .join(KanjiCoverage, KanjiCoverage.kanji_id == Kanji.id)
+        .filter(KanjiCoverage.coverage_source == "n3_batch", KanjiCoverage.batch_number == batch_n)
+        .all()
     )
     vocab_rows = _batch_vocab_rows(db, batch_n)
     vocab_with_chars = [(v, frozenset(extract_kanji(v.kanji_form))) for v in vocab_rows]

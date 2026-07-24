@@ -1,0 +1,2261 @@
+#separator:tab
+#html:true
+#deck column:1
+#tags column:4
+Japanese Hiragana	あ	A	basic jlpt::n5
+Japanese Hiragana	い	I	basic jlpt::n5
+Japanese Hiragana	う	U	basic jlpt::n5
+Japanese Hiragana	え	 E	basic jlpt::n5
+Japanese Hiragana	お	O	basic jlpt::n5
+Japanese Hiragana	か	Ka	basic jlpt::n5
+Japanese Hiragana	き	Ki	basic jlpt::n5
+Japanese Hiragana	く	Ku	basic jlpt::n5
+Japanese Hiragana	け	Ke	basic jlpt::n5
+Japanese Hiragana	こ	Ko	basic jlpt::n5
+Japanese Hiragana	さ	Sa	basic jlpt::n5
+Japanese Hiragana	し	Shi	basic jlpt::n5
+Japanese Hiragana	す	Su	basic jlpt::n5
+Japanese Hiragana	せ	Se	basic jlpt::n5
+Japanese Hiragana	そ	So	basic jlpt::n5
+Japanese Hiragana	た	Ta	basic jlpt::n5
+Japanese Hiragana	ち	Chi	basic jlpt::n5
+Japanese Hiragana	つ	 Tsu	basic jlpt::n5
+Japanese Hiragana	て	Te	basic jlpt::n5
+Japanese Hiragana	と	To	basic jlpt::n5
+Japanese Hiragana	な	Na	basic jlpt::n5
+Japanese Hiragana	に	Ni	basic jlpt::n5
+Japanese Hiragana	ぬ	Nu	basic jlpt::n5
+Japanese Hiragana	ね	Ne	basic jlpt::n5
+Japanese Hiragana	の	No	basic jlpt::n5
+Japanese Hiragana	は	Ha	basic jlpt::n5
+Japanese Hiragana	ひ	Hi	basic jlpt::n5
+Japanese Hiragana	ふ	Fu	basic jlpt::n5
+Japanese Hiragana	へ	He	basic jlpt::n5
+Japanese Hiragana	ほ	Ho	basic jlpt::n5
+Japanese Hiragana	ま	Ma	basic jlpt::n5
+Japanese Hiragana	み	Mi	basic jlpt::n5
+Japanese Hiragana	む	Mu	basic jlpt::n5
+Japanese Hiragana	め	 Me	basic jlpt::n5
+Japanese Hiragana	も	 Mo	basic jlpt::n5
+Japanese Hiragana	や	Ya	basic jlpt::n5
+Japanese Hiragana	ゆ	Yu	basic jlpt::n5
+Japanese Hiragana	よ	Yo	basic jlpt::n5
+Japanese Hiragana	ら	Ra	basic jlpt::n5
+Japanese Hiragana	り	Ri	basic jlpt::n5
+Japanese Hiragana	る	Ru	basic jlpt::n5
+Japanese Hiragana	れ	Re	basic jlpt::n5
+Japanese Hiragana	ろ	Ro	basic jlpt::n5
+Japanese Hiragana	わ	Wa	basic jlpt::n5
+Japanese Hiragana	を	O (wo) 	basic jlpt::n5
+Japanese Hiragana	ん	N	basic jlpt::n5
+Japanese Katakana	ア	a	basic jlpt::n5
+Japanese Katakana	イ	i	basic jlpt::n5
+Japanese Katakana	ウ	u	basic jlpt::n5
+Japanese Katakana	エ	e	basic jlpt::n5
+Japanese Katakana	オ	o	basic jlpt::n5
+Japanese Katakana	カ	ka	basic jlpt::n5
+Japanese Katakana	キ	ki	basic jlpt::n5
+Japanese Katakana	ク	ku	basic jlpt::n5
+Japanese Katakana	ケ	ke	basic jlpt::n5
+Japanese Katakana	サ	sa	basic jlpt::n5
+Japanese Katakana	シ	shi	basic jlpt::n5
+Japanese Katakana	ス	su	basic jlpt::n5
+Japanese Katakana	セ	se	basic jlpt::n5
+Japanese Katakana	ソ	so	basic jlpt::n5
+Japanese Katakana	タ	ta	basic jlpt::n5
+Japanese Katakana	チ	ti	basic jlpt::n5
+Japanese Katakana	ツ	tsu	basic jlpt::n5
+Japanese Katakana	テ	te	basic jlpt::n5
+Japanese Katakana	ト	to	basic jlpt::n5
+Japanese Katakana	コ	ko	basic jlpt::n5
+Japanese Katakana	ナ	na	basic jlpt::n5
+Japanese Katakana	ニ	ni	basic jlpt::n5
+Japanese Katakana	ヌ	nu	basic jlpt::n5
+Japanese Katakana	ネ	ne	basic jlpt::n5
+Japanese Katakana	ノ	no	basic jlpt::n5
+Japanese Katakana	ハ	ha	basic jlpt::n5
+Japanese Katakana	ヒ	hi	basic jlpt::n5
+Japanese Katakana	フ	fu	basic jlpt::n5
+Japanese Katakana	ヘ	he	basic jlpt::n5
+Japanese Katakana	ホ	ho	basic jlpt::n5
+Japanese Katakana	マ	ma	basic jlpt::n5
+Japanese Katakana	ミ	mi	basic jlpt::n5
+Japanese Katakana	ム	mu	basic jlpt::n5
+Japanese Katakana	メ	me	basic jlpt::n5
+Japanese Katakana	モ	mo	basic jlpt::n5
+Japanese Katakana	ヤ	ya	basic jlpt::n5
+Japanese Katakana	ユ	yu	basic jlpt::n5
+Japanese Katakana	ヨ	yo	basic jlpt::n5
+Japanese Katakana	ラ	ra	basic jlpt::n5
+Japanese Katakana	リ	ri	basic jlpt::n5
+Japanese Katakana	ル	ru	basic jlpt::n5
+Japanese Katakana	レ	re	basic jlpt::n5
+Japanese Katakana	ロ	ro	basic jlpt::n5
+Japanese Katakana	ワ	wa	basic jlpt::n5
+Japanese Katakana	ヲ	wo	basic jlpt::n5
+Japanese Katakana	ン	n	basic jlpt::n5
+Japanese Vocabulary	お早うございます（おはようございます）	Good morning (formal) 	common_word
+Japanese Vocabulary	今日は（こんにちは）	Hello 	common_word jlpt::n3
+Japanese Vocabulary	今晩は（こんばんは）	Good night 	common_word jlpt::n2
+Japanese Vocabulary	お休みなさい（おやすみなさい）	Good night (when leaving) 	common_word
+Japanese Vocabulary	済みません（すみません）	Sorry 	common_word jlpt::n3
+Japanese Vocabulary	ぃただきます	Thanks for the food 	
+Japanese Vocabulary	ご馳走様でした（ごちそうさまでした）	Thanks for the food (after) 	common_word
+Japanese Vocabulary	行ってきます（いってきます）	See you (leaving) 	common_word
+Japanese Vocabulary	行ってらっしゃい（いってらっしゃい）	See you (staying) 	common_word jlpt::n2
+Japanese Vocabulary	只今（ただいま）	I'm back 	common_word
+Japanese Vocabulary	お帰りなさい（おかえりなさい）	Welcome back 	common_word
+Japanese Vocabulary	さよなら	Good bye 	common_word
+Japanese Vocabulary	有難うございます（ありがとうございます）	Thank you 	common_word
+Japanese Vocabulary	はじめまして,..., よろしくおねがいします	For the first time, I'm counting on you (for first time presentations) 	common_word jlpt::n2
+Japanese Kanji	一	いち	common_word jlpt::n5
+Japanese Kanji	二	に	common_word jlpt::n5
+Japanese Kanji	三	さん	common_word jlpt::n5
+Japanese Kanji	四	よん	common_word jlpt::n5
+Japanese Kanji	五	ご	common_word jlpt::n5
+Japanese Kanji	六	ろく	common_word jlpt::n5
+Japanese Kanji	七	なな	common_word jlpt::n5
+Japanese Kanji	八	はち	common_word jlpt::n5
+Japanese Kanji	九	きゅう	common_word jlpt::n3
+Japanese Kanji	十	じゅう	common_word jlpt::n5
+Japanese Kanji	百	ひゃく	common_word jlpt::n5
+Japanese Kanji	千	せん	common_word jlpt::n5
+Japanese Kanji	万	まん	common_word jlpt::n5
+Japanese Kanji	円	えん	common_word jlpt::n3
+Japanese Kanji	時	じ	common_word jlpt::n3
+Japanese Vocabulary	朝（あさ）	Morning	common_word jlpt::n5
+Japanese Vocabulary	昼（ひる）	Afternoon 	common_word jlpt::n5
+Japanese Vocabulary	晩（ばん）	Early night 	common_word jlpt::n5
+Japanese Vocabulary	夜（よる）	Late night 	common_word jlpt::n5
+Japanese Vocabulary	朝ごはん（あさごはん）	Breakfast 	common_word jlpt::n5
+Japanese Vocabulary	昼ご飯（ひるごはん）	Lunch 	common_word jlpt::n5
+Japanese Vocabulary	晩御飯（ばんごはん）	Dinner 	common_word jlpt::n5
+Japanese Vocabulary	珈琲（コーヒー）	Coffee 	common_word jlpt::n5
+Japanese Vocabulary	ジュース	Juice 	common_word jlpt::n3
+Japanese Vocabulary	水（みず）	Water 	common_word jlpt::n5
+Japanese Vocabulary	牛乳（ぎゅうにゅう）	Milk	common_word jlpt::n5
+Japanese Vocabulary	お茶（おちゃ）	Tea 	common_word jlpt::n5
+Japanese Vocabulary	お酒（おさけ）	 Alcohol 	jlpt::n5
+Japanese Vocabulary	麦酒（ビール）	Beer	common_word
+Japanese Vocabulary	ウイスキー	Whiskey 	common_word jlpt::n3
+Japanese Vocabulary	ワイン	Wine	common_word jlpt::n3
+Japanese Vocabulary	ハンバーガー	Hamburger 	common_word
+Japanese Vocabulary	アイスクリーム	Ice cream 	common_word jlpt::n3
+Japanese Vocabulary	テレビ	TV	common_word jlpt::n5
+Japanese Vocabulary	映画（えいが）	Cinema 	common_word jlpt::n5
+Japanese Vocabulary	雑誌（ざっし）	Magazine 	common_word jlpt::n5
+Japanese Vocabulary	音楽（おんがく）	Music	common_word jlpt::n5
+Japanese Vocabulary	スポーツ	Sports 	common_word jlpt::n5
+Japanese Vocabulary	サッカー	Soccer 	common_word
+Japanese Vocabulary	テニス	Tennis 	common_word jlpt::n4
+Japanese Vocabulary	スイミング	Swimming 	
+Japanese Vocabulary	バスケットボール	Basketball 	common_word
+Japanese Vocabulary	デト	Date 	
+Japanese Vocabulary	アメリカ	America 	common_word jlpt::n4
+Japanese Vocabulary	イギリス	Uk	common_word
+Japanese Vocabulary	オーストラリア	Australia 	common_word
+Japanese Vocabulary	スウェーデン	Sweeden 	common_word
+Japanese Vocabulary	ブラジル	Brazil 	common_word
+Japanese Vocabulary	トイレ	Toilet 	common_word jlpt::n5
+Japanese Vocabulary	カフェ	Cafe 	common_word
+Japanese Vocabulary	バー	Bar	common_word jlpt::n1
+Japanese Vocabulary	ジンズ	Jeans 	common_word
+Japanese Vocabulary	メニュー	Menu	common_word jlpt::n2
+Japanese Vocabulary	のーと	Notebook 	common_word jlpt::n5
+Japanese Vocabulary	ぺん	Pen 	common_word jlpt::n5
+Japanese Vocabulary	コンピューター	Computer 	common_word jlpt::n4
+Japanese Vocabulary	タキシー	Taxi 	
+Japanese Vocabulary	バス	Bus 	common_word jlpt::n5
+Japanese Vocabulary	バイク	Motorbike 	common_word
+Japanese Vocabulary	スキー	Ski	common_word jlpt::n3
+Japanese Vocabulary	ミルク	Milk	common_word jlpt::n3
+Japanese Vocabulary	今（いま）	Now	common_word jlpt::n5
+Japanese Vocabulary	〜さい	... Years old 	common_word jlpt::n1
+Japanese Vocabulary	専攻（せんこう）	Major (studies) 	common_word jlpt::n3
+Japanese Vocabulary	大学（だいがく）	University 	common_word jlpt::n5
+Japanese Vocabulary	電話（でんわ）	Telephone 	common_word jlpt::n5
+Japanese Grammar	年生（ねんせい）	counting of years in school	
+Japanese Vocabulary	韓国（かんこく）	Korea 	common_word
+Japanese Vocabulary	中国（ちゅうごく）	China	common_word
+Japanese Vocabulary	仕事（しごと）	Job 	common_word jlpt::n5
+Japanese Vocabulary	医者（いしゃ）	Doctor 	common_word jlpt::n5
+Japanese Vocabulary	会社員（かいしゃいん）	Office Worker 	common_word
+Japanese Vocabulary	高校生（こうこうせい）	High schooler 	common_word jlpt::n4
+Japanese Vocabulary	主婦（しゅふ）	House worker 	common_word jlpt::n3
+Japanese Vocabulary	大学院生（だいがくいんせい）	Graduate student 	
+Japanese Vocabulary	大学生（だいがくせい）	College student 	common_word jlpt::n4
+Japanese Vocabulary	弁護士（べんごし）	Lawyer 	common_word
+Japanese Grammar	此れ（これ）	This one 	
+Japanese Grammar	其れ（それ）	That one 	
+Japanese Grammar	彼（あれ）	That one over there 	
+Japanese Grammar	此の（この）	This (thing) 	
+Japanese Grammar	其の（その）	That (thing) 	
+Japanese Grammar	彼の（あの）	That (thing) over there 	
+Japanese Grammar	何の（どの）	Which 	
+Japanese Grammar	此処（ここ）	 Here 	
+Japanese Grammar	其処（そこ）	There 	
+Japanese Grammar	彼処（あそこ）	Over there 	
+Japanese Grammar	何処（どこ）	Where 	
+Japanese Grammar	誰（だれ）	Who 	
+Japanese Vocabulary	魚（さかな）	Fish	common_word jlpt::n5
+Japanese Vocabulary	豚カツ（とんかつ）	Pork cutlet 	common_word
+Japanese Vocabulary	肉（にく）	Meat	common_word jlpt::n5
+Japanese Vocabulary	野菜（やさい）	Vegetables 	common_word jlpt::n5
+Japanese Vocabulary	鉛筆（えんぴつ）	Pencil 	common_word jlpt::n5
+Japanese Vocabulary	傘（かさ）	Umbrella 	common_word jlpt::n5
+Japanese Vocabulary	鞄（かばん）	Beg	common_word jlpt::n5
+Japanese Vocabulary	財布（さいふ）	Wallet 	common_word jlpt::n5
+Japanese Vocabulary	辞書（じしょ）	Dictionary 	common_word jlpt::n5
+Japanese Vocabulary	自転車（じてんしゃ）	Bicycle 	common_word jlpt::n5
+Japanese Vocabulary	新聞（しんぶん）	News paper	common_word jlpt::n5
+Japanese Vocabulary	時計（とけい）	Watch 	common_word jlpt::n5
+Japanese Vocabulary	帽子（ぼうし）	Hat	common_word jlpt::n5 leech
+Japanese Vocabulary	本（ほん）	Book	common_word jlpt::n5
+Japanese Vocabulary	喫茶店（きっさてん）	 Cafe	common_word jlpt::n5
+Japanese Vocabulary	銀行（ぎんこう）	Bank	common_word jlpt::n5
+Japanese Vocabulary	図書館（としょかん）	Library 	common_word jlpt::n5
+Japanese Vocabulary	郵便局（ゆうびんきょく）	Post office 	common_word jlpt::n5 leech
+Japanese Vocabulary	円（えん）	Yen	common_word jlpt::n3
+Japanese Vocabulary	いらっしゃいませ	Welcome (to our store) 	common_word
+Japanese Vocabulary	〜をおねがいします	That (object) please 	common_word
+Japanese Vocabulary	〜をください	Please give me (object) 	common_word
+Japanese Vocabulary	じゃあ	 Then; If that's the case 	common_word jlpt::n5
+Japanese Vocabulary	どうぞ	Please, here it is 	common_word jlpt::n5
+Japanese Vocabulary	どうも	Thank you, Informal/abreviation	common_word jlpt::n5
+Japanese Vocabulary	いえ	Home, House 	common_word jlpt::n5
+Japanese Vocabulary	家（うち）	Home, House, my place 	common_word jlpt::n5
+Japanese Vocabulary	学校（がっこう）	School 	common_word jlpt::n5
+Japanese Vocabulary	明日（あした）	Tomorrow 	common_word jlpt::n5
+Japanese Grammar	何時（いつ）	When 	
+Japanese Vocabulary	今日（きょう）	Today 	common_word jlpt::n5
+Japanese Vocabulary	こんばん	Tonight 	common_word jlpt::n5
+Japanese Vocabulary	週末（しゅうまつ）	Weekend 	common_word
+Japanese Vocabulary	土曜日（どようび）	Saturday 	common_word jlpt::n5
+Japanese Vocabulary	日曜日（にちようび）	Sunday 	common_word jlpt::n5
+Japanese Adverbs	毎日（まいにち）	Every day 	common_word jlpt::n5
+Japanese Adverbs	毎晩（まいばん）	Every night 	common_word jlpt::n5
+Japanese Verbs	起きる（おきる）	To Wake Up, Group II	common_word jlpt::n5
+Japanese Verbs	寝る（ねる）	To Sleep, group II	common_word jlpt::n5
+Japanese Verbs	見る（みる）	To See, group I 	common_word jlpt::n5
+Japanese Verbs	食べる（たべる）	To Eat, group II	common_word jlpt::n5
+Japanese Verbs	話す（はなす）	To Speak, group II	common_word jlpt::n5
+Japanese Verbs	効く（きく）	To&nbsp;Listen / Ask, group II	common_word jlpt::n3
+Japanese Verbs	行く（いく）	To&nbsp;Go, group I	common_word jlpt::n5
+Japanese Verbs	読む（よむ）	To&nbsp;Reed, group I	common_word jlpt::n5
+Japanese Verbs	飲む（のむ）	To&nbsp;Drink, group I	common_word jlpt::n5
+Japanese Verbs	帰る（かえる）	To&nbsp;Return, group I	common_word jlpt::n5
+Japanese Verbs	来る（くる）	To&nbsp;Come, Group III	common_word jlpt::n5
+Japanese Verbs	する	To&nbsp;Do, group III	common_word jlpt::n5
+Japanese Verbs	勉強する（べんきょうする）	To&nbsp;Study, group III	common_word jlpt::n5
+Japanese Vocabulary	車（くるま）	Car	common_word jlpt::n5
+Japanese Vocabulary	月曜日（げつようび）	Monday 	common_word jlpt::n5
+Japanese Vocabulary	火曜日（かようび）	Tuesday 	common_word jlpt::n5
+Japanese Vocabulary	水曜日（すいようび）	Wednesday 	common_word jlpt::n5
+Japanese Vocabulary	木曜日（もくようび）	Thursday 	common_word jlpt::n5
+Japanese Vocabulary	金曜日（きんようび）	Friday	common_word jlpt::n5
+Japanese Vocabulary	毎朝（まいあさ）	Every morning 	common_word jlpt::n5
+Japanese Vocabulary	毎週（まいしゅう）	Every week 	common_word jlpt::n5
+Japanese Vocabulary	毎月（まいつき）	Every month 	common_word jlpt::n5
+Japanese Vocabulary	毎年（まいとし）	Every year 	common_word jlpt::n5
+Japanese Vocabulary	毎（まい）	Every (time) 	common_word
+Japanese Adverbs	何時も（いつも）	Always 	common_word jlpt::n5
+Japanese Adverbs	良く（よく）	Frequently 	common_word jlpt::n5
+Japanese Adverbs	大抵（たいてい）	usually	common_word jlpt::n4
+Japanese Vocabulary	いいえ	No	common_word jlpt::n5
+Japanese Adverbs	時々（ときどき）	Some times 	common_word jlpt::n5
+Japanese Adverbs	余り（あまり）	Not much 	common_word jlpt::n5
+Japanese Adverbs	全然（ぜんぜん）	Never 	common_word jlpt::n3
+Japanese Vocabulary	一昨日（おととい）	Day before yesterday 	common_word jlpt::n5
+Japanese Vocabulary	昨日（きのう）	Yesterday 	common_word jlpt::n5
+Japanese Vocabulary	明後日（あさって）	Day after tomorrow 	common_word jlpt::n5
+Japanese Vocabulary	先々週（せんせんしゅう）	Week before last week 	jlpt::n2
+Japanese Vocabulary	先週（せんしゅう）	Last week 	common_word jlpt::n5
+Japanese Vocabulary	今週（こんしゅう）	This week 	common_word jlpt::n5
+Japanese Vocabulary	来週（らいしゅう）	Next week 	common_word jlpt::n5
+Japanese Vocabulary	再来週（さらいしゅう）	Week after next week 	common_word jlpt::n4
+Japanese Vocabulary	先々月（せんせんげつ）	Month before last month 	jlpt::n2
+Japanese Vocabulary	先月（せんげつ）	Last month 	common_word jlpt::n5
+Japanese Vocabulary	今月（こんげつ）	This month 	common_word jlpt::n5
+Japanese Vocabulary	来月（らいげつ）	Next month 	common_word jlpt::n5
+Japanese Vocabulary	再来月（さらいげつ）	Month after next month 	common_word jlpt::n4
+Japanese Vocabulary	一昨年（おととし）	Year before last year 	common_word jlpt::n5
+Japanese Vocabulary	去年（きょねん）	Last year 	common_word jlpt::n5
+Japanese Vocabulary	今年（ことし）	This year 	common_word jlpt::n5
+Japanese Vocabulary	来年（らいねん）	Next year 	common_word jlpt::n5
+Japanese Vocabulary	再来年（さらいねん）	 Year after next year 	common_word jlpt::n5
+Japanese Vocabulary	船（ふね）	Ship	common_word jlpt::n4
+Japanese Vocabulary	飛行機（ひこうき）	Plane 	common_word jlpt::n5
+Japanese Vocabulary	電車（でんしゃ）	train	common_word jlpt::n5 leech
+Japanese Vocabulary	地下鉄（ちかてつ）	subway	common_word jlpt::n5
+Japanese Grammar	に	Absolute time, place (V. D) 	
+Japanese Grammar	と	Complement 	
+Japanese Grammar	は	Subject 	
+Japanese Grammar	で	Place V.A	
+Japanese Grammar	も	Too 	
+Japanese Grammar	か	Question	
+Japanese Grammar	ね	Isn't it? 	
+Japanese Grammar	を	Direct object 	
+Japanese Grammar	の	Possession 	
+Japanese Grammar	ませんか	Invitation 	
+Japanese Vocabulary	上（うえ）	On Top	common_word jlpt::n5
+Japanese Vocabulary	下（した）	Under	common_word jlpt::n5
+Japanese Vocabulary	前（まえ）	In front	common_word jlpt::n1
+Japanese Vocabulary	後ろ（うしろ）	Behind	common_word jlpt::n5
+Japanese Vocabulary	中（なか）	Inside	common_word jlpt::n3
+Japanese Vocabulary	外（そと）	Outside	common_word jlpt::n5
+Japanese Vocabulary	左（ひだり）	Left	common_word jlpt::n5
+Japanese Vocabulary	右（みぎ）	Right	common_word jlpt::n5
+Japanese Vocabulary	隣（となり）	Next to	common_word jlpt::n5
+Japanese Vocabulary	間（あいだ）	Middle of	common_word jlpt::n4
+Japanese Vocabulary	近く（ちかく）	Close to	common_word jlpt::n5
+Japanese Kanji	日	ひ	common_word jlpt::n3
+Japanese Kanji	日本	にほん	common_word jlpt::n3
+Japanese Kanji	毎日	まいにち	common_word jlpt::n5
+Japanese Kanji	日曜日	にちようび	common_word jlpt::n5
+Japanese Kanji	木	き	common_word jlpt::n5
+Japanese Kanji	木曜日	もくようび	common_word jlpt::n5
+Japanese Kanji	本	ほん	common_word jlpt::n5
+Japanese Kanji	日本人	にほんじん	common_word
+Japanese Kanji	この人	このひと	
+Japanese Kanji	上	うえ	common_word jlpt::n5 leech
+Japanese Kanji	下	した	common_word jlpt::n5
+Japanese Kanji	中	なか	common_word jlpt::n3
+Japanese Kanji	三時半	さんじはん	
+Japanese Kanji	半	はん	common_word jlpt::n5
+Japanese Kanji	月	つき	common_word jlpt::n3
+Japanese Kanji	一月	いちがつ	common_word jlpt::n5
+Japanese Kanji	月曜日	げつようび	common_word jlpt::n5
+Japanese Kanji	今月	こんげつ	common_word jlpt::n5
+Japanese Kanji	火	ひ	common_word jlpt::n4
+Japanese Kanji	火曜日	かようび	common_word jlpt::n5
+Japanese Kanji	火山	かざん	common_word jlpt::n2
+Japanese Kanji	水	みず	common_word jlpt::n5
+Japanese Kanji	水曜日	すいようび	common_word jlpt::n5
+Japanese Kanji	土	つち	common_word jlpt::n3
+Japanese Kanji	土曜日	どようび	common_word jlpt::n5
+Japanese Kanji	金	きん	common_word jlpt::n3
+Japanese Kanji	お金	おかね	common_word jlpt::n5
+Japanese Kanji	金曜日	きんようび	common_word jlpt::n5
+Japanese Kanji	山	やま	common_word jlpt::n5
+Japanese Kanji	ふじ山	ふじさん	common_word
+Japanese Kanji	川	かわ	common_word jlpt::n5
+Japanese Kanji	田んぼ	たんぼ	common_word jlpt::n2
+Japanese Kanji	山田	やまだ	
+Japanese Kanji	元気	げんき	common_word jlpt::n5
+Japanese Kanji	元	もと	common_word jlpt::n3
+Japanese Kanji	気	き	common_word jlpt::n4
+Japanese Kanji	天気	てんき	common_word jlpt::n5
+Japanese Kanji	私	わたし	common_word jlpt::n5
+Japanese Kanji	今	いま	common_word jlpt::n5
+Japanese Kanji	今日	きょう	common_word jlpt::n5
+Japanese Kanji	女の人	おんなのひと	common_word jlpt::n2
+Japanese Kanji	女	おんな	common_word jlpt::n5
+Japanese Kanji	女の子	おんなのこ	common_word jlpt::n5
+Japanese Kanji	男の人	おとこのひと	common_word jlpt::n3
+Japanese Kanji	男	おとこ	common_word jlpt::n5
+Japanese Kanji	男の子	おとこのこ	common_word jlpt::n5
+Japanese Kanji	目	め	common_word jlpt::n5
+Japanese Kanji	見る	みる	common_word jlpt::n5
+Japanese Kanji	行く	いく	common_word jlpt::n5
+Japanese Kanji	食べる	たべる	common_word jlpt::n5
+Japanese Kanji	食べもの	たべもの	common_word jlpt::n5
+Japanese Kanji	飲む	のむ	common_word jlpt::n5
+Japanese Kanji	飲みもの	のみもの	common_word jlpt::n5
+Japanese Kanji	東	ひがし	common_word jlpt::n5
+Japanese Kanji	東口	ひがしぐち	common_word
+Japanese Kanji	西	にし	common_word jlpt::n5
+Japanese Kanji	西口	にしぐち	common_word
+Japanese Kanji	南	みなみ	common_word jlpt::n5
+Japanese Kanji	南口	みなみぐち	common_word
+Japanese Kanji	北	きた	common_word jlpt::n5
+Japanese Kanji	北口	きたぐち	common_word
+Japanese Kanji	口	くち	common_word jlpt::n5
+Japanese Kanji	人口	じんこう	common_word jlpt::n4
+Japanese Kanji	出す	だす	common_word jlpt::n5
+Japanese Kanji	出る	でる	common_word jlpt::n5
+Japanese Kanji	出口	でぐち	common_word jlpt::n5
+Japanese Kanji	出かける	でかける	common_word jlpt::n5
+Japanese Kanji	半分	はんぶん	common_word jlpt::n5
+Japanese Kanji	分ける	わける	common_word jlpt::n3
+Japanese Kanji	分かる	わかる	common_word jlpt::n5
+Japanese Kanji	右	みぎ	common_word jlpt::n5
+Japanese Kanji	左	ひだり	common_word jlpt::n5
+Japanese Vocabulary	お寺（おてら）	Temple 	
+Japanese Vocabulary	スーパー	Super market 	common_word
+Japanese Vocabulary	デパート	Shopping mall 	common_word jlpt::n5
+Japanese Vocabulary	バス停（バスてい）	Bus stop 	common_word
+Japanese Vocabulary	ホテル	Hotel	common_word jlpt::n5
+Japanese Vocabulary	レストラン	Restaurant 	common_word jlpt::n5
+Japanese Vocabulary	公園（こうえん）	Park	common_word jlpt::n5 leech
+Japanese Vocabulary	本屋（ほんや）	Book store (Smaller)	common_word
+Japanese Vocabulary	町（まち）	City	common_word jlpt::n5
+Japanese Vocabulary	病院（びょういん）	Hospital 	common_word jlpt::n5
+Japanese Vocabulary	人（ひと）	Person	common_word jlpt::n5
+Japanese Vocabulary	子供（こども）	Child	common_word jlpt::n5
+Japanese Vocabulary	おとこの人	Men	common_word jlpt::n3
+Japanese Vocabulary	おんなの人	Woman	common_word jlpt::n2
+Japanese Vocabulary	男の子（おとこのこ）	boy	common_word jlpt::n5
+Japanese Vocabulary	女の子（おんなのこ）	girl	common_word jlpt::n5
+Japanese Vocabulary	犬（いぬ）	Dog	common_word jlpt::n5
+Japanese Vocabulary	猫（ねこ）	Cat	common_word jlpt::n5
+Japanese Vocabulary	机（つくえ）	Desk	common_word jlpt::n5
+Japanese Vocabulary	テーブル	Table	common_word jlpt::n5
+Japanese Vocabulary	椅子（いす）	Chair	common_word jlpt::n5
+Japanese Vocabulary	お土産（おみやげ）	Gift (from vacation)	common_word jlpt::n4
+Japanese Vocabulary	クラス	Class	common_word jlpt::n5
+Japanese Vocabulary	アルバイト	Part-time Job	common_word jlpt::n4
+Japanese Vocabulary	買い物（かいもの）	Shopping (Action)	common_word jlpt::n5
+Japanese Vocabulary	メール	Email	common_word
+Japanese Vocabulary	手紙（てがみ）	Letter	common_word jlpt::n5
+Japanese Vocabulary	ご飯（ごはん）	Cooked Rice or Meal	common_word jlpt::n5
+Japanese Vocabulary	パン	Bread	common_word jlpt::n5
+Japanese Vocabulary	御免なさい（ごめんなさい）	I'm Sorry	jlpt::n3
+Japanese Vocabulary	写真（しゃしん）	photo	common_word jlpt::n5
+Japanese Adverbs	沢山（たくさん）	A lot; many; much	common_word jlpt::n5
+Japanese Adverbs	少し（すこし）	A Little	common_word jlpt::n5
+Japanese Vocabulary	一人で（ひとりで）	Alone	common_word
+Japanese Vocabulary	一緒に（いっしょに）	Togheter	common_word
+Japanese Verbs	有る（ある）	To&nbsp;Exist, For inanimated objects, group I	common_word jlpt::n5
+Japanese Verbs	居る（いる）	To&nbsp;Exists, For Animated Objects, Group II	common_word jlpt::n5
+Japanese Verbs	書く（かく）	To Write, Group I	common_word jlpt::n5
+Japanese Verbs	買う（かう）	To Buy, Group I	common_word jlpt::n5
+Japanese Verbs	撮る（とる）	To Take, Group I	common_word jlpt::n5 leech
+Japanese Verbs	待つ（まつ）	To Wait, Group I	common_word jlpt::n5
+Japanese Verbs	会う（あう）	To Meet, Group I	common_word jlpt::n5
+Japanese Verbs	分かる（わかる）	To Understand, Group I	common_word jlpt::n5
+Japanese Vocabulary	アニメーション映画（アニメーションえいが）	Animation Movie	
+Japanese Vocabulary	ぼけんえいが	Adventure Movie	
+Japanese Vocabulary	Ｋ-ＰＯＰ（ケーポップ）	k-pop	
+Japanese Vocabulary	ＰＯＰ（ポップ）	Pop	
+Japanese Vocabulary	カーリング	curling	common_word
+Japanese Vocabulary	功夫（カンフー）	kung fu	common_word jlpt::n2
+Japanese Adjectives	大きい（おおきい）	Big	common_word jlpt::n5
+Japanese Adjectives	小さい（ちいさい）	Smal	common_word jlpt::n5
+Japanese Adjectives	高い（たかい）	Expensive	common_word jlpt::n5
+Japanese Adjectives	安い（やすい）	Cheap	common_word jlpt::n5
+Japanese Adjectives	新しい（あたらしい）	New	common_word jlpt::n5
+Japanese Adjectives	古い（ふるい）	Old	common_word jlpt::n5
+Japanese Adjectives	暑い（あつい）	Hot (Weather)	common_word jlpt::n5
+Japanese Adjectives	寒い（さむい）	Cold (Weather)	common_word jlpt::n5
+Japanese Adjectives	熱い（あつい）	Hot (Thing)	common_word jlpt::n5
+Japanese Adjectives	冷たい（つめたい）	Cold (Thing)	common_word jlpt::n5
+Japanese Adjectives	面白い（おもしろい）	Intresting / Funny	common_word jlpt::n5
+Japanese Adjectives	詰らない（つまらない）	Boring	common_word jlpt::n5
+Japanese Adjectives	美味しい（おいしい）	delicious	common_word jlpt::n5
+Japanese Adjectives	不味い（まずい）	Bad (Taste)	common_word jlpt::n5
+Japanese Adjectives	良い（いい）	Good	common_word jlpt::n5
+Japanese Adjectives	悪い（わるい）	Bad	common_word jlpt::n5
+Japanese Adjectives	楽しい（たのしい）	Enjoyable / Fun / Pleasant / Happy / Delightful	common_word jlpt::n5
+Japanese Adjectives	怖い（こわい）	Scary	common_word jlpt::n4
+Japanese Adjectives	早い（はやい）	Early	common_word jlpt::n5
+Japanese Adjectives	遅い（おそい）	Late / Slow	common_word jlpt::n5
+Japanese Adjectives	難しい（むずかしい）	Complicated / Dificult	common_word jlpt::n5
+Japanese Adjectives	易しい（やさしい）	Easy / Kind	common_word jlpt::n5
+Japanese Adjectives	簡単（かんたん）	Easy	common_word jlpt::n4
+Japanese Adjectives	綺麗（きれい）	Beautiful / Clean	common_word jlpt::n5
+Japanese Adjectives	汚い（きたない）	Dirty / Messy	common_word jlpt::n5 leech
+Japanese Adjectives	格好いい（かっこいい）	Attractive (Men or Things) / Cool	common_word
+Japanese Adjectives	忙しい（いそがしい）	Busy	common_word jlpt::n5
+Japanese Adjectives	暇（ひま）	Idle	common_word jlpt::n5
+Japanese Adjectives	静か（しずか）	Quiet	common_word jlpt::n5
+Japanese Adjectives	賑やか（にぎやか）	Bustling	common_word jlpt::n5
+Japanese Adjectives	元気（げんき）	Energetic	common_word jlpt::n5
+Japanese Adjectives	速い（はやい）	Fast	common_word jlpt::n5
+Japanese Adjectives	重い（おもい）	Heavy	common_word jlpt::n5
+Japanese Adjectives	軽い（かるい）	Light (i.e. not heavy)	common_word jlpt::n5 leech
+Japanese Adjectives	明るい（あかるい）	Bright	common_word jlpt::n5
+Japanese Adjectives	暗い（くらい）	Dark | Gloomy	common_word jlpt::n5
+Japanese Adjectives	暖かい（あたたかい）	(pleasantly) hot	common_word jlpt::n5
+Japanese Adjectives	涼しい（すずしい）	Cool / Refreshing	common_word jlpt::n5
+Japanese Adjectives	多い（おおい）	Many	common_word jlpt::n5
+Japanese Adjectives	少ない（すくない）	Few	common_word jlpt::n5
+Japanese Adjectives	長い（ながい）	Long	common_word jlpt::n5
+Japanese Adjectives	短い（みじかい）	Short	common_word jlpt::n5
+Japanese Adjectives	強い（つよい）	Strong	common_word jlpt::n5
+Japanese Adjectives	弱い（よわい）	Weak	common_word jlpt::n5
+Japanese Adjectives	狭い（せまい）	Narrow	common_word jlpt::n5
+Japanese Adjectives	きつい	Tough / Hard / Severe / Demanding / Harsh	common_word jlpt::n3
+Japanese Adjectives	広い（ひろい）	Spacious / Wide	common_word jlpt::n5 leech
+Japanese Adjectives	近い（ちかい）	Close	common_word jlpt::n5
+Japanese Adjectives	遠い（とおい）	Far	common_word jlpt::n5
+Japanese Adjectives	低い（ひくい）	Short (height)	common_word jlpt::n5
+Japanese Adjectives	可愛い（かわいい）	Cute	common_word jlpt::n5
+Japanese Adjectives	素敵（すてき）	Lovely	common_word jlpt::n3
+Japanese Verbs	泳ぐ（およぐ）	To Swim, Type I	common_word jlpt::n5
+Japanese Verbs	遣る（やる）	To Do, Type I	common_word jlpt::n1
+Japanese Verbs	乗る（のる）	To Board, To Get On, Type I	common_word jlpt::n5
+Japanese Verbs	出かける（でかける）	To Go Out, Type II	common_word jlpt::n5
+Japanese Vocabulary	切手（きって）	Stamp	common_word jlpt::n5
+Japanese Vocabulary	葉書（はがき）	Postal Card	common_word jlpt::n5
+Japanese Vocabulary	食べ物（たべもの）	Food (less formal)	common_word jlpt::n5
+Japanese Vocabulary	飲み物（のみもの）	Drink	common_word jlpt::n5
+Japanese Vocabulary	海（うみ）	Sea	common_word jlpt::n5
+Japanese Vocabulary	サーフィン	Surfing	common_word
+Japanese Vocabulary	旅行（りょこう）	Travel	common_word jlpt::n5
+Japanese Vocabulary	切符（きっぷ）	Ticket	common_word jlpt::n5
+Japanese Vocabulary	休み（やすみ）	Rest	common_word jlpt::n5
+Japanese Vocabulary	部屋（へや）	Room	common_word jlpt::n5
+Japanese Vocabulary	天気（てんき）	Weather	common_word jlpt::n5
+Japanese Adverbs	本当に（ほんとうに）	Really	common_word
+Japanese Adverbs	凄く（すごく）	Immensely	leech
+Japanese Adverbs	迚も（とても）	Very	common_word jlpt::n5
+Japanese Adverbs	一寸（ちょっと）	slightly	common_word jlpt::n5
+Japanese Adjectives	嫌い（きらい）	To Hate	common_word jlpt::n5
+Japanese Adjectives	好き（すき）	To Love	common_word jlpt::n5
+Japanese Verbs	気に入る（きにいる）	To Like, Group I	common_word jlpt::n3 leech
+Japanese Kanji	分かる	わかる	common_word jlpt::n5
+Japanese Kanji	分ける	わける	common_word jlpt::n3
+Japanese Kanji	五分	ごふん	common_word
+Japanese Kanji	十分	じゅっぷん	common_word jlpt::n4
+Japanese Kanji	先	さき	common_word jlpt::n5
+Japanese Kanji	先生	せんせい	common_word jlpt::n5
+Japanese Kanji	先週	せんしゅう	common_word jlpt::n5
+Japanese Kanji	先月	せんげつ	common_word jlpt::n5
+Japanese Kanji	先ぱい	せんぱい	common_word jlpt::n4
+Japanese Kanji	学生	がくせい	common_word jlpt::n5
+Japanese Kanji	大学	だいがく	common_word jlpt::n5
+Japanese Kanji	大学生	だいがくせい	common_word jlpt::n4
+Japanese Kanji	大きい	おおきい	common_word jlpt::n5
+Japanese Kanji	大人	おとな	common_word jlpt::n5
+Japanese Kanji	外	そと	common_word jlpt::n5
+Japanese Kanji	外国人	がいこくじん	common_word jlpt::n5
+Japanese Kanji	国	くに	common_word jlpt::n5
+Japanese Kanji	中国	ちゅうごく	common_word
+Japanese Kanji	外国	がいこく	common_word jlpt::n5
+Japanese Verbs	立つ（たつ）	To Stand Up, Group I	common_word jlpt::n5 leech
+Japanese Verbs	座る（すわる）	To Sit down, Group I	common_word jlpt::n5 leech
+Japanese Verbs	開ける（あける）	To Open, Group II	common_word jlpt::n5
+Japanese Verbs	閉める（しめる）	To Close, Group II	common_word jlpt::n5
+Japanese Verbs	点ける（つける）	To turn on, Group II	common_word jlpt::n2 leech
+Japanese Verbs	消す（けす）	To turn off, Group II	common_word jlpt::n5
+Japanese Verbs	貸す（かす）	To Lend something, Group I	common_word jlpt::n5
+Japanese Verbs	借りる（かりる）	To Borrow, Group II	common_word jlpt::n5 leech
+Japanese Verbs	返す（かえす）	To Return something, Group I	common_word jlpt::n5
+Japanese Verbs	教える（おしえる）	To teach, Group II	common_word jlpt::n5
+Japanese Verbs	習う（ならう）	To learn, Group I 	common_word jlpt::n5
+Japanese Verbs	降りる（おりる）	To Get off of something, Group II	common_word jlpt::n5
+Japanese Verbs	お風呂に入る（おふろにはいる）	To take a bath, Group I	
+Japanese Verbs	シャワーを浴びる（シャワーをあびる）	To take a shower, Group II	
+Japanese Verbs	入る（はいる）	To enter, Group I	common_word jlpt::n5
+Japanese Verbs	出る（でる）	To exit, Group II	common_word jlpt::n5
+Japanese Verbs	遊ぶ（あそぶ）	To Play, Group I 	common_word jlpt::n5
+Japanese Verbs	休む（やすむ）	To Rest, Group I	common_word jlpt::n5
+Japanese Verbs	たばこをすう	To Smoke a cigarette, Group I	
+Japanese Verbs	氏ぬ（しぬ）	To die, Group I 	
+Japanese Verbs	使う（つかう）	To use, Group I 	common_word jlpt::n5
+Japanese Verbs	電話をかける（でんわをかける）	To make a phone call, group II 	
+Japanese Verbs	手伝う（てつだう）	To help, group I	common_word jlpt::n4
+Japanese Verbs	急ぐ（いそぐ）	To hurry, group I	common_word jlpt::n4
+Japanese Verbs	持つ（もつ）	To carry, To have, group I	common_word jlpt::n5
+Japanese Verbs	忘れる（わすれる）	To forget, group II 	common_word jlpt::n5
+Japanese Verbs	持ってくる（もってくる）	To bring an object, group III	common_word
+Japanese Verbs	連れてくる（つれてくる）	To bring someone, group III 	common_word
+Japanese Grammar	時かん	Counting hours 	
+Japanese Grammar	一人（ひとり）	people counting - 1	
+Japanese Grammar	二人（ふたり）	Counting people - 2	
+Japanese Grammar	にん	People counting 3+	
+Japanese Grammar	"
+枚 (まい)<br>"	Counting - flat or flattened objects 	
+Japanese Grammar	"
+台&nbsp;(だい)"	Counting - cars, machines etc... 0+	
+Japanese Grammar	キロ	Counting - weight 0+	
+Japanese Grammar	ぽん	Counting - thing and cylindrical objects ending in 1, 6, 8, 10	
+Japanese Grammar	ぼん	Counting - thin and cylindrical objects, ending in 3	
+Japanese Grammar	本（ほん）	Counting - thin and cylindrical objects, ending in 2, 4, 5, 7, and 9	
+Japanese Grammar	一つ（ひとつ）	Generic counting - 1	
+Japanese Grammar	二つ（ふたつ）	Generic counting, 2	
+Japanese Grammar	三つ（みっつ）	Generic counting, 3	
+Japanese Grammar	四つ（よっつ）	Generic counting, 4	
+Japanese Grammar	五つ（いつつ）	Generic counting 5	
+Japanese Grammar	六つ（むっつ）	Generic counting 6	
+Japanese Grammar	七つ（ななつ）	Generic counting 7	
+Japanese Grammar	八つ（やっつ）	Generic counting 8	
+Japanese Grammar	九つ（ここのつ）	Generic counting 9	
+Japanese Grammar	十（とお）	Generic counting 10	
+Japanese Verbs	磨く（みがく）	To Brush, Group I	common_word jlpt::n5 leech
+Japanese Verbs	洗う（あらう）	To Wash, Group I	common_word jlpt::n5
+Japanese Verbs	解く（とく）	To Comb, Group I	common_word jlpt::n3 leech
+Japanese Verbs	剃る（そる）	To Shave, Group I	common_word jlpt::n2
+Japanese Verbs	着替える（きがえる）	To Change Clothes, Group II	common_word leech
+Japanese Verbs	信じる（しんじる）	To Believe, group II	common_word jlpt::n3
+Japanese Verbs	生まれる（うまれる）	To be born group II	common_word jlpt::n5
+Japanese Verbs	住む（すむ）	To live (at a place), group I	common_word jlpt::n5
+Japanese Verbs	分ける（わける）	To divide group II	common_word jlpt::n3
+Japanese Verbs	出す（だす）	To take out, group I	common_word jlpt::n5
+Japanese Verbs	散歩をする（さんぽをする）	To go on a walk, group III	common_word jlpt::n5
+Japanese Verbs	歌う（うたう）	To sing, group I	common_word jlpt::n5
+Japanese Verbs	結婚する（けっこんする）	To Mery, group III	common_word jlpt::n5
+Japanese Verbs	つきあう	To date, group I	common_word jlpt::n2
+Japanese Verbs	勤める（つとめる）	To work for, group II 	common_word jlpt::n5
+Japanese Verbs	研究する（けんきゅうする）	To research, group III	common_word jlpt::n4
+Japanese Verbs	知る（しる）	To know, group I	common_word jlpt::n5
+Japanese Vocabulary	歌（うた）	Song	common_word jlpt::n5
+Japanese Vocabulary	曲（きょく）	Song	common_word jlpt::n1
+Japanese Verbs	着る（きる）	To put on, upper body, group II	common_word jlpt::n5
+Japanese Verbs	履く（はく）	To put on, lower body, group I	common_word jlpt::n3
+Japanese Kanji	小さい	ちいさい	common_word jlpt::n5
+Japanese Kanji	小学生	しょうがくせい	common_word jlpt::n2
+Japanese Kanji	東京	とうきょう	common_word
+Japanese Kanji	京子	きょうこ	
+Japanese Kanji	上京する	じょうきょうする	common_word jlpt::n3
+Japanese Kanji	子ども	こども	common_word jlpt::n5
+Japanese Kanji	お子さん	おこさん	
+Japanese Kanji	会う	あう	common_word jlpt::n5
+Japanese Kanji	日本人会	にほんじんかい	
+Japanese Kanji	社	やしろ	jlpt::n1 leech
+Japanese Kanji	会社	かいしゃ	common_word jlpt::n5
+Japanese Kanji	社会	しゃかい	common_word jlpt::n4
+Japanese Kanji	父	ちち	common_word
+Japanese Kanji	お父さん	おとうさん	common_word jlpt::n5
+Japanese Kanji	母	はは	common_word
+Japanese Kanji	お母さん	おかあさん	common_word jlpt::n5
+Japanese Kanji	父母	ふぼ	common_word jlpt::n2
+Japanese Kanji	母語	ぼご	
+Japanese Verbs	被る（かぶる）	to put on (one's head), group I	common_word jlpt::n3
+Japanese Verbs	掛ける（かける）	to hang up,&nbsp;to suspend (from), group II	common_word jlpt::n5
+Japanese Verbs	太る（ふとる）	to put on weight, group I	common_word jlpt::n4
+Japanese Verbs	痩せる（やせる）	to lose weight, group II	common_word jlpt::n4
+Japanese Kanji	本や	ほんや	common_word
+Japanese Kanji	高い	たかい	common_word jlpt::n5
+Japanese Kanji	高校	こうこう	common_word jlpt::n4
+Japanese Kanji	高校生	こうこうせい	common_word jlpt::n4
+Japanese Kanji	学校	がっこう	common_word jlpt::n5
+Japanese Kanji	小学校	しょうがっこう	common_word jlpt::n4
+Japanese Kanji	中学校	ちゅがっこう	common_word jlpt::n4
+Japanese Kanji	毎	まい	common_word
+Japanese Kanji	毎月	まいつき	common_word jlpt::n5
+Japanese Kanji	中学生	ちゅうがくせい	common_word
+Japanese Vocabulary	家族（かぞく）	family	common_word jlpt::n5
+Japanese Vocabulary	アパート	studio apartment	common_word jlpt::n5
+Japanese Vocabulary	会社（かいしゃ）	company	common_word jlpt::n5
+Japanese Vocabulary	食堂（しょくどう）	cafeteria	common_word jlpt::n5 leech
+Japanese Vocabulary	国（くに）	country	common_word jlpt::n5
+Japanese Vocabulary	コンビニ	convenience store	common_word
+Japanese Vocabulary	眼鏡（めがね）	glasses	common_word jlpt::n5
+Japanese Vocabulary	髪（かみ）	hair	common_word jlpt::n5
+Japanese Vocabulary	口（くち）	mouth	common_word jlpt::n5
+Japanese Vocabulary	サークル	club in uni	common_word jlpt::n2
+Japanese Adjectives	頭がいい（あたまがいい）	inteligent	
+Japanese Adjectives	親切（しんせつ）	generous	common_word jlpt::n4 leech
+Japanese Adjectives	便利（べんり）	convenient	common_word jlpt::n5
+Japanese Adjectives	赤（あか）	red	common_word jlpt::n5
+Japanese Adjectives	青（あお）	blue	common_word jlpt::n5
+Japanese Adjectives	黒（くろ）	black	common_word jlpt::n5
+Japanese Adjectives	白（しろ）	white	common_word jlpt::n5
+Japanese Adjectives	黄色（きいろ）	yellow	common_word jlpt::n5
+Japanese Adjectives	茶色（ちゃいろ）	brown	common_word jlpt::n5
+Japanese Adjectives	緑（みどり）	green	common_word jlpt::n5
+Japanese Adjectives	紫（むらさき）	purple	common_word jlpt::n2
+Japanese Adjectives	桃色（ももいろ）	pink	
+Japanese Kanji	日本語	にほんご	common_word
+Japanese Kanji	えい語	えいご	common_word jlpt::n5
+Japanese Kanji	文	ふみ	common_word jlpt::n3
+Japanese Kanji	文学	ぶんがく	common_word jlpt::n4
+Japanese Kanji	天文学	てんもんがく	common_word
+Japanese Kanji	帰る	かえる	common_word jlpt::n5
+Japanese Kanji	帰国	きこく	common_word
+Japanese Kanji	帰り	かえり	common_word jlpt::n4
+Japanese Kanji	入る	はいる	common_word jlpt::n5
+Japanese Kanji	おちゃを入れる	おちゃをいれる	common_word jlpt::n1
+Japanese Kanji	入り口	いりぐち	common_word jlpt::n5
+Japanese Kanji	入口	いりぐち	common_word jlpt::n5
+Japanese Kanji	ウニカンピに入学	ウニカンピににゅうがく	common_word jlpt::n5
+Japanese Vocabulary	キャップ	cap / dad hat	common_word
+Japanese Vocabulary	スカート	skirt	common_word jlpt::n5
+Japanese Vocabulary	スニーカー	snikers	common_word
+Japanese Vocabulary	バスケットシューズ	high top snikers	
+Japanese Vocabulary	トレーナー	sweatshirt	common_word
+Japanese Vocabulary	指輪（ゆびわ）	ring	common_word jlpt::n4
+Japanese Vocabulary	腕時計（うでどけい）	wrist watch	common_word
+Japanese Vocabulary	ピアス	earrings / pirsings	common_word
+Japanese Vocabulary	イヤリンぐ	pressure earrings	common_word
+Japanese Vocabulary	ブラスレット	bracelet	
+Japanese Vocabulary	ヘッドホン	headphones	common_word
+Japanese Vocabulary	イヤホン	in&nbsp;earphones	common_word
+Japanese Vocabulary	サングラス	sun glasses	common_word
+Japanese Vocabulary	黒髪（くろかみ）	black hair	
+Japanese Vocabulary	赤毛（あかげ）	ginger	
+Japanese Vocabulary	はくはつ・ホワイトヘア	wite hair	common_word jlpt::n2
+Japanese Vocabulary	金髪（きんぱつ）	blonde	
+Japanese Vocabulary	ちゃぽつ	brown hair	common_word jlpt::n3
+Japanese Vocabulary	靴（くつ）	shoes	common_word jlpt::n5
+Japanese Adjectives	大変（たいへん）	serious / grave / dreadful / terrible	common_word jlpt::n5
+Japanese Kanji	貝	かい	common_word jlpt::n2
+Japanese Kanji	会社員	かいしゃいん	common_word
+Japanese Kanji	会員	かいいん	common_word jlpt::n3
+Japanese Kanji	立つ	たつ	common_word jlpt::n5
+Japanese Kanji	新しい	あたらしい	common_word jlpt::n5
+Japanese Kanji	新聞	しんぶん	common_word jlpt::n5
+Japanese Kanji	門	もん	common_word jlpt::n5
+Japanese Kanji	聞く	きく	common_word jlpt::n5
+Japanese Kanji	聞こえる	きこえる	common_word jlpt::n4
+Japanese Verbs	聞こえる（きこえる）	to be heard, group II	common_word jlpt::n4
+Japanese Vocabulary	パーカー	Hoodie	common_word
+Japanese Kanji	小人	こびと	common_word
+Japanese Kanji	小金	こがね	
+Japanese Kanji	大会	たいかい	common_word jlpt::n3
+Japanese Kanji	母の日	ははのひ	
+Japanese Kanji	父の日	ちちのひ	
+Japanese Kanji	母国	ぼこく	common_word
+Japanese Kanji	高山	こうざん	common_word
+Japanese Kanji	高木	こうぼく	
+Japanese Kanji	国語	こくご	common_word jlpt::n3
+Japanese Kanji	外国語	がいこくご	common_word
+Japanese Kanji	外来語	がいらいご	common_word
+Japanese Kanji	語学	ごがく	common_word jlpt::n3
+Japanese Kanji	入学	にゅうがく	common_word jlpt::n4
+Japanese Vocabulary	小人（こびと）	child, dwarf	common_word
+Japanese Vocabulary	小金（こがね）	small sum of money	
+Japanese Vocabulary	大会（たいかい）	convention / rally / conference / tournament / competition / contest	common_word jlpt::n3
+Japanese Vocabulary	母の日（ははのひ）	mother's day	
+Japanese Vocabulary	父の日（ちちのひ）	father's day	
+Japanese Vocabulary	母国（ぼこく）	one's homeland	common_word
+Japanese Vocabulary	高山（こうざん）	high mountain	common_word
+Japanese Vocabulary	高木（こうぼく）	tall tree	
+Japanese Vocabulary	国語（こくご）	national language	common_word jlpt::n3
+Japanese Vocabulary	母語（ぼご）	mother tongue	
+Japanese Vocabulary	外国語（がいこくご）	foreign language	common_word
+Japanese Vocabulary	外来語（がいらいご）	loanword	common_word
+Japanese Vocabulary	言語学（げんごがく）	linguistics	
+Japanese Vocabulary	入学（にゅうがく）	admission (to a school or university)	common_word jlpt::n4
+Japanese Kanji	人気	にんき	common_word jlpt::n3
+Japanese Kanji	元日	がんじつ	common_word
+Japanese Grammar	１日（ついたち）	day 1	
+Japanese Grammar	２日（ふつか）	day 2	
+Japanese Grammar	３日（みっか）	day 3	
+Japanese Grammar	４日（よっか）	day 4	
+Japanese Grammar	５日（いつか）	day 5	
+Japanese Grammar	６日（むいか）	day 6	
+Japanese Grammar	７日（なのか）	day 7	
+Japanese Grammar	８日（ようか）	day 8	
+Japanese Grammar	９日（ここのか）	day 9	
+Japanese Grammar	１０日（とおか）	day 10	
+Japanese Grammar	１４日（じゅうよっか）	day 14	
+Japanese Grammar	２０日（はつか）	day 20	
+Japanese Grammar	ー日（ーにち）	days 11 to 31 except 14 and 20	
+Japanese Kanji	先に	さきに	common_word jlpt::n1
+Japanese Vocabulary	お先に（おさきに）	before | previously	common_word jlpt::n2
+Japanese Kanji	作る	つくる	common_word jlpt::n5
+Japanese Kanji	作文	さくぶん	common_word jlpt::n5
+Japanese Kanji	仕事	しごと	common_word jlpt::n5
+Japanese Kanji	仕える	つかえる	jlpt::n1
+Japanese Kanji	事	こと	common_word jlpt::n3
+Japanese Kanji	食事	しょくじ	common_word jlpt::n3
+Japanese Kanji	火事	かじ	common_word jlpt::n4
+Japanese Verbs	作る（つくる）	to make / build, group I	common_word jlpt::n5
+Japanese Vocabulary	作文（さくぶん）	writing (an essay, prose, etc.) / composition	common_word jlpt::n5
+Japanese Vocabulary	食事（しょくじ）	meal / diet	common_word jlpt::n3
+Japanese Vocabulary	事（こと）	thing / matter​	common_word jlpt::n3
+Japanese Vocabulary	火事（かじ）	fire	genki::ch17
+Japanese Verbs	雨が降る（あめがふる）	to rain, group I	common_word
+Japanese Verbs	言う（いう）	to say, group I	common_word jlpt::n5
+Japanese Verbs	要る（いる）	to be needed, group I	common_word jlpt::n5 leech
+Japanese Verbs	おそくなる	to become/be late, group I	leech
+Japanese Verbs	思う（おもう）	to consider / to believe / to think, Group I	common_word jlpt::n4
+Japanese Verbs	切る（きる）	to cut, group I	common_word jlpt::n5
+Japanese Verbs	持っていく（もっていく）	to take (something) along, group I	common_word
+Japanese Verbs	じろじろ見る	to stare at, group II	
+Japanese Verbs	始める（はじめる）	to start/begin, group II	common_word jlpt::n4
+Japanese Verbs	捨てる（すてる）	to throw away, group II	common_word jlpt::n4 leech
+Japanese Verbs	運転する（うんてんする）	to drive (a vehicle), group III	common_word jlpt::n3
+Japanese Verbs	洗濯する（せんたくする）	to do laundry, group III	common_word jlpt::n5
+Japanese Verbs	掃除する（そうじする）	to clean, group III	common_word jlpt::n5 leech
+Japanese Verbs	電話する（でんわする）	to make a phone call, group III	common_word jlpt::n5
+Japanese Verbs	料理する（りょうりする）	to cook, group III	common_word jlpt::n5
+Japanese Vocabulary	乾杯（かんぱい）	toast/cheers	common_word jlpt::n2
+Japanese Adjectives	残念（ざんねん）	regrettable / unfortunate	common_word jlpt::n4
+Japanese Adjectives	有名（ゆうめい）	famous / well-known	common_word jlpt::n5
+Japanese Kanji	雨	あめ	common_word jlpt::n5
+Japanese Kanji	雨水	あまみず	common_word
+Japanese Kanji	電気	でんき	common_word jlpt::n5
+Japanese Kanji	電子	でんし	common_word jlpt::n3
+Japanese Kanji	電車	でんしゃ	common_word jlpt::n5
+Japanese Kanji	電話	でんわ	common_word jlpt::n5
+Japanese Kanji	電	でん	common_word
+Japanese Kanji	車	くるま	common_word jlpt::n5
+Japanese Kanji	休む	やすむ	common_word jlpt::n5
+Japanese Kanji	休み	やすみ	common_word jlpt::n5
+Japanese Kanji	休日	きゅうじつ	common_word
+Japanese Kanji	言う	いう	common_word jlpt::n5
+Japanese Kanji	言語	げんご	common_word jlpt::n3 leech
+Japanese Kanji	言語学	げんごがく	
+Japanese Vocabulary	雨（あめ）	rain	common_word jlpt::n5
+Japanese Vocabulary	雨水（あまみず）	rain water	common_word
+Japanese Vocabulary	電気（でんき）	electricity	common_word jlpt::n5
+Japanese Vocabulary	電子（でんし）	electron / electronic	common_word jlpt::n3
+Japanese Vocabulary	休日（きゅうじつ）	holiday / day off​	common_word
+Japanese Kanji	雷	かみなり	common_word jlpt::n3
+Japanese Vocabulary	雷（かみなり）	thunder / lightning bolt	common_word jlpt::n3
+Japanese Kanji	売る	うる	common_word jlpt::n5
+Japanese Kanji	読む	よむ	common_word jlpt::n5
+Japanese Kanji	読書	どくしょ	common_word jlpt::n3
+Japanese Kanji	思う	おもう	common_word jlpt::n4
+Japanese Kanji	思い出す	おもいだす	common_word jlpt::n4
+Japanese Kanji	心	こころ	common_word jlpt::n4
+Japanese Verbs	売る（うる）	to sell, group I	common_word jlpt::n5
+Japanese Verbs	思い出す（おもいだす）	to recall / to remember, group I	common_word jlpt::n4
+Japanese Kanji	次	つぎ	common_word jlpt::n5
+Japanese Kanji	次女	じじょ	common_word
+Japanese Kanji	目次	もくじ	common_word jlpt::n2
+Japanese Kanji	次回	じかい	common_word
+Japanese Kanji	何	なに	common_word jlpt::n5
+Japanese Kanji	何時	なんじ	common_word jlpt::n5
+Japanese Kanji	何人	なんにん	common_word
+Japanese Kanji	何か	なにか	common_word jlpt::n3
+Japanese Vocabulary	次（つぎ）	next	common_word jlpt::n5
+Japanese Vocabulary	次女（じじょ）	second daughter	common_word
+Japanese Vocabulary	目次（もくじ）	table of contents	common_word jlpt::n2
+Japanese Vocabulary	次回（じかい）	next time	common_word
+Japanese Vocabulary	何時（なんじ）	what time	common_word jlpt::n5
+Japanese Vocabulary	何人（なんにん）	how many people	common_word
+Japanese Vocabulary	何（なに）	what	common_word jlpt::n5
+Japanese Vocabulary	何（なん）	how many	common_word jlpt::n5
+Japanese Vocabulary	何か（なにか）	something	common_word jlpt::n3
+Japanese Adjectives	上手（じょうず）	skillful | proficient	common_word jlpt::n5
+Japanese Adjectives	下手（へた）	unskillful	common_word jlpt::n5
+Japanese Vocabulary	カメラ	camera	common_word jlpt::n5
+Japanese Vocabulary	カラオケ	karaoke	common_word
+Japanese Vocabulary	パーティー	party	common_word jlpt::n5
+Japanese Vocabulary	ＢＢＱ（バーベキュー）	barbecue	
+Japanese Vocabulary	トマト	tomato&nbsp;	common_word
+Japanese Vocabulary	箸（はし）	chopsticks	common_word jlpt::n5
+Japanese Vocabulary	橋（はし）	bridge	common_word jlpt::n5
+Japanese Vocabulary	ホームステイ	homestay	common_word
+Japanese Vocabulary	夏（なつ）	summer	common_word jlpt::n5
+Japanese Vocabulary	冬（ふゆ）	winter	common_word jlpt::n5
+Japanese Vocabulary	春（はる）	spring	common_word jlpt::n5
+Japanese Vocabulary	秋（あき）	autumn	common_word jlpt::n5
+Japanese Vocabulary	空気（くうき）	air | atmosphere	common_word jlpt::n4
+Japanese Vocabulary	黒板（こくばん）	blackboard	common_word jlpt::n3 leech
+Japanese Vocabulary	天気予報（てんきよほう）	weather forecast	common_word jlpt::n4
+Japanese Grammar	どんな	what kind of｜what	
+Japanese Verbs	走る（はしる）	To run, group I	common_word jlpt::n5
+Japanese Verbs	止める（やめる）	To stop (an activity), group II	common_word jlpt::n4
+Japanese Verbs	踊る（おどる）	to dance, group I	common_word jlpt::n4
+Japanese Verbs	終わる（おわる）	to end, group I,&nbsp;Intransitive&nbsp;	common_word jlpt::n5
+Japanese Verbs	人気がある（にんきがある）	to be popular, group I	
+Japanese Verbs	引く（ひく）	to play (a stringed or keyboard instrument)​, group I	common_word jlpt::n5
+Japanese Verbs	始まる（はじまる）	to begin, group I,&nbsp;Intransitive	common_word jlpt::n5
+Japanese Verbs	貰う（もらう）	to receive, group I	common_word jlpt::n3
+Japanese Verbs	覚える（おぼえる）	to memorize, group II	common_word jlpt::n5
+Japanese Verbs	運動する（うんどうする）	to exercise, group III	common_word jlpt::n3
+Japanese Adjectives	寂しい（さびしい）	lonely	common_word jlpt::n4
+Japanese Adjectives	意地悪（いじわる）	malicious	common_word jlpt::n2
+Japanese Adjectives	若い（わかい）	young	common_word jlpt::n5
+Japanese Vocabulary	お年寄り（おとしより）	elderly person	common_word leech
+Japanese Vocabulary	色（いろ）	color	common_word jlpt::n5
+Japanese Vocabulary	お弁当（おべんとう）	Japanese box lunch	common_word jlpt::n5
+Japanese Vocabulary	コンサート	concert	common_word jlpt::n4
+Japanese Vocabulary	歌舞伎（かぶき）	traditional form of drama and music performed by male actors wearing makeup mainly in white and red	common_word
+Japanese Vocabulary	ギター	guitar	common_word jlpt::n5
+Japanese Vocabulary	テスト	test	common_word jlpt::n5
+Japanese Vocabulary	試験（しけん）	exam	common_word jlpt::n4
+Japanese Vocabulary	単語（たんご）	vocabulary	common_word jlpt::n3
+Japanese Vocabulary	言葉（ことば）	word	common_word jlpt::n5
+Japanese Vocabulary	ピザ	pizza	common_word
+Japanese Vocabulary	病気（びょうき）	illness	common_word jlpt::n5 leech
+Japanese Vocabulary	薬（くすり）	medicine	common_word jlpt::n5
+Japanese Kanji	午	ご	common_word jlpt::n5
+Japanese Kanji	午前	ごぜん	common_word jlpt::n5
+Japanese Kanji	午後	ごご	common_word jlpt::n5
+Japanese Kanji	午前中	ごぜんちゅう	common_word
+Japanese Kanji	午後中	ごごじゅう	
+Japanese Kanji	後ろ	うしろ	common_word jlpt::n5 leech
+Japanese Kanji	後で	あとで	
+Japanese Kanji	の後	のあと	common_word jlpt::n3
+Japanese Kanji	前	まえ	common_word jlpt::n1
+Japanese Kanji	名前	なまえ	common_word jlpt::n5
+Japanese Kanji	前売り	まえうり	common_word jlpt::n1
+Japanese Kanji	白	しろ	common_word jlpt::n5
+Japanese Kanji	白い	しろい	common_word jlpt::n5
+Japanese Kanji	書く	かく	common_word jlpt::n5
+Japanese Kanji	友だち	ともだち	common_word jlpt::n5
+Japanese Kanji	友人	ゆうじん	common_word jlpt::n3
+Japanese Kanji	間	あいだ	common_word jlpt::n4 leech
+Japanese Kanji	時間	じかん	common_word jlpt::n5
+Japanese Kanji	二時間	にじかん	common_word jlpt::n5
+Japanese Kanji	人間	にんげん	common_word jlpt::n3
+Japanese Vocabulary	午前（ごぜん）	morning | A.M.	common_word jlpt::n5
+Japanese Vocabulary	午後（ごご）	afternoon | P.M.	common_word jlpt::n5
+Japanese Vocabulary	午前中（ごぜんちゅう）	during the morning	common_word
+Japanese Vocabulary	午後中（ごごじゅう）	throughout the afternoon	
+Japanese Vocabulary	後で（あとで）	afterwards	
+Japanese Vocabulary	後（あと）	after | later	common_word jlpt::n3
+Japanese Vocabulary	名前（なまえ）	name	common_word jlpt::n5
+Japanese Vocabulary	前売り（まえうり）	advance sale | booking | Pre order&nbsp;	common_word jlpt::n1
+Japanese Vocabulary	読書（どくしょ）	reading&nbsp;	common_word jlpt::n3 leech
+Japanese Vocabulary	友達（ともだち）	friend | companion	common_word jlpt::n5
+Japanese Vocabulary	友人（ゆうじん）	friend	common_word jlpt::n3
+Japanese Grammar	時間（じかん）	counting hours	
+Japanese Vocabulary	にじかん	for 2 hours	
+Japanese Vocabulary	人間（にんげん）	human being	common_word jlpt::n3
+Japanese Verbs	吹く（ふく）	To blow, To play (wind instruments), group I	common_word jlpt::n5
+Japanese Verbs	叩く（たたく）	To play (percussion instruments), group I	common_word jlpt::n3
+Japanese Adjectives	眠い（ねむい）	Sleepy&nbsp;	common_word jlpt::n4
+Japanese Kanji	家	いえ・うち	common_word jlpt::n5
+Japanese Kanji	作家	さっか	common_word jlpt::n3
+Japanese Kanji	話す	はなす	common_word jlpt::n5
+Japanese Kanji	話	はなし	common_word jlpt::n5
+Japanese Kanji	会話	かいわ	common_word jlpt::n4
+Japanese Kanji	少し	すこし	common_word jlpt::n5
+Japanese Kanji	少ない	すくない	common_word jlpt::n5
+Japanese Kanji	少女	しょうじょ	common_word jlpt::n3
+Japanese Kanji	少年	しょうねん	common_word jlpt::n3
+Japanese Vocabulary	作家（さっか）	author	common_word jlpt::n3 leech
+Japanese Vocabulary	話（はなし）	tale | story	common_word jlpt::n5
+Japanese Vocabulary	会話（かいわ）	conversation	common_word jlpt::n4
+Japanese Vocabulary	少女（しょうじょ）	young lady | girl (usu. between 7 and 17)	common_word jlpt::n3
+Japanese Vocabulary	少年（しょうねん）	boy | juvenile	common_word jlpt::n3
+Japanese Kanji	古い	ふるい	common_word jlpt::n5
+Japanese Kanji	中古	ちゅうこ	common_word jlpt::n3 leech
+Japanese Kanji	知る	しる	common_word jlpt::n5
+Japanese Kanji	知人	ちじん	common_word jlpt::n2
+Japanese Kanji	知り合い	しりあい	common_word jlpt::n2
+Japanese Kanji	来る	くる	common_word jlpt::n5
+Japanese Kanji	来週	らいしゅう	common_word jlpt::n5
+Japanese Kanji	手	て	common_word jlpt::n5
+Japanese Kanji	上手	じょうず	common_word jlpt::n5
+Japanese Kanji	下手	へた	common_word jlpt::n5
+Japanese Kanji	足	あし	common_word jlpt::n5
+Japanese Kanji	右足	みぎあし	common_word
+Japanese Kanji	左足	ひだりあし	common_word
+Japanese Kanji	足りる	たりる	common_word jlpt::n4
+Japanese Kanji	空	そら	common_word jlpt::n5
+Japanese Kanji	空気	くうき	common_word jlpt::n4
+Japanese Kanji	空く	あく・すく	common_word jlpt::n3
+Japanese Kanji	安い	やすい	common_word jlpt::n5
+Japanese Kanji	安心	あんしん	common_word jlpt::n4 leech
+Japanese Kanji	多い	おおい	common_word jlpt::n5
+Japanese Kanji	多分	たぶん	common_word jlpt::n5
+Japanese Kanji	長い	ながい	common_word jlpt::n5
+Japanese Kanji	買う	かう	common_word jlpt::n5
+Japanese Kanji	花	はな	common_word jlpt::n5
+Japanese Kanji	花びん	かびん	common_word jlpt::n5
+Japanese Kanji	生け花	いけばな	common_word jlpt::n2
+Japanese Kanji	花火	はなび	common_word jlpt::n2
+Japanese Kanji	花見	はなみ	common_word jlpt::n4
+Japanese Kanji	店	みせ	common_word jlpt::n5
+Japanese Kanji	店員	てんいん	common_word jlpt::n4
+Japanese Kanji	売店	ばいてん	common_word jlpt::n2
+Japanese Kanji	道	みち	common_word jlpt::n5
+Japanese Kanji	週	しゅう	common_word jlpt::n3
+Japanese Kanji	毎週	まいしゅう	common_word jlpt::n5
+Japanese Kanji	先週	せんしゅう	common_word jlpt::n5
+Japanese Kanji	今週	こんしゅう	common_word jlpt::n5
+Japanese Kanji	魚	さかな	common_word jlpt::n5
+Japanese Kanji	金魚	きんぎょ	common_word jlpt::n2
+Japanese Kanji	人魚	にんぎょ	
+Japanese Kanji	馬	うま	common_word jlpt::n3
+Japanese Kanji	駅	えき	common_word jlpt::n5
+Japanese Kanji	駅前	えきまえ	common_word
+Japanese Kanji	同じ	おなじ	common_word jlpt::n5
+Japanese Vocabulary	中古（ちゅうこ）	second-hand	common_word jlpt::n3
+Japanese Vocabulary	知人（ちじん）	acquaintance	common_word jlpt::n2
+Japanese Vocabulary	手（て）	hand	common_word jlpt::n5
+Japanese Vocabulary	足（あし）	foot	common_word jlpt::n5
+Japanese Vocabulary	右足（みぎあし）	right foot	common_word
+Japanese Vocabulary	左足（ひだりあし）	left foot	common_word
+Japanese Verbs	足りる（たりる）	to be sufficient, group II, intransitive	common_word jlpt::n4 leech
+Japanese Vocabulary	空（そら）	sky	common_word jlpt::n5
+Japanese Verbs	空く（すく）	to get empty, Group I, intransitive	common_word jlpt::n3
+Japanese Vocabulary	安心（あんしん）	peace of mind	common_word jlpt::n4
+Japanese Vocabulary	多分（たぶん）	Probably; perhaps	common_word jlpt::n4
+Japanese Vocabulary	花（はな）	flower	common_word jlpt::n5
+Japanese Vocabulary	花瓶（かびん）	Vase	common_word jlpt::n5
+Japanese Vocabulary	花火（はなび）	fireworks	common_word jlpt::n2
+Japanese Vocabulary	花見（はなみ）	cherry blossom viewing	common_word jlpt::n4
+Japanese Vocabulary	店（みせ）	store | shop	common_word jlpt::n5
+Japanese Vocabulary	店員（てんいん）	employee (of a store)	common_word jlpt::n4
+Japanese Vocabulary	売店（ばいてん）	stand | stall | booth | kiosk | store	common_word jlpt::n2
+Japanese Vocabulary	道（みち）	road | path | street | lane | passage	common_word jlpt::n5
+Japanese Vocabulary	金魚（きんぎょ）	goldfish	common_word jlpt::n2
+Japanese Vocabulary	馬（うま）	horse	common_word jlpt::n3
+Japanese Vocabulary	駅（えき）	railway station | train station	common_word jlpt::n5
+Japanese Vocabulary	同じ（おなじ）	same	common_word jlpt::n5
+Japanese Kanji	矢	や	common_word jlpt::n1
+Japanese Kanji	新作	しんさく	common_word
+Japanese Kanji	行事	ぎょうじ	common_word jlpt::n2
+Japanese Kanji	休校	きゅうこう	common_word
+Japanese Kanji	休学	きゅうがく	common_word jlpt::n1
+Japanese Kanji	休火山	きゅうかざん	
+Japanese Kanji	次男	じなん	common_word
+Japanese Kanji	本名	ほんみょう	common_word jlpt::n1
+Japanese Kanji	小雨	こさめ	common_word
+Japanese Kanji	大雨	おおあめ	common_word
+Japanese Kanji	校友	こうゆう	
+Japanese Kanji	家事	かじ	common_word jlpt::n3
+Japanese Kanji	国家	こっか	common_word jlpt::n3
+Japanese Kanji	古語	こご	
+Japanese Kanji	古本	ふるほん	common_word
+Japanese Kanji	来月	らいげつ	common_word jlpt::n5
+Japanese Vocabulary	新作（しんさく）	new work | new production	common_word
+Japanese Vocabulary	行事（ぎょうじ）	event	common_word jlpt::n2 leech
+Japanese Vocabulary	休校（きゅうこう）	(temporary) closure of school	common_word jlpt::n4
+Japanese Vocabulary	休学（きゅうがく）	temporary absence from school	common_word jlpt::n1
+Japanese Vocabulary	休火山（きゅうかざん）	dormant volcano	
+Japanese Vocabulary	次男（じなん）	second son	common_word
+Japanese Vocabulary	本名（ほんみょう）	real name	common_word jlpt::n1
+Japanese Vocabulary	小雨（こさめ）	light rain	common_word
+Japanese Vocabulary	大雨（おおあめ）	heavy rain | torrential rainfall | downpour	common_word
+Japanese Vocabulary	校友（こうゆう）	schoolmate	
+Japanese Vocabulary	家事（かじ）	housework | domestic chores	common_word jlpt::n3
+Japanese Vocabulary	国家（こっか）	state | country | nation	common_word jlpt::n3
+Japanese Vocabulary	古語（こご）	archaic word | old saying | old language	
+Japanese Vocabulary	古本（ふるほん）	secondhand book	common_word
+Japanese Verbs	触る（さわる）	To touch, group I	common_word jlpt::n4 leech
+Japanese Vocabulary	砂糖（さとう）	Sugar	common_word jlpt::n5
+Japanese Grammar	未だ（まだ）	Still	
+Japanese Grammar	もう	Already | yet&nbsp;	
+Japanese Verbs	負ける（まける）	to lose, group II, intransitive	common_word jlpt::n4
+Japanese Verbs	送る（おくる）	To send, group I	common_word jlpt::n4 leech
+Japanese Kanji	住む	すむ	common_word jlpt::n5
+Japanese Kanji	今年	ことし	common_word jlpt::n5
+Japanese Kanji	正しい	ただしい	common_word jlpt::n4
+Japanese Kanji	お正月	おしょうがつ	
+Japanese Kanji	正午	しょうご	common_word jlpt::n3 leech
+Japanese Kanji	一年	いちねん	common_word
+Japanese Kanji	来年	らいねん	common_word jlpt::n5
+Japanese Kanji	三年生	さんねんせい	
+Japanese Kanji	売買	ばいばい	common_word jlpt::n2
+Japanese Kanji	町	まち	common_word jlpt::n5
+Japanese Kanji	北山町	きたやまちょう	
+Japanese Kanji	町長	ちょうちょう	common_word
+Japanese Kanji	長男	ちょうなん	common_word jlpt::n2
+Japanese Kanji	社長	しゃちょう	common_word jlpt::n4
+Japanese Kanji	書道	しょどう	common_word jlpt::n2
+Japanese Vocabulary	書道（しょどう）	calligraphy	common_word jlpt::n2
+Japanese Vocabulary	社長（しゃちょう）	company president	common_word jlpt::n4
+Japanese Vocabulary	長男（ちょうなん）	eldest son	common_word jlpt::n2
+Japanese Vocabulary	町長（ちょうちょう）	town mayor	common_word
+Japanese Vocabulary	売買（ばいばい）	trade／buying and selling	common_word jlpt::n2
+Japanese Vocabulary	正午（しょうご）	noon／midday	common_word jlpt::n3 leech
+Japanese Vocabulary	お正月（おしょうがつ）	New Year（お正月）	
+Japanese Adjectives	正しい（ただしい）	right／correct	common_word jlpt::n4
+Japanese Verbs	入れる（いれる）	1 - to put in／to insert／to install (e.g. software)／to ink in (e.g. tattoo).&nbsp;<br>2 - to admit / to accept / to employ / to hire	common_word jlpt::n5
+Japanese Verbs	似る（にる）	To look like, group II	common_word jlpt::n4 leech
+Japanese Vocabulary	かれたち	they (masculim/plural) | eles	
+Japanese Vocabulary	かのじょたち	they (feminin/plural) elas	common_word jlpt::n1
+Japanese Vocabulary	私たち（わたしたち）	we / us	common_word
+Japanese Kanji	雪	ゆき	common_word jlpt::n5
+Japanese Kanji	新雪	しんせつ	
+Japanese Kanji	雪だるま	ゆきだるま	
+Japanese Kanji	国立大学	こくりつだいがく	
+Japanese Kanji	私立高校	しりつこうこう	
+Japanese Kanji	自分	じぶん	common_word jlpt::n5
+Japanese Kanji	自転車	じてんしゃ	common_word jlpt::n5
+Japanese Kanji	夜	よる	common_word jlpt::n5
+Japanese Kanji	夜中	よなか	common_word jlpt::n3
+Japanese Kanji	今夜	こんや	common_word jlpt::n4
+Japanese Kanji	朝	あさ	common_word jlpt::n5
+Japanese Kanji	朝ごはん	あさごはん	common_word jlpt::n5
+Japanese Kanji	朝食	ちょうしょく	common_word
+Japanese Kanji	今朝	けさ	common_word jlpt::n5
+Japanese Kanji	毎朝	まいあさ	common_word jlpt::n5
+Japanese Kanji	持つ	もつ	common_word jlpt::n5
+Japanese Kanji	持って行く	もっていく	common_word
+Japanese Kanji	持って来る	もってくる	common_word
+Japanese Kanji	気持ち	きもち	common_word jlpt::n4
+Japanese Vocabulary	気持ち（きもち）	feeling / sensation / mood	common_word jlpt::n4
+Japanese Vocabulary	今朝（けさ）	this morning	common_word jlpt::n5
+Japanese Vocabulary	朝食（ちょうしょく）	breakfast (formal)	common_word
+Japanese Vocabulary	今夜（こんや）	this evening	common_word jlpt::n4
+Japanese Vocabulary	夜中（よなか）	middle of the night	common_word jlpt::n3 leech
+Japanese Vocabulary	自分（じぶん）	myself /&nbsp;yourself / oneself / himself / herself	common_word jlpt::n5
+Japanese Vocabulary	私立高校（しりつこうこう）	private high school	
+Japanese Vocabulary	国立大学（こくりつだいがく）	national university	
+Japanese Vocabulary	雪だるま（ゆきだるま）	snowman	
+Japanese Vocabulary	新雪（しんせつ）	fresh snow / new snow	common_word jlpt::n4
+Japanese Vocabulary	雪（ゆき）	snow	common_word jlpt::n5
+Japanese Kanji	糸	いと	common_word jlpt::n4
+Japanese Kanji	氏	うじ	common_word jlpt::n3 leech
+Japanese Kanji	紙	かみ	common_word jlpt::n5
+Japanese Kanji	手紙	てがみ	common_word jlpt::n5
+Japanese Kanji	好き	すき	common_word jlpt::n5
+Japanese Kanji	好み	このみ	common_word jlpt::n3
+Japanese Kanji	お好み焼き	おこのみやき	common_word
+Japanese Kanji	近い	ちかい	common_word jlpt::n5
+Japanese Kanji	近く	ちかく	common_word jlpt::n5
+Japanese Kanji	明るい	あかるい	common_word jlpt::n5
+Japanese Kanji	明日	あした	common_word jlpt::n5
+Japanese Kanji	文明	ぶんめい	common_word jlpt::n3
+Japanese Kanji	病院	びょういん	common_word jlpt::n5
+Japanese Kanji	病気	びょうき	common_word jlpt::n5
+Japanese Kanji	大学院	だいがくいん	common_word jlpt::n2
+Japanese Kanji	新年	しんねん	common_word
+Japanese Kanji	学長	がくちょう	common_word
+Japanese Kanji	校長	こうちょう	common_word jlpt::n4
+Japanese Kanji	長女	ちょうじょ	common_word jlpt::n2
+Japanese Kanji	長文	ちょうぶん	
+Japanese Kanji	水道	すいどう	common_word jlpt::n4
+Japanese Kanji	食道	しょくどう	common_word
+Japanese Kanji	大雪	おおゆき	common_word
+Japanese Kanji	小雪	こゆき	
+Japanese Kanji	雪女	ゆきおんな	
+Japanese Kanji	雪国	ゆきぐに	common_word
+Japanese Kanji	雪見	ゆきみ	
+Japanese Kanji	自家	じか	common_word
+Japanese Kanji	自国	じこく	common_word
+Japanese Kanji	自作	じさく	common_word
+Japanese Kanji	自生	じせい	
+Japanese Kanji	夜学	やがく	common_word
+Japanese Kanji	夜食	やしょく	leech
+Japanese Kanji	夜会	やかい	
+Japanese Kanji	夜間	やかん	common_word jlpt::n2 leech
+Japanese Kanji	前夜	ぜんや	common_word
+Japanese Kanji	月夜	つきよ	common_word
+Japanese Kanji	朝日	あさひ	common_word
+Japanese Kanji	手本	てほん	common_word jlpt::n1
+Japanese Kanji	小手	こて	
+Japanese Kanji	白紙	はくし	common_word
+Japanese Kanji	近道	ちかみち	common_word
+Japanese Kanji	近年	きんねん	common_word
+Japanese Kanji	病	やまい	common_word jlpt::n1 leech
+Japanese Kanji	病人	びょうにん	common_word
+Japanese Kanji	院長	いんちょう	common_word
+Japanese Kanji	入院	にゅういん	common_word jlpt::n4
+Japanese Vocabulary	新年（しんねん）	New Year （新年）	common_word
+Japanese Vocabulary	学長（がくちょう）	(university) president / chancellor / principal	common_word
+Japanese Vocabulary	校長（こうちょう）	principal / head teacher / headmaster / headmistress	common_word jlpt::n4
+Japanese Vocabulary	会長（かいちょう）	president (of a society) / chairman	common_word
+Japanese Vocabulary	長女（ちょうじょ）	eldest daughter / first-born daughter​	common_word jlpt::n2
+Japanese Vocabulary	長文（ちょうぶん）	long sentence	
+Japanese Vocabulary	水道（すいどう）	1. water supply / water service<br>2.&nbsp;channel / strait<br>3.&nbsp;water course / waterway	common_word jlpt::n4
+Japanese Vocabulary	大雪（おおゆき）	heavy snow / heavy snowfall	common_word
+Japanese Vocabulary	小雪（こゆき）	light snow	
+Japanese Vocabulary	雪女（ゆきおんな）	yuki-onna (spirit in Japanese folklore) / snow woman	
+Japanese Vocabulary	雪国（ゆきぐに）	snow country / snowy region	common_word
+Japanese Vocabulary	雪見（ゆきみ）	snow viewing / snow-scene viewing	
+Japanese Vocabulary	自家（じか）	own / personal;	common_word
+Japanese Vocabulary	自国（じこく）	one's own country​	common_word jlpt::n3
+Japanese Vocabulary	自作（じさく）	one's own work / making by oneself	common_word
+Japanese Vocabulary	夜学（やがく）	night school / evening school / evening class	common_word
+Japanese Vocabulary	夜食（やしょく）	night meal / late-night snack;	
+Japanese Vocabulary	夜会（やかい）	evening party	
+Japanese Vocabulary	夜間（やかん）	night / nighttime	common_word jlpt::n2
+Japanese Vocabulary	前夜（ぜんや）	night before (Christmas, etc.); eve (of festival, major event, etc.)	common_word
+Japanese Vocabulary	月夜（つきよ）	moonlit night	common_word
+Japanese Vocabulary	朝日（あさひ）	morning sun	common_word
+Japanese Vocabulary	手本（てほん）	model / (good) example /; exemplar	common_word jlpt::n1
+Japanese Vocabulary	小手（こて）	forearm	
+Japanese Vocabulary	白紙（はくし）	white paper	common_word
+Japanese Vocabulary	近道（ちかみち）	shorter way / shortcut	common_word
+Japanese Vocabulary	近年（きんねん）	recent years	common_word
+Japanese Vocabulary	病（やまい）	illness / disease​（病）	common_word jlpt::n1
+Japanese Vocabulary	病人（びょうにん）	sick person / patient;	common_word
+Japanese Vocabulary	院長（いんちょう）	director (of a hospital, institution, academy, etc.)	common_word
+Japanese Vocabulary	入院（にゅういん）	hospitalization	common_word jlpt::n4
+Japanese Verbs	練習する（れんしゅうする）	To practice, Group III, Transitive&nbsp;	common_word jlpt::n5 leech
+Japanese Kanji	映る	うつる	common_word jlpt::n2
+Japanese Kanji	映画	えいが	common_word jlpt::n5
+Japanese Kanji	画家	がか	common_word jlpt::n3
+Japanese Kanji	漫画	まんが	common_word jlpt::n4
+Japanese Kanji	歌う	うたう	common_word jlpt::n5
+Japanese Kanji	歌	うた	common_word jlpt::n5
+Japanese Kanji	歌手	かしゅ	common_word jlpt::n3
+Japanese Kanji	国歌	こっか	common_word
+Japanese Kanji	川口市	かわぐちし	
+Japanese Kanji	市長	しちょう	common_word
+Japanese Kanji	所	ところ	common_word jlpt::n5
+Japanese Kanji	住所	じゅうしょ	common_word jlpt::n4 leech
+Japanese Kanji	近所	きんじょ	common_word jlpt::n4
+Japanese Kanji	勉強する	べんきょうする	common_word jlpt::n5
+Japanese Kanji	勉める	つとめる	common_word jlpt::n2
+Japanese Kanji	強い	つよい	common_word jlpt::n5
+Japanese Kanji	勉強	べんきょう	common_word jlpt::n5
+Japanese Kanji	有る	ある	common_word jlpt::n5 leech
+Japanese Kanji	有名	ゆうめい	common_word jlpt::n5
+Japanese Kanji	旅行	りょこう	common_word jlpt::n5
+Japanese Kanji	旅館	りょかん	common_word jlpt::n4
+Japanese Kanji	一人旅	ひとりたび	common_word
+Japanese Verbs	映る（うつる）	to be reflected, to be projected; to be displayed (on a screen), group I, Intransitive&nbsp;	common_word jlpt::n2
+Japanese Vocabulary	画家（がか）	painter; artist	common_word jlpt::n3
+Japanese Vocabulary	歌手（かしゅ）	singer	common_word jlpt::n3
+Japanese Vocabulary	国歌（こっか）	national anthem	common_word jlpt::n3 leech
+Japanese Vocabulary	市長（しちょう）	mayor (市長)	common_word
+Japanese Vocabulary	市（し）	city (市)	common_word jlpt::n3
+Japanese Kanji	市	し	common_word jlpt::n4
+Japanese Vocabulary	所（ところ）	place; spot; scene; site​	common_word jlpt::n5
+Japanese Vocabulary	住所（じゅうしょ）	address; residence; domicile	common_word jlpt::n4
+Japanese Vocabulary	近所（きんじょ）	neighbourhood	common_word jlpt::n4 leech
+Japanese Vocabulary	旅館（りょかん）	ryokan; traditional Japanese inn	common_word jlpt::n4
+Japanese Vocabulary	一人旅（ひとりたび）	travelling alone; solitary journey	common_word
+Japanese Vocabulary	湖（みずうみ）	lake	common_word jlpt::n4
+Japanese Vocabulary	温泉（おんせん）	onsen; hot spring resort; hot spring spa	common_word jlpt::n2
+Japanese Vocabulary	キャンプ	camp; camping	common_word jlpt::n3
+Japanese Vocabulary	お菓子（おかし）	snaks	common_word jlpt::n5
+Japanese Vocabulary	釣り（つり）	fishing	common_word jlpt::n3
+Japanese Verbs	釣る（つる）	to fish, group I	common_word jlpt::n4
+Japanese Vocabulary	夢（ゆめ）	dream	common_word jlpt::n4
+Japanese Vocabulary	宇宙飛行士（うちゅうひこうし）	astronaut	common_word leech
+Japanese Vocabulary	消防士（しょうぼうし）	firefighter	leech
+Japanese Vocabulary	女優（じょゆう）	actress	common_word jlpt::n3
+Japanese Vocabulary	俳優（はいゆう）	actor	common_word jlpt::n3
+Japanese Vocabulary	看護士（かんごし）	nurse	leech
+Japanese Vocabulary	警察官（けいさつかん）	police officer	common_word
+Japanese Vocabulary	野球選手（やきゅうせんしゅ）	baseball player	leech
+Japanese Vocabulary	大統領（だいとうりょう）	president	common_word jlpt::n3 leech
+Japanese Vocabulary	漫画家（まんがか）	manga artist	common_word
+Japanese Vocabulary	ジャーナリスト	journalist	common_word jlpt::n2
+Japanese Vocabulary	ドライブ	drive	common_word jlpt::n3
+Japanese Vocabulary	神社（じんじゃ）	Shinto shrine	common_word jlpt::n4
+Japanese Vocabulary	お祭り（おまつり）	festival; feast; carnival; matsur	jlpt::n4
+Japanese Vocabulary	玩具（おもちゃ）	toy	common_word jlpt::n4
+Japanese Vocabulary	ルームメイト	roommate	
+Japanese Vocabulary	授業（じゅぎょう）	lesson; class	common_word jlpt::n5 leech
+Japanese Vocabulary	美術館（びじゅつかん）	art museum; art gallery	common_word jlpt::n4
+Japanese Vocabulary	将来（しょうらい）	future; (future) prospects​	common_word jlpt::n4
+Japanese Vocabulary	学期（がっき）	school term; semester	common_word jlpt::n3
+Japanese Verbs	ダイエットする	to diet, Group III	common_word
+Japanese Verbs	お腹が空く（おなかがすく）	<div><div>to get hungry; to become hungry​, Group I</div></div>	
+Japanese Verbs	上る（のぼる）	to ascend; to go up; to climb​, Group I	common_word jlpt::n5
+Japanese Verbs	疲れる（つかれる）	to get tired; to tire; to get fatigued; to become exhausted, Group II	common_word jlpt::n5 leech
+Japanese Verbs	うそつく	to tell a lie, Group I	common_word jlpt::n3 leech
+Japanese Verbs	サボる	&nbsp;to skip school; to cut class, Group I	common_word jlpt::n1
+Japanese Verbs	取る（とる）	to get; to obtain; to acquire; to win; to receive; to earn, Group I	common_word jlpt::n5
+Japanese Verbs	遅刻する（ちこくする）	To be late for something, Group III	common_word jlpt::n3
+Japanese Verbs	飼う（かう）	to keep (a pet or other animal); to have; to own; to raise, Group I	common_word jlpt::n5
+Japanese Verbs	喧嘩する（けんかする）	To argue, To fight, Group III	common_word jlpt::n4
+Japanese Verbs	留学する（りゅうがくする）	to studying abroad, Group III	common_word jlpt::n3
+Japanese Verbs	紹介する（しょうかいする）	To introduct (someone), Group III	common_word jlpt::n4
+Japanese Verbs	働く（はたらく）	to work, Group I	common_word jlpt::n5
+Japanese Verbs	無くす（なくす）	to lose (something), Group I	common_word jlpt::n5 leech
+Japanese Verbs	心配する（しんぱいする）	to worry, Group III	common_word jlpt::n3
+Japanese Verbs	別れる（わかれる）	to part (usu. of people); to separate (of a couple); to lose (e.g. one's mother), Group II	common_word jlpt::n4
+Japanese Verbs	緊張する（きんちょうする）	to stress, Group III	common_word jlpt::n3 leech
+Japanese Verbs	興味がある（きょうみがある）	to have interest, Group I	common_word jlpt::n4
+Japanese Verbs	歩く（あるく）	to walk, Group I	common_word jlpt::n5
+Japanese Verbs	熱がある（ねつがある）	To have a feaver, Group I	common_word jlpt::n4
+Japanese Verbs	喉が渇く（のどがかわく）	to be thirsty, Group I	
+Japanese Verbs	風邪をひく（かぜをひく）	to catch a cold, Group I	common_word
+Japanese Verbs	せきが出る	to have a cough; to cough, Group II	common_word jlpt::n4
+Japanese Adjectives	都合が悪い（つごうがわるい）	inconvenient, to not be free	leech
+Japanese Adjectives	甘い（あまい）	sweet	common_word jlpt::n5
+Japanese Adjectives	塩っぱい（しょっぱい）	salty	
+Japanese Adjectives	痛い（いたい）	painful; sore​	common_word jlpt::n5
+Japanese Vocabulary	お大事に（おだいじに）	take care of yourself; get well soon	common_word jlpt::n2
+Japanese Vocabulary	元気がない（げんきがない）	not feel well	common_word jlpt::n3
+Japanese Vocabulary	意味（いみ）	meaning; significance	common_word jlpt::n5
+Japanese Vocabulary	席（せき）	seat	common_word jlpt::n4
+Japanese Vocabulary	政治（せいじ）	politics; government​	common_word jlpt::n4
+Japanese Vocabulary	政治家（せいじか）	politician; statesman	common_word
+Japanese Vocabulary	プラス	plus; addition​	common_word jlpt::n3
+Japanese Vocabulary	マイナス	minus; subtraction	common_word jlpt::n2
+Japanese Vocabulary	お腹（おなか）	belly; abdomen; stomach	common_word jlpt::n5
+Japanese Vocabulary	喉（のど）	throat	common_word jlpt::n3
+Japanese Vocabulary	歯（は）	tooth; teeth​	common_word
+Japanese Vocabulary	晴れ（はれ）	clear weather; fine weather	common_word jlpt::n5
+Japanese Vocabulary	曇り（くもり）	cloudiness; cloudy weather	common_word jlpt::n5 leech
+Japanese Vocabulary	気温（きおん）	(air) temperature	common_word jlpt::n3 leech
+Japanese Vocabulary	物（もの）	thing; object; article	common_word jlpt::n5
+Japanese Vocabulary	お手洗い（おてあらい）	toilet; restroom; lavatory;	common_word jlpt::n5
+Japanese Vocabulary	ホームシック	homesickness	common_word
+Japanese Vocabulary	成績（せいせき）	results; record; grades;	common_word jlpt::n3 leech
+Japanese Vocabulary	試合（しあい）	match; game;	common_word jlpt::n4
+Japanese Vocabulary	二日酔い（ふつかよい）	hangover	
+Japanese Kanji	昔	むかし	common_word jlpt::n4
+Japanese Kanji	昔話	むかしばなし	common_word
+Japanese Kanji	大昔	おおむかし	
+Japanese Kanji	々	のま&nbsp;(just the name, not pronunciation)	
+Japanese Kanji	人々	ひとびと	common_word
+Japanese Kanji	時々	ときどき	common_word jlpt::n5
+Japanese Kanji	神さま	かみさま	common_word jlpt::n2
+Japanese Kanji	神社	じんじゃ	common_word jlpt::n4
+Japanese Kanji	神道	しんとう	common_word
+Japanese Kanji	神戸市	こうべし	
+Japanese Kanji	早い	はやい	common_word jlpt::n5
+Japanese Kanji	早起きする	はやおきする	common_word
+Japanese Kanji	早朝	そうちょう	common_word
+Japanese Kanji	起きる	おきる	common_word jlpt::n5
+Japanese Kanji	起こす	おこす	common_word jlpt::n4
+Japanese Kanji	起立する	きりつする	common_word
+Japanese Kanji	牛	うし	common_word jlpt::n3
+Japanese Kanji	使う	つかう	common_word jlpt::n5
+Japanese Kanji	大使	たいし	common_word jlpt::n3
+Japanese Kanji	お使い	おつかい	common_word jlpt::n1
+Japanese Kanji	働く	はたらく	common_word jlpt::n5
+Japanese Kanji	連れて帰る	つれてかえる	
+Japanese Kanji	国連	こくれん	common_word jlpt::n1
+Japanese Kanji	連休	れんきゅう	common_word jlpt::n1
+Japanese Kanji	別れる	わかれる	common_word jlpt::n4
+Japanese Kanji	別に	べつに	common_word jlpt::n3
+Japanese Kanji	別々	べつべつ	common_word jlpt::n2
+Japanese Adverbs	別に（べつに）	(not) particularly; (not) especially; (not) specially	common_word jlpt::n3
+Japanese Vocabulary	別々（べつべつ）	separate; respective	common_word jlpt::n2
+Japanese Vocabulary	国連（こくれん）	United Nations	common_word jlpt::n1
+Japanese Vocabulary	連休（れんきゅう）	consecutive holidays	common_word jlpt::n1
+Japanese Vocabulary	大使（たいし）	ambassador	common_word jlpt::n3
+Japanese Vocabulary	お使い（おつかい）	errand; mission;&nbsp;	common_word jlpt::n1
+Japanese Vocabulary	牛（うし）	caw	common_word jlpt::n3
+Japanese Verbs	起こす（おこす）	to wake someone; to wake someone up, Group I	common_word jlpt::n4
+Japanese Verbs	早起きする（はやおきする）	to wake up early, Group III	common_word
+Japanese Vocabulary	早朝（そうちょう）	early morning	common_word
+Japanese Vocabulary	神様（かみさま）	God	common_word jlpt::n2
+Japanese Vocabulary	神道（しんとう）	Shinto; Shintoism​	common_word
+Japanese Vocabulary	こうべし	Kobe City	
+Japanese Vocabulary	昔々（むかしむかし）	long ago; once upon a time	
+Japanese Vocabulary	人々（ひとびと）	people; men and women	common_word
+Japanese Vocabulary	昔（むかし）	the old days; the past; former times	common_word jlpt::n4
+Japanese Vocabulary	昔話（むかしばなし）	old tale	common_word
+Japanese Vocabulary	大昔（おおむかし）	ancient times; prehistoric times;	
+Japanese Vocabulary	旅（たび）	journey	common_word jlpt::n3
+Japanese Adverbs	あるいて	On foot&nbsp;	common_word jlpt::n5
+Japanese Kanji	物	もの	common_word jlpt::n5
+Japanese Kanji	食べ物	たべもの	common_word jlpt::n5
+Japanese Kanji	飲み物	のみもの	common_word jlpt::n5
+Japanese Kanji	買い物	かいもの	common_word jlpt::n5
+Japanese Kanji	動物	どうぶつ	common_word jlpt::n5 leech
+Japanese Kanji	鳥	とり	common_word jlpt::n5
+Japanese Kanji	焼き鳥	やきとり	common_word
+Japanese Kanji	白鳥	はくちょう	common_word
+Japanese Kanji	料	りょう	common_word jlpt::n1
+Japanese Kanji	料理	りょうり	common_word jlpt::n5
+Japanese Kanji	料金	りょうきん	common_word jlpt::n3
+Japanese Kanji	理	り	common_word
+Japanese Kanji	特に	とくに	common_word jlpt::n4
+Japanese Kanji	特別な	とくべつな	
+Japanese Vocabulary	動物（どうぶつ）	animal	common_word jlpt::n5
+Japanese Vocabulary	鳥（とり）	bird	common_word jlpt::n5
+Japanese Vocabulary	白鳥（はくちょう）	swan	common_word
+Japanese Vocabulary	給料（きゅうりょう）	salary; wages; pay	common_word jlpt::n3 leech
+Japanese Vocabulary	料金（りょうきん）	fee; charge; fare	common_word jlpt::n3
+Japanese Adverbs	特に（とくに）	particularly; especially; in particular; expressly	common_word jlpt::n4 leech
+Japanese Adjectives	特別（とくべつ）	special; particular; extraordinary; exceptional; especial	common_word jlpt::n4 leech
+Japanese Kanji	ご飯	ごはん	common_word jlpt::n5
+Japanese Kanji	朝ご飯	あさごはん	common_word jlpt::n5
+Japanese Kanji	晩ご飯	ばんごはん	common_word jlpt::n5
+Japanese Kanji	肉	にく	common_word jlpt::n5
+Japanese Kanji	牛肉	ぎゅにく	common_word jlpt::n5
+Japanese Kanji	肉屋	にくや	
+Japanese Kanji	悪い	わるい	common_word jlpt::n5
+Japanese Kanji	気分が悪い	きぶんがわるい	
+Japanese Kanji	悪魔	あくま	common_word jlpt::n3
+Japanese Kanji	体	からだ	common_word jlpt::n5
+Japanese Kanji	体重	たいじゅう	common_word
+Japanese Kanji	空手	からて	common_word
+Japanese Kanji	港	みなと	common_word jlpt::n4
+Japanese Kanji	空港	くうこう	common_word jlpt::n4
+Japanese Kanji	神戸港	こうべこう	
+Japanese Kanji	着く	つく	common_word jlpt::n5
+Japanese Kanji	着る	きる	common_word jlpt::n5
+Japanese Kanji	着物	きもの	common_word jlpt::n4
+Japanese Kanji	大阪着	おおさかちゃく	
+Japanese Kanji	同級生	どうきゅうせい	common_word
+Japanese Kanji	同時	どうじ	common_word jlpt::n3
+Japanese Kanji	海	うみ	common_word jlpt::n5
+Japanese Kanji	日本海	にほんかい	common_word
+Japanese Kanji	海外	かいがい	common_word jlpt::n3
+Japanese Kanji	昼	ひる	common_word jlpt::n5
+Japanese Kanji	昼休み	ひるやすみ	common_word jlpt::n4
+Japanese Kanji	昼食	ちゅうしょく	common_word jlpt::n3
+Japanese Kanji	昼寝	ひるね	common_word jlpt::n2
+Japanese Kanji	昼ご飯	ひるごはん	common_word jlpt::n5
+Japanese Kanji	寝る	ねる	common_word jlpt::n5
+Japanese Vocabulary	牛肉（ぎゅうにく）	beef	common_word jlpt::n5
+Japanese Vocabulary	肉屋（にくや）	butcher's shop	
+Japanese Vocabulary	筋肉（きんにく）	muscle	common_word jlpt::n3
+Japanese Vocabulary	悪魔（あくま）	devil; demon	common_word jlpt::n3
+Japanese Vocabulary	体（からだ）	body	common_word jlpt::n5
+Japanese Vocabulary	体重（たいじゅう）	(body) weight	common_word
+Japanese Vocabulary	港（みなと）	harbour; harbor; port	common_word jlpt::n4
+Japanese Vocabulary	空港（くうこう）	airport	common_word jlpt::n4
+Japanese Vocabulary	着物（きもの）	1.&nbsp;kimono; Japanese traditional clothing<br>2.&nbsp;clothing; clothes	common_word jlpt::n4
+Japanese Vocabulary	着（ちゃく）	arrival; arriving at ...	common_word jlpt::n1
+Japanese Vocabulary	同僚（どうりょう）	coworker; co-worker; colleague; associate	common_word jlpt::n3 leech
+Japanese Vocabulary	同級生（どうきゅうせい）	classmate	common_word leech
+Japanese Vocabulary	同時（どうじ）	same time	common_word jlpt::n3
+Japanese Vocabulary	日本海（にほんかい）	Sea of Japan	common_word
+Japanese Vocabulary	海外（かいがい）	foreign; abroad; overseas	common_word jlpt::n3
+Japanese Vocabulary	海岸（かいがん）	coast; beach	common_word jlpt::n4
+Japanese Vocabulary	昼休み（ひるやすみ）	lunch break; noon recess	common_word jlpt::n4
+Japanese Vocabulary	昼食（ちゅうしょく）	lunch; midday meal (formal)	common_word jlpt::n3
+Japanese Vocabulary	昼寝（ひるね）	(afternoon) nap; sleeping during the day; siesta	common_word jlpt::n2
+Japanese Vocabulary	気分が悪い（きぶんがわるい）	feel sick; feel unwell	
+Japanese Adjectives	最悪（さいあく）	1.&nbsp;worst​<br>2.&nbsp;horrible; horrid; awful; terrible​	common_word leech
+Japanese Verbs	着く（つく）	to arrive at; to reach	common_word jlpt::n5
+Japanese Kanji	生き物	いきもの	common_word jlpt::n3
+Japanese Kanji	物語	ものがたり	common_word jlpt::n3
+Japanese Kanji	人物	じんぶつ	common_word jlpt::n3
+Japanese Kanji	生物	せいぶつ	common_word jlpt::n3
+Japanese Kanji	生物学	せいぶつがく	common_word
+Japanese Kanji	食料	しょくりょう	common_word jlpt::n3
+Japanese Kanji	理由	りゆう	common_word jlpt::n4
+Japanese Kanji	地理	ちり	common_word jlpt::n4
+Japanese Kanji	無理	むり	common_word jlpt::n4
+Japanese Kanji	安全	あんぜん	common_word jlpt::n4 leech
+Japanese Kanji	不安	ふあん	common_word jlpt::n3
+Japanese Kanji	夕食	ゆうしょく	common_word
+Japanese Kanji	悪口	わるぐち	common_word jlpt::n3
+Japanese Kanji	悪気	わるぎ	common_word
+Japanese Kanji	最悪	さいあく	common_word leech
+Japanese Kanji	悪人	あくにん	common_word
+Japanese Kanji	体操	たいそう	common_word jlpt::n2
+Japanese Kanji	青空	あおぞら	common_word
+Japanese Kanji	北海道	ほっかいどう	common_word
+Japanese Vocabulary	鋳物（いもの）	living thing; living creature; animal	
+Japanese Vocabulary	物語（ものがたり）	story; tale; narrative; account; fable; legend	common_word jlpt::n3
+Japanese Vocabulary	人物（じんぶつ）	person; character; figure	common_word jlpt::n3
+Japanese Vocabulary	生物（せいぶつ）	living thing; organism; creature	common_word jlpt::n3
+Japanese Vocabulary	生物学（せいぶつがく）	biology	common_word
+Japanese Vocabulary	食料（しょくりょう）	food (more formal)	common_word jlpt::n3
+Japanese Vocabulary	飲料（いんりょう）	beverage; drink​	common_word
+Japanese Vocabulary	飲料水（いんりょうすい）	drinking water	common_word
+Japanese Vocabulary	理由（りゆう）	reason; grounds; pretext; excuse; motive	common_word jlpt::n4 leech
+Japanese Vocabulary	地理（ちり）	geography	common_word jlpt::n4
+Japanese Adjectives	無理（むり）	1.&nbsp;impossible<br>2.&nbsp;unreasonable; unnatural; unjustifiable	common_word jlpt::n4
+Japanese Adjectives	安全（あんぜん）	safety; security​	common_word jlpt::n4 leech
+Japanese Adjectives	不安（ふあん）	anxiety; uneasiness; worry; apprehension; fear; insecurity; suspense	common_word jlpt::n3
+Japanese Vocabulary	夕食（ゆうしょく）	evening meal; dinner	common_word
+Japanese Vocabulary	悪口（わるぐち）	(verbal) abuse; speaking ill of people; bad-mouthing	common_word jlpt::n3
+Japanese Vocabulary	悪気（わるぎ）	ill will; malice; evil intent	common_word
+Japanese Vocabulary	悪人（あくにん）	bad person; villain	common_word
+Japanese Vocabulary	体操（たいそう）	gymnastics; physical exercises	common_word jlpt::n2
+Japanese Vocabulary	青空（あおぞら）	blue sky	common_word
+Japanese Vocabulary	お宅（おたく）	your house; your home; your family	common_word jlpt::n4
+Japanese Vocabulary	ゴルフ	golf	common_word
+Japanese Vocabulary	セーター	sweater; jumper	common_word jlpt::n5
+Japanese Vocabulary	咖哩（カレー）	rice and curry	common_word jlpt::n5
+Japanese Vocabulary	紅茶（こうちゃ）	black tea	common_word jlpt::n5
+Japanese Vocabulary	楽器（がっき）	musical instrument	common_word jlpt::n3
+Japanese Vocabulary	バイオリン	violin	common_word jlpt::n3
+Japanese Vocabulary	レポート	report; paper​	common_word jlpt::n4
+Japanese Vocabulary	広告（こうこく）	advertisement; advertising	common_word jlpt::n3
+Japanese Vocabulary	象（ぞう）	elephant	common_word jlpt::n3
+Japanese Vocabulary	約束（やくそく）	promise; agreement; arrangement; one's word; contract; pact	common_word jlpt::n4
+Japanese Verbs	編む（あむ）	to knit; to plait; to braid	common_word jlpt::n2
+Japanese Verbs	頑張る（がんばる）	to persevere; to persist; to keep at it; to hang on; to hold out; to do one's best	common_word
+Japanese Verbs	鳴く（なく）	to make sound (of an animal); to call; to cry; to whine; to sing; to chirp	common_word jlpt::n5
+Japanese Verbs	感動する（かんどうする）	being deeply moved emotionally; excitement; passion; inspiration; deep emotion; strong impression	common_word jlpt::n3
+Japanese Verbs	約束を守る（やくそくをまもる）	to keep a promise; to keep one's word​	
+Japanese Adjectives	嬉しい（うれしい）	happy; glad; pleased; delighted; overjoyed	common_word jlpt::n3
+Japanese Adjectives	悲しい（かなしい）	sad; miserable; unhappy; sorrowful	common_word jlpt::n4 leech
+Japanese Adjectives	辛い（からい）	spicy; hot	common_word jlpt::n5
+Japanese Adjectives	厳しい（きびしい）	severe; strict; rigid; unsparing; relentless	common_word jlpt::n4
+Japanese Adjectives	凄い（すごい）	amazing	common_word jlpt::n4
+Japanese Adjectives	駄目（だめ）	no good; not serving its purpose; useless; broken	common_word jlpt::n3
+Japanese Adjectives	幸せ（しあわせ）	happiness; good fortune; luck; blessing	common_word jlpt::n3
+Japanese Adjectives	色々（いろいろ）	various; a variety of; all sorts of; many&nbsp;	common_word jlpt::n5
+Japanese Vocabulary	選手（せんしゅ）	player (of a sport); athlete; team member	common_word jlpt::n3 leech
+Japanese Vocabulary	野球（やきゅう）	baseball	common_word
+Japanese Vocabulary	ビル	multi-floor building; multi-storey building​	common_word jlpt::n4
+Japanese Kanji	彼	かれ	common_word jlpt::n4
+Japanese Kanji	彼女	かのじょ	common_word jlpt::n4
+Japanese Kanji	彼ら	かれら	common_word jlpt::n3
+Japanese Kanji	時代	じだい	common_word jlpt::n4
+Japanese Kanji	九十年代	きゅうじゅうねんだい	
+Japanese Kanji	十代	じゅうだい	common_word
+Japanese Kanji	電気代	でんきだい	
+Japanese Kanji	代わりに	かわりに	
+Japanese Kanji	留学生	りゅうがくせい	common_word jlpt::n5
+Japanese Kanji	留学する	りゅうがくする	common_word jlpt::n3
+Japanese Kanji	留守	るす	common_word jlpt::n4
+Japanese Kanji	家族	かぞく	common_word jlpt::n5
+Japanese Kanji	父親	ちちおや	common_word jlpt::n3
+Japanese Kanji	親切な	しんせつな	
+Japanese Kanji	親しい	したしい	common_word jlpt::n3
+Japanese Kanji	親友	しんゆう	common_word jlpt::n3
+Japanese Kanji	母親	ははおや	common_word jlpt::n3
+Japanese Kanji	切る	きる	common_word jlpt::n5
+Japanese Kanji	切手	きって	common_word jlpt::n5
+Japanese Kanji	大切な	たいせつな	
+Japanese Kanji	英語	えいご	common_word jlpt::n5
+Japanese Kanji	英会話	えいかいわ	common_word
+Japanese Kanji	英国	えいこく	common_word
+Japanese Kanji	書店	しょてん	common_word jlpt::n2
+Japanese Kanji	去年	きょねん	common_word jlpt::n5
+Japanese Kanji	去る	さる	common_word jlpt::n3
+Japanese Kanji	急ぐ	いそぐ	common_word jlpt::n4
+Japanese Kanji	急に	きゅうに	common_word jlpt::n3 leech
+Japanese Kanji	急行	きゅうこう	common_word jlpt::n4 leech
+Japanese Kanji	特急	とっきゅう	common_word jlpt::n4
+Japanese Kanji	乗る	のる	common_word jlpt::n5
+Japanese Kanji	乗り物	のりもの	common_word jlpt::n4
+Japanese Kanji	乗車	じょうしゃ	common_word jlpt::n2 leech
+Japanese Kanji	乗馬	じょうば	common_word
+Japanese Kanji	本当に	ほんとうに	common_word
+Japanese Kanji	お弁当	おべんとう	common_word jlpt::n5
+Japanese Kanji	当時	とうじ	common_word jlpt::n3
+Japanese Kanji	当たる	あたる	common_word jlpt::n3
+Japanese Kanji	音楽	おんがく	common_word jlpt::n5
+Japanese Kanji	音	おと	common_word jlpt::n4
+Japanese Kanji	本音	ほんね	common_word jlpt::n1
+Japanese Kanji	楽しい	たのしい	common_word jlpt::n5
+Japanese Kanji	楽な	らくな	common_word jlpt::n3
+Japanese Kanji	楽器	がっき	common_word jlpt::n2
+Japanese Kanji	医者	いしゃ	common_word jlpt::n5
+Japanese Kanji	歯医者	はいしゃ	common_word jlpt::n4
+Japanese Kanji	医学	いがく	common_word jlpt::n4
+Japanese Kanji	医院	いいん	common_word
+Japanese Kanji	学者	がくしゃ	common_word jlpt::n3
+Japanese Kanji	読者	どくしゃ	common_word jlpt::n1 leech
+Japanese Vocabulary	彼ら（かれら）	they; them	common_word jlpt::n3
+Japanese Vocabulary	時代（じだい）	period; epoch; era; age	common_word jlpt::n4
+Japanese Vocabulary	電気代（でんきだい）	electricity bill; electric bill	
+Japanese Vocabulary	９０年代（きゅうじゅうねんだい）	the '90s; the nineties	
+Japanese Vocabulary	１０代（じゅうだい）	the tenth generation​<br>the teens (10-19); teenage	common_word
+Japanese Vocabulary	代わりに（かわりに）	instead of; in place of; as a substitute for	leech
+Japanese Vocabulary	留学生（りゅうがくせい）	overseas student; exchange student	common_word jlpt::n5
+Japanese Vocabulary	留守（るす）	absence; being away from home	common_word jlpt::n4
+Japanese Vocabulary	水族館（すいぞくかん）	aquarium	common_word
+Japanese Vocabulary	王族（おうぞく）	royalty; royal family	common_word
+Japanese Vocabulary	父親（ちちおや）	father（父親）	common_word jlpt::n3
+Japanese Vocabulary	両親（りょうしん）	parents; both parents	common_word jlpt::n5 leech
+Japanese Adjectives	親しい（したしい）	close (e.g. friend); familiar; friendly; intimate	common_word jlpt::n3
+Japanese Vocabulary	親友（しんゆう）	close friend; buddy;	common_word jlpt::n3
+Japanese Vocabulary	母親（ははおや）	mother	common_word jlpt::n3
+Japanese Adjectives	大切（たいせつ）	important; significant; serious; crucial	common_word jlpt::n5
+Japanese Vocabulary	英語（えいご）	English (language)​	common_word jlpt::n5
+Japanese Vocabulary	英会話（えいかいわ）	English conversation	common_word
+Japanese Vocabulary	英国（えいこく）	United Kingdom	common_word
+Japanese Vocabulary	英雄（えいゆう）	hero; heroine; great person	common_word jlpt::n1
+Japanese Vocabulary	書店（しょてん）	bookshop; bookstore (bigger)	common_word jlpt::n2
+Japanese Verbs	去る（さる）	to leave; to go away	common_word jlpt::n3
+Japanese Verbs	消去する（しょうきょする）	to erase; to delete	common_word jlpt::n1 leech
+Japanese Adverbs	急に（きゅうに）	swiftly; rapidly; quickly; immediately; hastily; hurriedly	common_word jlpt::n3
+Japanese Vocabulary	急行（きゅうこう）	express (train)​	common_word jlpt::n4 leech
+Japanese Vocabulary	特急（とっきゅう）	limited express train	common_word jlpt::n4
+Japanese Vocabulary	乗り物（のりもの）	vehicle; (means of) transport	common_word jlpt::n4
+Japanese Vocabulary	乗車（じょうしゃ）	boarding (a train, bus, etc.); getting into (e.g. a taxi)	common_word jlpt::n2 leech
+Japanese Vocabulary	乗馬（じょうば）	horse riding; horseback riding	common_word
+Japanese Vocabulary	当時（とうじ）	at that time; in those days	common_word jlpt::n3 leech
+Japanese Verbs	当たる（あたる）	to be hit; to strike​ intransitive&nbsp;	common_word jlpt::n3
+Japanese Vocabulary	発音（はつおん）	pronunciation	common_word jlpt::n4
+Japanese Vocabulary	音（おと）	sound; noise	common_word jlpt::n4
+Japanese Vocabulary	本音（ほんね）	real intention; motive; true opinion	common_word jlpt::n1
+Japanese Adjectives	楽（らく）	comfort; ease	common_word jlpt::n3
+Japanese Vocabulary	医学（いがく）	medical science; medicine	common_word jlpt::n4
+Japanese Vocabulary	医院（いいん）	doctor's office; doctor's surgery; clinic	common_word
+Japanese Vocabulary	学者（がくしゃ）	scholar; academic; scientist	common_word jlpt::n3
+Japanese Vocabulary	読者（どくしゃ）	reader	common_word jlpt::n1
+Japanese Vocabulary	若者（わかもの）	young person; youngster; young people;	common_word leech
+Japanese Vocabulary	お会計（おかいけい）	bill (at a restaurant), check	common_word
+Japanese Vocabulary	経験（けいけん）	experience	common_word jlpt::n3
+Japanese Vocabulary	予定（よてい）	plan / schedule	common_word jlpt::n4 leech
+Japanese Vocabulary	習慣（しゅうかん）	habit / custom	common_word jlpt::n4 leech
+Japanese Vocabulary	締め切り（しめきり）	deadline	common_word jlpt::n2
+Japanese Vocabulary	番組（ばんぐみ）	TV/radio program	common_word jlpt::n4
+Japanese Vocabulary	税金（ぜいきん）	tax	common_word jlpt::n3
+Japanese Vocabulary	発表（はっぴょう）	presentation / announcement	common_word jlpt::n3
+Japanese Vocabulary	保険（ほけん）	insurance	common_word jlpt::n1
+Japanese Vocabulary	割引券（わりびきけん）	discount coupon	leech
+Japanese Vocabulary	履歴書（りれきしょ）	resume / CV	common_word
+Japanese Verbs	誘う（さそう）	to invite	common_word jlpt::n3
+Japanese Verbs	相談する（そうだんする）	to consult / to discuss	common_word jlpt::n3
+Japanese Verbs	諦める（あきらめる）	to give up	common_word jlpt::n3 leech
+Japanese Verbs	似合う（にあう）	to suit / to look good (on someone)	common_word jlpt::n3
+Japanese Verbs	探す（さがす）	to look for / to search	common_word jlpt::n4 leech
+Japanese Verbs	観光する（かんこうする）	to do sightseeing	common_word jlpt::n3
+Japanese Grammar	冊 (さつ)	counter for bound volumes (books, magazines)	
+Japanese Grammar	本 (ほん)	counter for long, cylindrical objects (bottles, pens, umbrellas)	
+Japanese Grammar	個 (こ)	counter for small objects	
+Japanese Grammar	匹 (ひき)	counter for small animals (cats, dogs, fish)	
+Japanese Grammar	回 (かい)	counter for occurrences (times)	
+Japanese Grammar	わたし{{c1::は}} がくせい {{c2::です}}。(I am a student.)	X は Y です — topic は + noun/adjective + です (polite copula).	genki::ch01 grammar::xはyです
+Japanese Grammar	これ{{c1::は}} なん{{c2::ですか}}。(What is this?)	か at sentence end = question. No rising intonation mark needed.	genki::ch01 grammar::question_ka
+Japanese Grammar	"これ{{c1::は}} やまださん{{c2::の}} ほん です。(This is Yamada-san&#x27;s book.)"	の = possession/association. A の B = B belonging to A.	genki::ch01 grammar::no_possession
+Japanese Grammar	あなた{{c1::は}} にほんじん {{c2::ですか}}。(Are you Japanese?)	Yes/no question: X は Y ですか。Answer: はい、そう です。/ いいえ、そう じゃ ありません。	genki::ch01 grammar::xはyですか
+Japanese Grammar	せんせい{{c1::は}} だれ{{c2::ですか}}。(Who is the teacher?)	だれ = who. Used with は + ですか to ask about identity.	genki::ch01 grammar::dare_who
+Japanese Grammar	{{c1::これ}} は わたし の かばん です。(This is my bag.)	これ=this (near speaker), それ=that (near listener), あれ=that over there.	genki::ch02 grammar::kore_sore_are
+Japanese Grammar	{{c1::この}} ほん は たかい です。(This book is expensive.)	この/その/あの must directly precede a noun. Unlike これ/それ/あれ which stand alone.	genki::ch02 grammar::kono_sono_ano
+Japanese Grammar	トイレ は {{c1::どこ}} ですか。(Where is the bathroom?)	どこ = where. ここ = here, そこ = there, あそこ = over there.	genki::ch02 grammar::doko_where
+Japanese Grammar	わたし は がくせい です。やまださん {{c1::も}} がくせい です。(I am a student. Yamada-san is also a student.)	"も replaces は to mean &#x27;also/too&#x27;."	genki::ch02 grammar::mo_also
+Japanese Grammar	これ は にほんご {{c1::じゃ ありません}}。(This is not Japanese.)	じゃ ありません = polite negative of です. Casual: じゃない。	genki::ch02 grammar::jya_arimasen
+Japanese Grammar	まいにち にほんご を {{c1::べんきょう します}}。(I study Japanese every day.)	Polite present/future: verb stem + ます. を marks the direct object.	genki::ch03 grammar::verb_masu
+Japanese Grammar	がっこう {{c1::へ}} いきます。(I go to school.)	"へ (read &#x27;e&#x27;) = direction/toward. Emphasizes direction of movement."	genki::ch03 grammar::particles_he_de_to
+Japanese Grammar	としょかん {{c1::で}} べんきょう します。(I study at the library.)	で = location where an action takes place.	genki::ch03 grammar::particles_he_de_to
+Japanese Grammar	ともだち {{c1::と}} えいが を みます。(I watch a movie with a friend.)	と = together with (someone).	genki::ch03 grammar::particles_he_de_to
+Japanese Grammar	なんじ {{c1::に}} おきます か。(What time do you wake up?)	に marks specific time points: clock times, days, months, years. NOT used with まいにち, きのう, あした.	genki::ch03 grammar::ni_time
+Japanese Grammar	きのう えいが を {{c1::みました}}。(I watched a movie yesterday.)	Polite past: replace ます with ました。	genki::ch04 grammar::mashita_masen
+Japanese Grammar	あした がっこう へ {{c1::いきません}}。(I will not go to school tomorrow.)	Polite negative: replace ます with ません。	genki::ch04 grammar::mashita_masen
+Japanese Grammar	この えいが は {{c1::おもしろい}} です。(This movie is interesting.)	い-adjective + です. い-adjectives conjugate on their own.	genki::ch05 grammar::i_adjective
+Japanese Grammar	きのう は {{c1::さむかった}} です。(Yesterday was cold.)	い-adj past affirmative: drop い → かった。さむい → さむかった。	genki::ch05 grammar::i_adjective
+Japanese Grammar	このへや は {{c1::しずか}} です。(This room is quiet.)	な-adjective + です. Needs な when directly modifying a noun: しずかな へや。	genki::ch05 grammar::na_adjective
+Japanese Grammar	すし が {{c1::すき}} です。(I like sushi.)	すき (な) = like. The thing liked is marked with が, not を。	genki::ch05 grammar::suki_kirai
+Japanese Grammar	"いっしょに たべ{{c1::ましょう}}。(Let&#x27;s eat together.)"	"ましょう = let&#x27;s do ~. Invitation or suggestion."	genki::ch05 grammar::mashou
+Japanese Grammar	"このりょうり は {{c1::すきじゃ ありません}}。(I don&#x27;t like this food.)"	な-adjective negative: adj + じゃ ありません. Past negative: じゃ ありませんでした.	genki::ch04 grammar::na_adj_negative
+Japanese Grammar	まど を あけ{{c1::てください}}。(Please open the window.)	て-form + ください = please do ~.	genki::ch08 grammar::te_kudasai_naide
+Japanese Grammar	ここ で しゃしん を とっ{{c1::ても いい}} ですか。(May I take a photo here?)	て-form + も いい ですか = may I ~? Permission request.	genki::ch06 grammar::temo_ii_tewa_ikemasen
+Japanese Grammar	ここ で たべ{{c1::ては いけません}}。(You must not eat here.)	て-form + は いけません = must not ~. Prohibition.	genki::ch06 grammar::temo_ii_tewa_ikemasen
+Japanese Grammar	"としょかん で {{c1::はなさないで}} ください。(Please don&#x27;t talk in the library.)"	"Negative: ないで ください = please don&#x27;t ~."	genki::ch08 grammar::te_kudasai_naide
+Japanese Grammar	いま なに を し{{c1::ていますか}}。(What are you doing now?)	て-form + います = ongoing action (progressive).	genki::ch07 grammar::te_imasu
+Japanese Grammar	まいにち コーヒー を {{c1::のんでいます}}。(I drink coffee every day.)	て-form + います also expresses habitual actions.	genki::ch07 grammar::te_imasu
+Japanese Grammar	シャワー を あびて{{c1::から}}、ごはん を たべます。(After taking a shower, I eat breakfast.)	て-form + から = after doing ~. First action must be complete before second begins.	genki::ch17 grammar::te_kara
+Japanese Grammar	かれ は けっこん {{c1::しています}}。(He is married.)	て-form + います can express a resultant state.	genki::ch07 grammar::te_imasu
+Japanese Grammar	にほん に {{c1::いきたい}} です。(I want to go to Japan.)	Verb stem + たい です = want to do ~. Conjugates like い-adjective.	genki::ch11 grammar::tai_want
+Japanese Grammar	おんがく を き{{c1::きながら}}、べんきょう します。(I study while listening to music.)	Verb stem + ながら = while doing ~. The ながら action is secondary/simultaneous.	genki::ch18 grammar::nagara_while
+Japanese Grammar	つくえ の うえ に ほん が {{c1::あります}}。(There is a book on the desk.)	あります = exists (inanimate). に marks location, が marks subject.	genki::ch04 grammar::arimasu_imasu
+Japanese Grammar	こうえん に こども が {{c1::います}}。(There are children in the park.)	います = exists (animate: people, animals).	genki::ch04 grammar::arimasu_imasu
+Japanese Grammar	ゆうびんきょく は えき の {{c1::となり}} に あります。(The post office is next to the station.)	Location nouns: となり(next to), まえ(front), うしろ(behind), なか(inside), うえ(on top), した(below).	genki::ch04 grammar::arimasu_imasu
+Japanese Grammar	あした あめ が ふる {{c1::と おもいます}}。(I think it will rain tomorrow.)	Plain form + とおもいます = I think that ~.	genki::ch08 grammar::to_omoimasu_iimasu
+Japanese Grammar	やまださん は くる {{c1::と いいました}}。(Yamada-san said she would come.)	Plain form + といいます/いいました = say/said that ~.	genki::ch08 grammar::to_omoimasu_iimasu
+Japanese Grammar	たなかさん は にほんじん {{c1::だ}} と おもいます。(I think Tanaka-san is Japanese.)	Noun/な-adj in plain form uses だ before と: noun + だ と おもいます。	genki::ch08 grammar::da_plain_copula
+Japanese Grammar	このえいが は おもしろく{{c1::ない}} と おもいます。(I think this movie is not interesting.)	い-adj negative plain: おもしろい → おもしろくない。	genki::ch08 grammar::to_omoimasu_iimasu
+Japanese Grammar	すし を たべた {{c1::こと が あります}}。(I have eaten sushi before.)	Past plain + ことがあります = have done ~ before (experiential perfect).	genki::ch11 grammar::koto_ga_aru
+Japanese Grammar	やすみの ひ は えいが を み{{c1::たり}}、ほん を よん{{c2::だり}} します。(On days off, I do things like watch movies and read books.)	た-form + り ～ た-form + り します = do things like A and B. Non-exhaustive list.	genki::ch11 grammar::tari_tari_suru
+Japanese Grammar	もっと べんきょう すれば よかった {{c1::のに}}。(I should have studied more, but...)	Expressing regret or unexpected result. のに at end of sentence shows contrast with what was hoped/expected.	genki::ch22 grammar::noni_regret
+Japanese Grammar	きょねん にほん に いっ{{c1::た}} とき、さくら が さいて いました。(When I went to Japan last year, the cherry blossoms were blooming.)	past plain + とき = when (someone did something). Present plain + とき = when (someone does/is doing something).	genki::ch16 grammar::toki_when
+Japanese Grammar	バス {{c1::より}} でんしゃ の ほう が はやい です。(The train is faster than the bus.)	A より B のほうが adj = B is more [adj] than A. より marks the standard of comparison.	genki::ch10 grammar::comparison
+Japanese Grammar	このみっつ の なかで、どれ が {{c1::いちばん}} おいしい ですか。(Among these three, which is the most delicious?)	いちばん + adjective = most [adj]. Often: ～のなかで いちばん～。	genki::ch10 grammar::comparison
+Japanese Grammar	ふゆ より なつ {{c1::の ほうが}} すき です。(I like summer more than winter.)	A より B のほうが = prefer B over A / B is more ~ than A.	genki::ch10 grammar::no_hou_ga
+Japanese Grammar	"あめ が ふっ{{c1::たら}}、うち に います。(If it rains, I&#x27;ll stay home.)"	た-form + ら = if/when. Works for hypotheticals and temporal sequences.	genki::ch17 grammar::tara_conditional
+Japanese Grammar	まいにち くすり を のま{{c1::なければ なりません}}。(I must take medicine every day.)	Negative stem + なければ なりません = must do ~. Also: なければ いけません。	genki::ch12 grammar::nakereba_nakutemo
+Japanese Grammar	"あした は こなく{{c1::ても いいです}}。(You don&#x27;t have to come tomorrow.)"	Negative て-form + も いいです = don't have to ~.	genki::ch17 grammar::nakereba_nakutemo
+Japanese Grammar	もし じかん が あっ{{c1::たら}}、てつだって ください。(If you have time, please help me.)	もし + たら for hypothetical conditionals.	genki::ch17 grammar::tara_conditional
+Japanese Grammar	"おかね が あれ{{c1::ば}}、りょこう します。(If I have money, I&#x27;ll travel.)"	ば-conditional: Group 1 u→えば, い-adj drop い→ければ. Expresses a sufficient condition.	genki::ch22 grammar::ba_conditional
+Japanese Grammar	もっと はやく おきれ{{c1::ば}} よかった。(I should have woken up earlier.)	ば + よかった = should have done / it would have been better if ~. Expresses regret.	genki::ch18 grammar::ba_yokatta_regret
+Japanese Grammar	きのう かった {{c1::ほん}} は おもしろい です。(The book I bought yesterday is interesting.)	Relative clause + noun: [plain form clause] noun. Clauses precede the noun in Japanese.	genki::ch09 grammar::relative_clause
+Japanese Grammar	かれ が つくっ{{c1::た}} りょうり は おいしかった です。(The food he made was delicious.)	Subject in relative clause marked by が (not は).	genki::ch09 grammar::relative_clause
+Japanese Grammar	わたし は いぬ に か{{c1::まれました}}。(I was bitten by a dog.)	Passive: Group 1 u→areru, Group 2 stem+rareru, する→される. Agent marked by に。	genki::ch21 grammar::passive_voice
+Japanese Grammar	このはなし は だれ に も し{{c1::られています}}。(This story is known by everyone.)	Passive + ています for a state resulting from a passive action. Known = しられている.	genki::ch21 grammar::passive_te_imasu
+Japanese Grammar	わたし は かんじ が よ{{c1::めます}}。(I can read kanji.)	Potential: Group 1 u→える, Group 2 stem+られる, する→できる. Object often marked by が。	genki::ch13 grammar::potential_form
+Japanese Grammar	"この もんだい は むずかしくて、とけ{{c1::ません}}。(This problem is too hard; I can&#x27;t solve it.)"	Potential negative: potential stem + ません。	genki::ch13 grammar::potential_form
+Japanese Grammar	せんせい は がくせい に さくぶん を か{{c1::かせました}}。(The teacher made the students write a composition.)	Causative: Group 1 u→aseru, Group 2 stem+させる. Causee marked by に, object by を。	genki::ch22 grammar::causative
+Japanese Grammar	こどもに やさい を た{{c1::べさせました}}。(I made my child eat vegetables.)	Causative with を: when the causee does a transitive verb, use に for the causee and を for the object.	genki::ch22 grammar::causative_ni_wo
+Japanese Grammar	すこし はやく かえら{{c1::せて ください}}。(Please let me go home a little early.)	Causative て-form + ください = please let me do ~.	genki::ch22 grammar::causative
+Japanese Grammar	わたし は はは に ピアノ を なら{{c1::わされました}}。(I was made to learn piano by my mother.)	Causative-passive = being made to do something (often unwillingly). Causative stem + passive ending.	genki::ch23 grammar::causative_passive
+Japanese Grammar	ともだち に プレゼント を かっ{{c1::てあげました}}。(I bought a present for my friend.)	て-form + あげる = do something FOR someone (speaker gives benefit outward).	genki::ch16 grammar::te_giving_receiving
+Japanese Grammar	せんせい に かんじ を おし{{c1::えてもらいました}}。(I had the teacher teach me kanji. / I received the favor of being taught kanji.)	て-form + もらう = receive the favor of someone doing something. Subject receives benefit. もらう = receive.	genki::ch16 grammar::te_morau
+Japanese Grammar	ともだち が しゅくだい を てつだっ{{c1::てくれました}}。(My friend helped me with my homework.)	て-form + くれる = someone does something for me/my in-group. Giver is subject.	genki::ch16 grammar::te_giving_receiving
+Japanese Grammar	たかければ {{c1::たかい ほど}}、いい と おもいます。(The more expensive it is, the better I think it is.)	ば-form + dictionary form + ほど = the more ~, the more ~.	genki::ch22 grammar::ba_hodo
+Japanese Grammar	にほんご は べんきょう すれ{{c1::ば するほど}}、おもしろく なります。(The more you study Japanese, the more interesting it becomes.)	する verb: すれば するほど。	genki::ch22 grammar::ba_hodo
+Japanese Grammar	すみません、ここ に なまえ を {{c1::かいてください}}。(Please write your name here.)	て-form + ください = please do ~. かく → かいて (て-form of Group 1 verb with く→いて change).	genki::ch06 grammar::te_kudasai
+Japanese Grammar	しずか に {{c1::してください}}。(Please be quiet.)	する → して (irregular て-form). してください is very common for behavioral requests.	genki::ch06 grammar::te_kudasai
+Japanese Grammar	"えんぴつ で {{c1::かかないで ください}}。(Please don&#x27;t write in pencil.)"	"Negative request: verb ない-form + で ください = please don&#x27;t ~. かく → かかない → かかないでください."	genki::ch08 grammar::naide_kudasai
+Japanese Grammar	"じしょ を {{c1::つかわないで ください}}。(Please don&#x27;t use a dictionary.)"	つかう → つかわない → つかわないでください. Group 1 verb: う→わない for negative.	genki::ch08 grammar::naide_kudasai
+Japanese Grammar	もう すこし {{c1::ゆっくり はなしてください}}。(Please speak a little more slowly.)	Adverb + てください: もうすこし (a little more) + ゆっくり (slowly) modifies the request.	genki::ch06 grammar::te_kudasai
+Japanese Grammar	このへや に {{c1::はいっても いい}} ですか。(May I enter this room?)	て-form + も いい ですか = may I ~? はいる → はいって → はいってもいいですか。	genki::ch06 grammar::temo_ii
+Japanese Grammar	すこし {{c1::やすんでも いい}} ですか。(Is it okay if I rest a little?)	やすむ → やすんで (て-form). Polite request for permission to do something.	genki::ch06 grammar::temo_ii
+Japanese Grammar	ここ で たばこ を {{c1::すっては いけません}}。(You must not smoke here.)	て-form + は いけません = must not ~. すう → すって → すってはいけません。	genki::ch06 grammar::tewa_ikemasen
+Japanese Grammar	じゅぎょうちゅう に けいたい を {{c1::つかっては いけません}}。(You must not use your phone during class.)	つかう → つかって → つかってはいけません. Common prohibition pattern.	genki::ch06 grammar::tewa_ikemasen
+Japanese Grammar	ここ に くるま を {{c1::とめても いい}} ですか。— {{c2::いいえ、とめては いけません}}。(May I park the car here? — No, you must not.)	Question and answer pair: permission request and prohibition. Reinforces both patterns together.	genki::ch06 grammar::temo_ii
+Japanese Grammar	あに は いま シャワー を {{c1::あびています}}。(My older brother is taking a shower now.)	Progressive use: action currently in progress. あびる → あびて → あびています。	genki::ch07 grammar::te_imasu_progressive
+Japanese Grammar	かのじょ は まいあさ ジョギング を {{c1::しています}}。(She jogs every morning.)	Habitual use: repeated action as a routine. する → して → しています。	genki::ch07 grammar::te_imasu_habitual
+Japanese Grammar	でんき が {{c1::ついています}}。(The light is on.)	Resultant state: つく (to turn on) → ついて → ついています. The light turned on and remains on.	genki::ch07 grammar::te_imasu_state
+Japanese Grammar	まど が {{c1::あいています}}。(The window is open.)	Resultant state: あく (to open, intransitive) → あいて → あいています. Different from あけています (someone is opening it).	genki::ch07 grammar::te_imasu_state
+Japanese Grammar	かれ は めがね を {{c1::かけています}}。(He is wearing glasses.)	Wearing/carrying state: かける → かけて → かけています. For glasses. Other wear verbs: きています (clothes), はいています (pants/shoes).	genki::ch07 grammar::te_imasu_state
+Japanese Grammar	たなかさん は どこ に {{c1::すんでいますか}}。(Where does Tanaka-san live?)	すむ (to live/reside) → すんで → すんでいます. Habitual/ongoing state of residence.	genki::ch07 grammar::te_imasu_habitual
+Japanese Grammar	わたし は にほんご を {{c1::べんきょうしています}}。(I am studying Japanese. / I study Japanese.)	Both progressive (right now) and habitual (ongoing activity) readings are possible depending on context.	genki::ch07 grammar::te_imasu_progressive
+Japanese Grammar	てを {{c1::あらってから}}、ごはん を たべます。(I eat after washing my hands.)	て-form + から = after doing ~. The first action must be fully completed before the second begins.	genki::ch17 grammar::te_kara_after
+Japanese Grammar	だいがく を {{c1::そつぎょうしてから}}、はたらきたい です。(I want to work after graduating from university.)	てから can connect to たい or other verb forms: after A, want to do B.	genki::ch17 grammar::te_kara_after
+Japanese Grammar	にほん に {{c1::きてから}}、にほんご が うまく なりました。(Since coming to Japan, my Japanese has improved.)	"てから can also mean &#x27;since ~&#x27; when describing a change that followed an event."	genki::ch17 grammar::te_kara_after
+Japanese Grammar	しゅくだい を {{c1::してから}}、テレビ を みます。(I watch TV after doing my homework.)	する → して → してから. Very common daily routine pattern.	genki::ch17 grammar::te_kara_after
+Japanese Grammar	なつやすみ に うみ で {{c1::およぎたい}} です。(I want to swim in the ocean during summer vacation.)	verb stem + たい = want to do ~. およぐ → およぎ → およぎたい。	genki::ch11 grammar::tai_want
+Japanese Grammar	なに が {{c1::たべたい}} ですか。(What do you want to eat?)	たい with が for the desired object (が or を both acceptable).	genki::ch11 grammar::tai_want
+Japanese Grammar	もう うち に {{c1::かえりたかった}} です。(I wanted to go home already.)	たい past: たかった. たい conjugates like an い-adjective: たい→たかった, たくない, たくなかった.	genki::ch11 grammar::tai_want
+Japanese Grammar	"さむくて、どこ にも {{c1::いきたくない}} です。(It&#x27;s cold and I don&#x27;t want to go anywhere.)"	たい negative: たくない. どこにも + negative = nowhere / not anywhere.	genki::ch11 grammar::tai_want
+Japanese Grammar	しょうらい、せんせい に {{c1::なりたい}} です。(In the future, I want to become a teacher.)	なる (to become) + たい. Career/life goal expression. に marks the target state with なる.	genki::ch11 grammar::tai_want
+Japanese Grammar	"あるき{{c1::ながら}} スマホ を みるのは あぶない です。(It&#x27;s dangerous to look at your phone while walking.)"	verb stem + ながら = while doing ~. The ながら action is the secondary/background action.	genki::ch18 grammar::nagara_while
+Japanese Grammar	コーヒー を のみ{{c1::ながら}}、しんぶん を よみます。(I read the newspaper while drinking coffee.)	のむ → のみ + ながら. Both actions share the same subject — ながら cannot have different subjects.	genki::ch18 grammar::nagara_while
+Japanese Grammar	うた を うたい{{c1::ながら}}、りょうり を します。(I cook while singing.)	うたう → うたい + ながら. The main action (りょうりをします) comes at the end.	genki::ch18 grammar::nagara_while
+Japanese Grammar	なき{{c1::ながら}}、えいが を みました。(I watched the movie while crying.)	なく → なき + ながら. ながら can express emotional state accompanying an action.	genki::ch18 grammar::nagara_while
+Japanese Grammar	れいぞうこ に たまご が {{c1::あります}} か。(Are there eggs in the refrigerator?)	あります = exists (inanimate). に marks the location, が marks the existing thing.	genki::ch07 grammar::arimasu_existence
+Japanese Grammar	そこ に だれ か {{c1::いますか}}。(Is anyone there?)	います = exists (animate). だれか = someone. Use います for people and animals.	genki::ch07 grammar::imasu_existence
+Japanese Grammar	この ちかく に コンビニ が {{c1::ありますか}}。(Is there a convenience store near here?)	Asking about the existence of a place/thing. この ちかく に = near here.	genki::ch07 grammar::arimasu_existence
+Japanese Grammar	にわ に ねこ が さんびき {{c1::います}}。(There are three cats in the garden.)	Counter for animals: ひき/ぴき/びき. Animate → います。	genki::ch07 grammar::imasu_existence
+Japanese Grammar	ぎんこう は ゆうびんきょく の {{c1::むかい}} に あります。(The bank is across from the post office.)	むかい = across from / opposite. Key location nouns: となり, まえ, うしろ, なか, うえ, した, ひだり, みぎ, そば, ちかく, むかい.	genki::ch04 grammar::location_nouns
+Japanese Grammar	えき の {{c1::ちかく}} に おいしい レストラン が あります。(There is a good restaurant near the station.)	ちかく = near/nearby. そば also means near but is slightly more intimate/close.	genki::ch04 grammar::location_nouns
+Japanese Grammar	かばん の {{c1::なか}} に さいふ が あります。(There is a wallet inside the bag.)	なか = inside. Contrast with うえ (on top of) and した (below/under).	genki::ch04 grammar::location_nouns
+Japanese Grammar	こうえん の {{c1::となり}} に としょかん が あります。(There is a library next to the park.)	となり = next to (adjacent). Use for things directly beside each other. ちかく = generally near.	genki::ch04 grammar::location_nouns
+Japanese Grammar	テーブル の {{c1::した}} に ねこ が います。(There is a cat under the table.)	した = under/below. Common with います since cats are animate.	genki::ch04 grammar::location_nouns
+Japanese Grammar	あした は はれる {{c1::と おもいます}}。(I think it will be sunny tomorrow.)	plain form + と おもいます. For future predictions, the dictionary form is used before と.	genki::ch08 grammar::to_omoimasu
+Japanese Grammar	あの えいが は おもしろくない {{c1::と おもいます}}。(I think that movie is not interesting.)	Negative plain form before と: い-adj negative = おもしろくない. な-adj/noun: じゃない.	genki::ch08 grammar::to_omoimasu
+Japanese Grammar	かれ は もう うち に かえった {{c1::と おもいます}}。(I think he has already gone home.)	Past plain form + と おもいます for past-tense beliefs/guesses.	genki::ch08 grammar::to_omoimasu
+Japanese Grammar	この しごと は むずかしい {{c1::と おもっていました}}。(I thought this job would be difficult.)	と おもっていました = was thinking that ~. The ている form of おもう indicates an ongoing thought in the past.	genki::ch08 grammar::to_omoimasu
+Japanese Grammar	せんせい は あした テスト が ある {{c1::と いいました}}。(The teacher said there will be a test tomorrow.)	"plain form + と いいました = said that ~. Reports someone&#x27;s speech indirectly."	genki::ch08 grammar::to_iimasu
+Japanese Grammar	かれ は くる {{c1::と いっていました}}。(He was saying he would come.)	と いっていました = was saying that ~. ている form suggests the statement was made and perhaps repeated.	genki::ch08 grammar::to_iimasu
+Japanese Grammar	てんきよほう では あした あめ だ {{c1::と いっています}}。(The weather forecast is saying it will rain tomorrow.)	と いっています = is saying that ~. Used for ongoing reports like news, forecasts.	genki::ch08 grammar::to_iimasu
+Japanese Grammar	かのじょ は もう にほんご が わかる {{c1::と いいました}}。(She said she already understands Japanese.)	"Reporting someone&#x27;s positive claim. わかる = understand, used with が not を."	genki::ch08 grammar::to_iimasu
+Japanese Grammar	いちど も にほん に いった {{c1::こと が ありません}}。(I have never been to Japan.)	Negative experience: past plain + ことが ありません. いちども + negative = not even once / never.	genki::ch11 grammar::koto_ga_aru_experience
+Japanese Grammar	ふじさん に のぼった {{c1::こと が あります}} か。(Have you ever climbed Mt. Fuji?)	Asking about experience: past plain + ことが ありますか。	genki::ch11 grammar::koto_ga_aru_experience
+Japanese Grammar	たこ を たべた {{c1::こと が ありますか}}。— はい、{{c2::あります}}。(Have you ever eaten octopus? — Yes, I have.)	Short answer to experience question: はい、あります / いいえ、ありません。No need to repeat the full sentence.	genki::ch11 grammar::koto_ga_aru_experience
+Japanese Grammar	かぶき を みた {{c1::こと が あります}}。とても きれい でした。(I have seen Kabuki before. It was very beautiful.)	Experience followed by a description/reaction. Past experience sets context for the comment.	genki::ch11 grammar::koto_ga_aru_experience
+Japanese Grammar	しゅうまつ は ゲーム を し{{c1::たり}}、ともだち と あそん{{c2::だり}} します。(On weekends I do things like play games and hang out with friends.)	たり～たりする lists activities non-exhaustively. Implies these are examples, not the complete list.	genki::ch11 grammar::tari_tari_suru
+Japanese Grammar	こどもたち は そと で はしっ{{c1::たり}}、とびはね{{c2::たり}} していました。(The children were running around and jumping outside.)	たり～たりして いました for past ongoing activities. Describes lively, varied activity.	genki::ch11 grammar::tari_tari_suru
+Japanese Grammar	きぶん が よかっ{{c1::たり}}、わるかっ{{c2::たり}} します。(My mood goes back and forth between good and bad.)	たり～たりする with adjectives: い-adj past + たり. Expresses alternating states.	genki::ch11 grammar::tari_tari_suru
+Japanese Grammar	にほん では くつ を ぬい{{c1::だり}}、はい{{c2::たり}} することが おおい です。(In Japan, you take off and put on shoes frequently.)	Opposite actions with たり～たり to describe a recurring back-and-forth activity.	genki::ch11 grammar::tari_tari_suru
+Japanese Grammar	こどもの {{c1::とき}}、よく きのぼり を しました。(When I was a child, I often climbed trees.)	Noun + の + とき = when I was [noun]. こどものとき = when (I was) a child.	genki::ch16 grammar::toki_when
+Japanese Grammar	ひまな {{c1::とき}}、なに を しますか。(What do you do when you have free time?)	な-adjective + な + とき。	genki::ch16 grammar::toki_when
+Japanese Grammar	にほん に いる {{c1::とき}}、まいにち おすしを たべました。(When I was in Japan, I ate sushi every day.)	Present plain + とき = when (at the time of being in a state). Contrast: いったとき = when I went (completed action).	genki::ch16 grammar::toki_when
+Japanese Grammar	くすり を のむ {{c1::とき}}、みず を たくさん のんでください。(When you take medicine, please drink a lot of water.)	Dictionary form + とき = when doing ~. General instruction or advice.	genki::ch16 grammar::toki_when
+Japanese Grammar	うち を でた {{c1::とき}}、かぎ を わすれました。(When I left the house, I forgot my key.)	Past plain + とき = when (after the action was done). でた = left (past of でる).	genki::ch16 grammar::toki_when
+Japanese Grammar	もっと はやく いえば よかった {{c1::のに}}。(I should have said it sooner, but...)	"のに at sentence end expresses regret or frustration about what didn&#x27;t happen."	genki::ch22 grammar::noni_regret
+Japanese Grammar	かれ は わかい {{c1::のに}}、もう しゃちょう です。(Even though he is young, he is already a company president.)	のに in the middle of a sentence = even though / despite. Contrasts two surprising facts.	genki::ch22 grammar::noni_regret
+Japanese Grammar	"うんどうした {{c1::のに}}、ぜんぜん やせません。(Even though I exercised, I didn&#x27;t lose any weight at all.)"	Past plain + のに = even though (did A), (unexpectedly B). Expresses disappointment at a result.	genki::ch22 grammar::noni_regret
+Japanese Grammar	あんなに れんしゅう した {{c1::のに}}、しあい に まけました。(Even though I practiced so much, I lost the match.)	あんなに = to that extent / that much. Strong contrast with のに highlights the unfairness.	genki::ch22 grammar::noni_regret
+Japanese Grammar	でんしゃ より ひこうき の ほう が {{c1::はやい}} です。(An airplane is faster than a train.)	A より B のほうが adj = B is more [adj] than A. より marks the lesser of the two.	genki::ch10 grammar::yori_comparison
+Japanese Grammar	なつ より ふゆ の ほう が {{c1::すき}} です。(I like winter more than summer.)	すき (な-adj) works the same way: より B のほうが すきです = prefer B over A.	genki::ch10 grammar::yori_comparison
+Japanese Grammar	きのう より きょう の ほう が {{c1::さむい}} です。(Today is colder than yesterday.)	Comparing temporal states: きのうより = than yesterday. Works with any adjective.	genki::ch10 grammar::yori_comparison
+Japanese Grammar	にほん で {{c1::いちばん}} たかい やま は ふじさん です。(The highest mountain in Japan is Mt. Fuji.)	Location/group + で + いちばん + adj. で marks the scope of comparison.	genki::ch10 grammar::ichiban_superlative
+Japanese Grammar	きせつ の なかで {{c1::いちばん}} すき な きせつ は なん ですか。(What is your favorite season?)	～のなかで + いちばん + な-adjective + な + noun. Superlative question pattern.	genki::ch10 grammar::ichiban_superlative
+Japanese Grammar	このクラス で だれ が {{c1::いちばん}} せ が たかい ですか。(Who is the tallest in this class?)	いちばん with people: だれが いちばん～ですか。せがたかい = tall (lit. back/stature is high).	genki::ch10 grammar::ichiban_superlative
+Japanese Grammar	みっつの なかで、この かばん が {{c1::いちばん}} やすい です。(Among the three, this bag is the cheapest.)	みっつのなかで = among the three. Superlative narrows down from a stated group.	genki::ch10 grammar::ichiban_superlative
+Japanese Grammar	コーヒー と おちゃ と、{{c1::どちら}} が すき ですか。(Which do you like better, coffee or tea?)	AとBと + どちら(が) = which of A and B. どちら is more polite than どっち.	genki::ch10 grammar::dochira_which
+Japanese Grammar	バス と でんしゃ と、{{c1::どちら}} の ほうが べんり ですか。(Which is more convenient, the bus or the train?)	どちら の ほうが = which is more ~. The のほうが makes the comparison explicit.	genki::ch10 grammar::dochira_which
+Japanese Grammar	この ふたつ の うち、{{c1::どちら}} が あなた の かばん ですか。(Of these two, which is your bag?)	このふたつのうち = of these two. うち = among (for a defined set).	genki::ch10 grammar::dochira_which
+Japanese Grammar	にく と さかな と、{{c1::どちら}} の ほうが すき ですか。— {{c2::さかな の ほうが}} すき です。(Meat or fish, which do you prefer? — I prefer fish.)	Full Q&amp;A pair with どちら. Answer uses のほうが to specify the preferred option.	genki::ch10 grammar::dochira_which
+Japanese Grammar	うち に かえっ{{c1::たら}}、てを あらいます。(When I get home, I wash my hands.)	たら for sequential certainty: once A happens, B follows. Common for routines.	genki::ch17 grammar::tara_conditional
+Japanese Grammar	もし わたし が とりだっ{{c1::たら}}、そら を とびたい です。(If I were a bird, I would want to fly in the sky.)	Counterfactual/hypothetical: もし + たら expresses impossible or unlikely conditions.	genki::ch17 grammar::tara_conditional
+Japanese Grammar	"しごと が おわっ{{c1::たら}}、のみに いきましょう。(Once work is done, let&#x27;s go for a drink.)"	"たら + ましょう: once condition is met, let&#x27;s do ~. Plan contingent on an event."	genki::ch17 grammar::tara_conditional
+Japanese Grammar	ドア を あけ{{c1::たら}}、ねこ が いました。(When I opened the door, there was a cat.)	Discovery use of たら: describes an unexpected finding upon doing something. Very natural in storytelling.	genki::ch17 grammar::tara_conditional
+Japanese Grammar	もし じしん が おき{{c1::たら}}、どう します か。(What would you do if an earthquake happened?)	Disaster/emergency hypothetical with もし～たら. どうしますか = what will/would you do.	genki::ch17 grammar::tara_conditional
+Japanese Grammar	あした はやく おき{{c1::なければ なりません}}。(I must wake up early tomorrow.)	Verb negative stem + なければなりません = must do ~. おきる → おきない → おきなければ。	genki::ch12 grammar::nakereba_narimasen
+Japanese Grammar	パスポート を も{{c1::って いかなければ なりません}}。(I must bring my passport.)	もっていく (take with) → もっていかなければなりません. Compound verb in must-form.	genki::ch12 grammar::nakereba_narimasen
+Japanese Grammar	この くすり は まいにち のま{{c1::なければ いけません}}。(I must take this medicine every day.)	なければ いけません = alternate form of must. Slightly more casual than なければなりません.	genki::ch12 grammar::nakereba_narimasen
+Japanese Grammar	もっと やさい を たべ{{c1::なければ なりません}}。(I must eat more vegetables.)	たべる → たべない → たべなければなりません. Group 2 verb negative: stem + ない.	genki::ch12 grammar::nakereba_narimasen
+Japanese Grammar	レポート を こんしゅう じゅう に だ{{c1::さなければ なりません}}。(I must submit the report within this week.)	だす → ださない → ださなければなりません. こんしゅうじゅうに = within this week.	genki::ch12 grammar::nakereba_narimasen
+Japanese Grammar	"きょう は かいしゃ に いか{{c1::なくても いい}} です。(I don&#x27;t have to go to the company today.)"	"Negative て-form + も いいです = don&#x27;t have to ~. いく → いかない → いかなくてもいい."	genki::ch17 grammar::nakutemo_ii
+Japanese Grammar	"そのほん は かえさ{{c1::なくても いいです}}よ。(You don&#x27;t have to return that book.)"	かえす → かえさない → かえさなくてもいい. よ at end softens/confirms the statement.	genki::ch17 grammar::nakutemo_ii
+Japanese Grammar	"かんじ で か{{c1::かなくても いい}} ですか。(Is it okay if I don&#x27;t write it in kanji?)"	Permission to NOT do something: negative て-form + も いいですか. Asking to be excused from a task.	genki::ch17 grammar::nakutemo_ii
+Japanese Grammar	"しんぱい し{{c1::なくても いい}} ですよ。(You don&#x27;t need to worry.)"	する → しない → しなくてもいい. しんぱいする = to worry. Reassurance expression.	genki::ch17 grammar::nakutemo_ii
+Japanese Grammar	"やす{{c1::ければ}}、かいます。(If it&#x27;s cheap, I&#x27;ll buy it.)"	い-adjective ば-form: drop い → ければ. やすい → やすければ。	genki::ch22 grammar::ba_conditional
+Japanese Grammar	じかん が あれ{{c1::ば}}、てつだいます。(If I have time, I will help.)	ある → あれば. Group 1 verb ば-form: replace う-row with え-row + ば。	genki::ch22 grammar::ba_conditional
+Japanese Grammar	まっすぐ いけ{{c1::ば}}、えき が みえます。(If you go straight, you can see the station.)	"いく → いけば. Direction/instruction use of ば: if you do X, you&#x27;ll reach/find Y."	genki::ch22 grammar::ba_conditional
+Japanese Grammar	この ボタン を おせ{{c1::ば}}、でます。(If you press this button, it will come out.)	おす → おせば. Instructions and procedures commonly use ば-conditional.	genki::ch22 grammar::ba_conditional
+Japanese Grammar	しずか に すれ{{c1::ば}}、もっと たのしい でしょう。(If it were quieter, it would probably be more enjoyable.)	する → すれば. な-adj: しずかであれば or しずかなら (なら is more natural for な-adj).	genki::ch22 grammar::ba_conditional
+Japanese Grammar	かさ を もってくれ{{c1::ば よかった}}。(I should have brought an umbrella.)	ば-form + よかった = should have done ~ / it would have been better if ~. Expresses regret.	genki::ch18 grammar::ba_yokatta_regret
+Japanese Grammar	もっと はやく ねれ{{c1::ば よかった}}。(I should have gone to sleep earlier.)	ねる → ねれば → ねればよかった. Regret about a past decision.	genki::ch18 grammar::ba_yokatta_regret
+Japanese Grammar	あのとき、もっと がんばれ{{c1::ば よかった}} と おもいます。(I think I should have tried harder at that time.)	ばよかった + と おもいます: reflecting on a past regret. がんばる → がんばれば。	genki::ch18 grammar::ba_yokatta_regret
+Japanese Grammar	"そんな こと、いわなけれ{{c1::ば よかった}}。(I shouldn&#x27;t have said something like that.)"	Negative ば-form + よかった = should not have done ~. いわない → いわなければ → いわなければよかった.	genki::ch18 grammar::ba_yokatta_regret
+Japanese Grammar	これ は {{c1::わたし が とった}} しゃしん です。(This is a photo that I took.)	Relative clause modifying しゃしん: [subject が verb plain] + noun. Japanese relative clauses always precede the noun.	genki::ch09 grammar::relative_clause
+Japanese Grammar	あそこ に いる {{c1::ひと は だれ}} ですか。(Who is the person standing over there?)	いる (present) modifies ひと: [verb plain] + noun. The relative clause describes which person.	genki::ch09 grammar::relative_clause
+Japanese Grammar	むずかしい {{c1::と おもう}} もんだい は これ です。(This is the problem I think is difficult.)	Relative clause using と おもう before the noun. Embeds a complete thought as a modifier.	genki::ch09 grammar::relative_clause
+Japanese Grammar	はは が {{c1::つくった}} ケーキ は とても おいしかった です。(The cake that my mother made was very delicious.)	Subject in relative clause uses が (not は): はさ が つくった ケーキ. は would create a different structure.	genki::ch09 grammar::relative_clause
+Japanese Grammar	わたし が {{c1::すんでいる}} まち は しずか です。(The town I live in is quiet.)	すんでいる modifies まち. Note が (not は) marks the subject inside the relative clause.	genki::ch09 grammar::relative_clause
+Japanese Grammar	きのう {{c1::かった}} くつ は もう こわれました。(The shoes I bought yesterday already broke.)	Past plain in relative clause: かった modifies くつ. Expresses something about a specific noun.	genki::ch09 grammar::relative_clause
+Japanese Grammar	この しょうせつ は なつめ そうせき に {{c1::かかれました}}。(This novel was written by Natsume Soseki.)	Direct passive: object becomes subject. Agent marked by に. かく → かかれる → かかれました.	genki::ch21 grammar::passive_voice
+Japanese Grammar	わたし は こどもに {{c1::なかれました}}。(I was cried on by the child. / The child cried and it affected me.)	Adversative (suffering) passive: describes an action by someone else that inconveniences the subject. Common even with intransitive verbs.	genki::ch21 grammar::passive_voice
+Japanese Grammar	このえいが は せかいじゅう で {{c1::みられています}}。(This movie is watched/known throughout the world.)	Passive + ています for ongoing/habitual passive state. みる → みられる → みられています.	genki::ch21 grammar::passive_voice
+Japanese Grammar	わたし は さいふ を {{c1::ぬすまれました}}。(My wallet was stolen. / I had my wallet stolen.)	Possession passive: I was [stolen from] regarding my wallet. The owner is the subject, suffers the action.	genki::ch21 grammar::passive_voice
+Japanese Grammar	その けいかく は かいぎ で {{c1::けっていされました}}。(That plan was decided in the meeting.)	する-verb passive: けっていする → けっていされる → けっていされました. Common in formal/written contexts.	genki::ch21 grammar::passive_voice
+Japanese Grammar	このまち は えど じだい に {{c1::たてられました}}。(This town was built in the Edo period.)	Historical/factual passive. たてる → たてられる → たてられました. に marks time here, not agent.	genki::ch21 grammar::passive_voice
+Japanese Grammar	もう はし で たべ{{c1::られますか}}。(Can you eat with chopsticks yet?)	Group 2 potential: stem + られる. たべる → たべられる. もう = already/yet depending on polarity.	genki::ch13 grammar::potential_form
+Japanese Grammar	"むずかしくて、この かんじ が {{c1::よめません}}。(This kanji is too difficult; I can&#x27;t read it.)"	Group 1 potential: replace う with える. よむ → よめる → よめません (negative).	genki::ch13 grammar::potential_form
+Japanese Grammar	"でんしゃ が とまって、がっこう に {{c1::こられませんでした}}。(The train stopped and I couldn&#x27;t come to school.)"	くる → こられる (potential). Past negative: こられませんでした.	genki::ch13 grammar::potential_form
+Japanese Grammar	かれ は さんか {{c1::できません}} でした。(He was not able to participate.)	する → できる (potential, irregular). Past negative: できませんでした.	genki::ch13 grammar::potential_form
+Japanese Grammar	おかあさん は こども に やさい を {{c1::たべさせました}}。(The mother made her child eat vegetables.)	Group 2 causative: stem + させる. たべる → たべさせる. に = the person made to do, を = the object.	genki::ch22 grammar::causative
+Japanese Grammar	せんせい は がくせい を {{c1::はしらせました}}。(The teacher made the students run.)	Group 1 causative: replace う with あせる. はしる → はしらせる. Intransitive verbs use を for the causee.	genki::ch22 grammar::causative
+Japanese Grammar	こどもに すきな もの を {{c1::かわせて あげました}}。(I let my child buy what they liked.)	Causative + あげる = let someone do ~ (as a favor). Permission nuance rather than compulsion.	genki::ch22 grammar::causative
+Japanese Grammar	かちょう は わたし を ざんぎょう {{c1::させました}}。(The section chief made me do overtime.)	する → させる. わたしを marks the person made to do. Nuance of compulsion/imposition.	genki::ch22 grammar::causative
+Japanese Grammar	わたし は はは に にんじん を たべ{{c1::させられました}}。(I was made to eat carrots by my mother.)	Causative-passive: たべる → たべさせる → たべさせられる. Subject is forced to do something against their will.	genki::ch23 grammar::causative_passive
+Japanese Grammar	こどものとき、まいにち ピアノ を れんしゅう {{c1::させられました}}。(When I was a child, I was made to practice piano every day.)	する → させる → させられる. Expresses a habitual imposition in the past.	genki::ch23 grammar::causative_passive
+Japanese Grammar	ぶちょう に よる おそく まで {{c1::はたらかせられました}}。(I was made to work late at night by the boss.)	はたらく → はたらかせる → はたらかせられる. Strong nuance of unwilling obligation.	genki::ch23 grammar::causative_passive
+Japanese Grammar	その うた を きいて、{{c1::なかされました}}。(I was moved to tears by that song.)	なく → なかせる → なかされる. Short causative-passive (colloquial): Group 1 verbs can contract ～させられる → ～される in speech.	genki::ch23 grammar::causative_passive
+Japanese Grammar	わたし は いつも かれ に また{{c1::されます}}。(I am always made to wait by him.)	まつ → またせる → またせられる. Recurring imposition expressed with present tense.	genki::ch23 grammar::causative_passive
+Japanese Grammar	ともだち に みち を おし{{c1::えてあげました}}。(I told my friend the way. [as a favor to them])	てあげる: subject performs an action FOR someone else. Giver = speaker or in-group. に = recipient.	genki::ch16 grammar::te_ageru
+Japanese Grammar	せんせい に さくぶん を なおし{{c1::てもらいました}}。(I had my teacher correct my essay. / I received the favor of having my essay corrected.)	てもらう: subject receives a favor. に marks the person FROM whom the favor is received.	genki::ch16 grammar::te_morau
+Japanese Grammar	いもうと が りょうり を つくっ{{c1::てくれました}}。(My little sister made food for me.)	てくれる: someone performs an action that benefits me (or my in-group). Subject is the giver.	genki::ch16 grammar::te_kureru
+Japanese Grammar	ちち に くるま で おく{{c1::ってもらいました}}。(I had my father drive me. / My father gave me a ride.)	おくっていく → おくってもらう. Receiving transportation as a favor. に = the person who did the favor.	genki::ch16 grammar::te_morau
+Japanese Grammar	となりの ひと が にもつ を もっ{{c1::てくれました}}。(The person next door carried my luggage for me.)	てくれる with non-family: a third party doing something that benefits the speaker.	genki::ch16 grammar::te_kureru
+Japanese Grammar	たかければ {{c1::たかいほど}}、いい もの だ と おもう ひと が おおい です。(Many people think the more expensive something is, the better it is.)	い-adj ば～ほど: ければ + adj + ほど. Repeating the adjective in both slots.	genki::ch22 grammar::ba_hodo
+Japanese Grammar	かんがえれ{{c1::ば かんがえるほど}}、わからなく なります。(The more I think about it, the less I understand.)	Verb ば～ほど: ば-form + dictionary form + ほど. わからなくなる = become unable to understand.	genki::ch22 grammar::ba_hodo
+Japanese Grammar	ともだち が おおけれ{{c1::ば おおいほど}}、たのしい です。(The more friends you have, the more fun it is.)	おおい (many) → おおければ + おおいほど. Superlative proportion with quantity adjective.	genki::ch22 grammar::ba_hodo
+Japanese Kanji	死	し	common_word jlpt::n1
+Japanese Kanji	死ね	しね	
+Japanese Kanji	死者	ししゃ	common_word
+Japanese Kanji	必死	ひっし	common_word jlpt::n3
+Japanese Kanji	意味	いみ	common_word jlpt::n5
+Japanese Kanji	用意する	よういする	common_word jlpt::n4
+Japanese Kanji	意見	いけん	common_word jlpt::n4
+Japanese Kanji	注意する	ちゅういする	
+Japanese Kanji	味	あじ	common_word jlpt::n4
+Japanese Kanji	趣味	しゅみ	common_word jlpt::n4
+Japanese Kanji	興味	きょうみ	common_word jlpt::n4
+Japanese Kanji	味噌	みそ	common_word jlpt::n4
+Japanese Kanji	味方	みかた	common_word jlpt::n3
+Japanese Kanji	注文する	ちゅうもんする	common_word jlpt::n3
+Japanese Kanji	注ぐ	そそぐ	common_word jlpt::n3
+Japanese Kanji	注目	ちゅうもく	common_word jlpt::n3
+Japanese Kanji	夏	なつ	common_word jlpt::n5
+Japanese Kanji	夏休み	なつやすみ	common_word jlpt::n5
+Japanese Kanji	初夏	しょか	common_word
+Japanese Kanji	魚市場	うおいちば	
+Japanese Kanji	東寺	とうじ	
+Japanese Kanji	寺院	じいん	common_word jlpt::n2
+Japanese Kanji	禅寺	ぜんでら	common_word
+Japanese Kanji	広い	ひろい	common_word jlpt::n5
+Japanese Kanji	広島	ひろしま	common_word
+Japanese Kanji	広告	こうこく	common_word jlpt::n3
+Japanese Kanji	運転する	うんてんする	common_word jlpt::n3
+Japanese Kanji	回転ずし	かいてんずし	
+Japanese Kanji	転ぶ	ころぶ	common_word jlpt::n3
+Japanese Kanji	借りる	かりる	common_word jlpt::n5
+Japanese Kanji	借金	しゃっきん	common_word jlpt::n3
+Japanese Kanji	借家	しゃくや	common_word
+Japanese Kanji	借地	しゃくち	common_word
+Japanese Kanji	走る	はしる	common_word jlpt::n5
+Japanese Kanji	走り書き	はしりがき	
+Japanese Kanji	脱走	だっそう	common_word
+Japanese Kanji	奏者	そうしゃ	common_word
+Japanese Kanji	建てる	たてる	common_word jlpt::n4
+Japanese Kanji	建つ	たつ	common_word jlpt::n2
+Japanese Kanji	建国	けんこく	common_word
+Japanese Kanji	地下	ちか	common_word jlpt::n3
+Japanese Kanji	地下鉄	ちかてつ	common_word jlpt::n5
+Japanese Kanji	地図	ちず	common_word jlpt::n5
+Japanese Kanji	地球	ちきゅう	common_word jlpt::n3
+Japanese Kanji	地震	じしん	common_word jlpt::n4
+Japanese Kanji	広場	ひろば	common_word jlpt::n2
+Japanese Kanji	場所	ばしょ	common_word jlpt::n4
+Japanese Kanji	場合	ばあい	common_word jlpt::n4
+Japanese Kanji	駐車場	ちゅうしゃじょう	common_word jlpt::n4
+Japanese Kanji	一足	いっそく	common_word
+Japanese Kanji	水不足	みずぶそく	
+Japanese Kanji	通る	とおる	common_word jlpt::n4
+Japanese Kanji	通う	かよう	common_word jlpt::n4
+Japanese Kanji	通学	つうがく	common_word jlpt::n3
+Japanese Kanji	通勤	つうきん	common_word jlpt::n2
+Japanese Adjectives	必死（ひっし）	frantic; frenetic; desperate	common_word jlpt::n3
+Japanese Verbs	死ぬ（しぬ）	to die; to pass away	common_word jlpt::n5
+Japanese Verbs	用意する（よういする）	to prepare; to get ready	common_word jlpt::n4 leech
+Japanese Verbs	注意する（ちゅういする）	to be careful; to warn	
+Japanese Verbs	注文する（ちゅうもんする）	to order	common_word jlpt::n3
+Japanese Verbs	注ぐ（そそぐ）	to pour; to irrigate	common_word jlpt::n3
+Japanese Verbs	転ぶ（ころぶ）	to fall down; to tumble	common_word jlpt::n3
+Japanese Verbs	建てる（たてる）	to build; to construct <em>(transitive)</em>	common_word jlpt::n4
+Japanese Verbs	建つ（たつ）	to be built; to stand <em>(intransitive)</em>	common_word jlpt::n2
+Japanese Verbs	通る（とおる）	to pass through; to go along	common_word jlpt::n4
+Japanese Verbs	通う（かよう）	to commute; to attend regularly	common_word jlpt::n4
+Japanese Vocabulary	死（し）	death	common_word jlpt::n1
+Japanese Vocabulary	死者（ししゃ）	the deceased; the dead	common_word
+Japanese Vocabulary	意見（いけん）	opinion; view	common_word jlpt::n4 leech
+Japanese Vocabulary	味（あじ）	taste; flavor	common_word jlpt::n4
+Japanese Vocabulary	趣味（しゅみ）	hobby; interest	common_word jlpt::n4
+Japanese Vocabulary	興味（きょうみ）	interest; curiosity	common_word jlpt::n4
+Japanese Vocabulary	味噌（みそ）	miso	common_word jlpt::n4
+Japanese Vocabulary	味方（みかた）	ally; supporter	common_word jlpt::n3
+Japanese Vocabulary	注目（ちゅうもく）	attention; notice	common_word jlpt::n3
+Japanese Vocabulary	夏休み（なつやすみ）	summer vacation	common_word jlpt::n5
+Japanese Vocabulary	初夏（しょか）	early summer	common_word
+Japanese Vocabulary	人魚（にんぎょ）	mermaid	
+Japanese Vocabulary	魚市場（うおいちば）	fish market	
+Japanese Vocabulary	寺院（じいん）	temple; monastery	common_word jlpt::n2
+Japanese Vocabulary	禅寺（ぜんでら）	Zen temple	common_word
+Japanese Vocabulary	広場（ひろば）	plaza; public square	common_word jlpt::n2
+Japanese Vocabulary	回転ずし（かいてんずし）	conveyor belt sushi	
+Japanese Vocabulary	借金（しゃっきん）	debt; loan	common_word jlpt::n3
+Japanese Vocabulary	借家（しゃくや）	rented house	common_word
+Japanese Vocabulary	借地（しゃくち）	leased land	common_word
+Japanese Vocabulary	走り書き（はしりがき）	hasty writing; scrawl	
+Japanese Vocabulary	脱走（だっそう）	escape; desertion	common_word
+Japanese Vocabulary	走者（そうしゃ）	runner	common_word
+Japanese Vocabulary	建物（たてもの）	building; structure	common_word jlpt::n5
+Japanese Vocabulary	建国（けんこく）	founding of a nation	common_word
+Japanese Vocabulary	地下（ちか）	underground; basement	common_word jlpt::n3
+Japanese Vocabulary	地図（ちず）	map	common_word jlpt::n5
+Japanese Vocabulary	地球（ちきゅう）	Earth; the globe	common_word jlpt::n3
+Japanese Vocabulary	地震（じしん）	earthquake	common_word jlpt::n4
+Japanese Vocabulary	場所（ばしょ）	place; location	common_word jlpt::n4 leech
+Japanese Vocabulary	場合（ばあい）	case; situation	common_word jlpt::n4
+Japanese Vocabulary	駐車場（ちゅうしゃじょう）	parking lot	common_word jlpt::n4
+Japanese Vocabulary	一足（いっそく）	one pair of footwear	common_word
+Japanese Vocabulary	水不足（みずぶそく）	water shortage	leech
+Japanese Vocabulary	通学（つうがく）	commuting to school	common_word jlpt::n3
+Japanese Vocabulary	通勤（つうきん）	commuting to work	common_word jlpt::n2
+Japanese Grammar	"あれ{{c1::は}} やまださん の くるま {{c2::です}}。(That is Yamada-san&#x27;s car.)"	X は Y です with あれ as topic.	genki::ch01 grammar::xはyです
+Japanese Grammar	わたし の なまえ{{c1::は}} メアリー {{c2::です}}。(My name is Mary.)	は marks the topic of the sentence.	genki::ch01 grammar::xはyです
+Japanese Grammar	せんせい{{c1::は}} にほんじん {{c2::ですか}}。(Is the teacher Japanese?)	Yes/no question: X は Y ですか。	genki::ch01 grammar::question_ka
+Japanese Grammar	あなた{{c1::は}} がくせい {{c2::ですか}}。(Are you a student?)	Polite yes/no question with ですか。	genki::ch01 grammar::question_ka
+Japanese Grammar	これ{{c1::は}} だれ{{c2::の}} かばん ですか。(Whose bag is this?)	だれ の = whose. の links owner to owned thing.	genki::ch01 grammar::no_possession
+Japanese Grammar	わたし{{c1::の}} せんせい は やさしい です。(My teacher is kind.)	の connects pronouns to nouns for possession.	genki::ch01 grammar::no_possession
+Japanese Grammar	{{c1::それ}} は なん ですか。(What is that?)	それ refers to something near the listener.	genki::ch02 grammar::kore_sore_are
+Japanese Grammar	{{c1::あれ}} は ゆうびんきょく です。(That over there is the post office.)	あれ refers to something far from both speaker and listener.	genki::ch02 grammar::kore_sore_are
+Japanese Grammar	{{c1::その}} かばん は だれ の ですか。(Whose bag is that?)	その = that [noun] near the listener.	genki::ch02 grammar::kono_sono_ano
+Japanese Grammar	{{c1::あの}} ひと は だれ ですか。(Who is that person over there?)	あの = that [noun] far from both. あの ひと is a common polite way to refer to someone.	genki::ch02 grammar::kono_sono_ano
+Japanese Grammar	あなた の うち は {{c1::どこ}} ですか。(Where is your house?)	どこ asks for location.	genki::ch02 grammar::doko_where
+Japanese Grammar	えき は {{c1::あそこ}} です。(The station is over there.)	あそこ = over there (far from both speaker and listener).	genki::ch02 grammar::doko_where
+Japanese Grammar	わたし {{c1::も}} にほんご を べんきょう します。(I also study Japanese.)	"も replaces the subject/topic particle to add &#x27;also&#x27;."	genki::ch02 grammar::mo_also
+Japanese Grammar	"これ {{c1::も}} やまださん の ですか。(Is this also Yamada-san&#x27;s?)"	も can replace を or は depending on context.	genki::ch02 grammar::mo_also
+Japanese Grammar	わたし は がくせい {{c1::じゃ ありません}}。(I am not a student.)	Noun + じゃ ありません for negative identity statements.	genki::ch02 grammar::jya_arimasen
+Japanese Grammar	"あれ は やまださん の くるま {{c1::じゃ ありません}}。(That is not Yamada-san&#x27;s car.)"	じゃ ありません negates です in any X は Y です sentence.	genki::ch02 grammar::jya_arimasen
+Japanese Grammar	よる テレビ を {{c1::みます}}。(I watch TV in the evening.)	Group 1 verb: みます (to watch/see). を marks what is watched.	genki::ch03 grammar::verb_masu
+Japanese Grammar	あした ともだち に {{c1::あいます}}。(I will meet a friend tomorrow.)	に marks the person you meet/are going toward.	genki::ch03 grammar::verb_masu
+Japanese Grammar	ど{{c1::よう}}び {{c2::に}} えいが を みます。(I watch a movie on Saturday.)	Day of week + に + verb. に required with specific days.	genki::ch03 grammar::ni_time
+Japanese Grammar	"しちじ {{c1::に}} ねます。(I go to sleep at 7 o&#x27;clock.)"	Clock time + に + verb.	genki::ch03 grammar::ni_time
+Japanese Grammar	"せんしゅう ともだち に {{c1::あいませんでした}}。(I didn&#x27;t meet my friend last week.)"	Polite past negative: ませんでした。	genki::ch04 grammar::mashita_masen
+Japanese Grammar	この りんご は {{c1::おいしくない}} です。(This apple is not delicious.)	い-adj negative: drop い → くない。おいしい → おいしくない。	genki::ch05 grammar::i_adjective
+Japanese Grammar	{{c1::しずかな}} へや が すき です。(I like quiet rooms.)	な-adj modifying noun: adj + な + noun。	genki::ch05 grammar::na_adjective
+Japanese Grammar	このまち は {{c1::にぎやか じゃ ありません}}。(This town is not lively.)	な-adj negative: adj + じゃ ありません。Past negative: じゃ ありませんでした。	genki::ch05 grammar::na_adjective
+Japanese Grammar	にがい もの が {{c1::きらい}} です。(I dislike bitter things.)	きらい (な) = dislike. Also marked with が。	genki::ch05 grammar::suki_kirai
+Japanese Grammar	にほんご が {{c1::すき}} です。(I love Japanese!)	すき = love. だいきらい = really dislike.	genki::ch05 grammar::suki_kirai
+Japanese Grammar	そろそろ かえり{{c1::ましょうか}}。(Shall we head home soon?)	ましょうか = shall we ~? Softer suggestion seeking agreement.	genki::ch05 grammar::mashou
+Japanese Grammar	"えいが を み{{c1::ましょう}}。(Let&#x27;s watch a movie.)"	Verb stem + ましょう for any verb.	genki::ch05 grammar::mashou
+Japanese Grammar	ゆっくり {{c1::はなしてください}}。(Please speak slowly.)	て-form + ください for polite requests.	genki::ch06 grammar::te_kudasai_naide
+Japanese Grammar	このほん を かり{{c1::ても いい}} ですか。(May I borrow this book?)	Asking permission: て-form + も いいですか。	genki::ch06 grammar::temo_ii_tewa_ikemasen
+Japanese Grammar	そつぎょう して{{c1::から}}、にほん へ いきたい です。(After graduating, I want to go to Japan.)	て-form + から with たい for future plans.	genki::ch17 grammar::te_kara
+Japanese Grammar	もっと ねむり{{c1::たかった}} です。(I wanted to sleep more.)	たい past: たかった。Conjugates like さむい → さむかった。	genki::ch11 grammar::tai_want
+Japanese Grammar	テレビ を み{{c1::ながら}} ごはん を たべます。(I eat while watching TV.)	Stem of secondary action + ながら + main action.	genki::ch18 grammar::nagara_while
+Japanese Grammar	これ は むずかしい もんだい {{c1::だ}}。(This is a difficult problem.) [plain/casual]	だ is the plain form of です. Used in casual speech and before と/から/けど etc.	genki::ch08 grammar::da_plain_copula
+Japanese Grammar	かのじょ は げんき {{c1::だ}} と いいました。(He said she is energetic.)	な-adjective plain form also uses だ before と.	genki::ch08 grammar::da_plain_copula
+Japanese Grammar	にほん に いった {{c1::こと が ありますか}}。(Have you ever been to Japan?)	ことがありますか = have you ever ~?	genki::ch11 grammar::koto_ga_aru
+Japanese Grammar	スカイダイビング を した {{c1::こと が ありません}}。(I have never gone skydiving.)	ことがありません = have never done ~.	genki::ch11 grammar::koto_ga_aru
+Japanese Grammar	きのう は そうじ し{{c1::たり}} りょうり し{{c2::たり}} しました。(Yesterday I did things like cleaning and cooking.)	たり～たりする in past: ～たり～たりしました。	genki::ch11 grammar::tari_tari_suru
+Japanese Grammar	うれし{{c1::かったり}} かなし{{c2::かったり}} します。(I feel things like happy and sad.)	たり～たりする also works with adjectives for fluctuating states.	genki::ch11 grammar::tari_tari_suru
+Japanese Grammar	にほん に いった {{c1::とき}}、さくら が さいて いました。(When I went to Japan, the cherry blossoms were blooming.)	Past plain + とき = when (completed action). Present plain + とき = when (in the middle of / at the time of).	genki::ch16 grammar::toki_when
+Japanese Grammar	"にほん に いっ{{c1::たら}}、おみやげ を かってきます。(When I go to Japan, I&#x27;ll bring back souvenirs.)"	たら can express 'when' for future events that will definitely happen.	genki::ch17 grammar::tara_conditional
+Japanese Grammar	しゅくだい を し{{c1::なければ いけません}}。(I have to do my homework.)	なければ いけません = must do ~. Slightly more casual than なければ なりません。	genki::ch12 grammar::nakereba_nakutemo
+Japanese Grammar	このほん は せかいじゅう で よま{{c1::れています}}。(This book is read all over the world.)	Passive + ています for ongoing or widely-applicable states.	genki::ch21 grammar::passive_voice
+Japanese Grammar	わたし は せんせい に ほめ{{c1::られました}}。(I was praised by the teacher.)	Direct passive: the receiver of the action becomes the subject.	genki::ch21 grammar::passive_voice
+Japanese Grammar	"こどもの ころ、およ{{c1::げませんでした}}。(When I was a child, I couldn&#x27;t swim.)"	Potential past negative: potential stem + ませんでした。	genki::ch13 grammar::potential_form
+Japanese Grammar	はは は わたし に やさい を た{{c1::べさせました}}。(My mother made me eat vegetables.)	Causative: the causer forces/allows the causee (に) to do the action.	genki::ch22 grammar::causative
+Japanese Grammar	こども の ころ、にんじん を た{{c1::べさせられました}}。(When I was a child, I was made to eat carrots.)	Causative-passive implies the subject had no choice.	genki::ch23 grammar::causative_passive
+Japanese Grammar	ざんぎょう を さ{{c1::せられました}}。(I was made to work overtime.)	する causative-passive: させられる。Common pattern for expressing forced actions.	genki::ch23 grammar::causative_passive
+Japanese Grammar	はやければ {{c1::はやい ほど}} いい です。(The faster the better.)	い-adj pattern: ければ [dict form] ほど。	genki::ch22 grammar::ba_hodo
+Japanese Grammar	いっしょに ひるごはん を たべ{{c1::ませんか}}。(Would you like to have lunch together?)	"～ませんか = won&#x27;t you ~? / Would you like to ~? Polite invitation. More inviting than ましょうか, which assumes agreement."	genki::ch03 grammar::masen_ka
+Japanese Grammar	こんど えいが を み{{c1::ませんか}}。(Would you like to watch a movie sometime?)	ませんか softens the invitation, leaving room for the other person to decline gracefully.	genki::ch03 grammar::masen_ka
+Japanese Grammar	"すこし やすみ{{c1::ませんか}}。(Why don&#x27;t we rest a little?)"	Suggesting a break with ませんか. Compare: やすみましょう (Let's rest) is more assertive.	genki::ch03 grammar::masen_ka
+Japanese Grammar	きのう は {{c1::さむかった}} です。いや、{{c2::さむかった}} {{c3::でした}}。(Yesterday was cold.)	でした = polite past of です. Used with nouns and な-adjectives: noun/な-adj + でした.	genki::ch04 grammar::deshita_past
+Japanese Grammar	やまださん は がくせい {{c1::でした}}。(Yamada-san was a student.)	Noun + でした = was [noun]. Polite past copula.	genki::ch04 grammar::deshita_past
+Japanese Grammar	このまち は むかし {{c1::しずか}} {{c2::でした}}。(This town used to be quiet.)	な-adjective + でした = was [na-adj]. しずか is a な-adjective so it needs でした, not かったです.	genki::ch04 grammar::deshita_past
+Japanese Grammar	"あの レストラン は {{c1::有名}} {{c2::でした}} が、いま は しまって います。(That restaurant was famous, but now it&#x27;s closed.)"	有名(ゆうめい) is a な-adjective: 有名でした = was famous. が here means 'but'.	genki::ch04 grammar::deshita_past
+Japanese Grammar	おきて、{{c1::かおを あらって}}、がっこうへ いきます。(I wake up, wash my face, and go to school.)	て-form chains actions sequentially: A て B て C. Order matters — implies A happens before B.	genki::ch06 grammar::te_connecting
+Japanese Grammar	このかばん は {{c1::やすくて}}、いい です。(This bag is cheap and good.)	い-adjective て-form: drop い → くて. Connects two descriptions of the same noun.	genki::ch06 grammar::te_connecting
+Japanese Grammar	かれ は {{c1::しんせつで}}、おもしろい ひと です。(He is a kind and interesting person.)	な-adjective て-form: adj + で. Connects two な-adjective descriptions.	genki::ch06 grammar::te_connecting
+Japanese Grammar	このへや は {{c1::ひろくて}} あかるい です。(This room is spacious and bright.)	ひろい → ひろくて. Chaining い-adjectives with くて to describe the same subject.	genki::ch06 grammar::te_connecting
+Japanese Grammar	シャワー を {{c1::あびて}}、ごはん を たべました。(I took a shower and then ate.)	Verb て-form chaining completed actions. The sequence is understood from context.	genki::ch06 grammar::te_connecting
+Japanese Grammar	"あめ が ふって いる {{c1::から}}、うち に います。(Because it&#x27;s raining, I&#x27;m staying home.)"	plain form/て-form + から = because ~. Gives the reason for what follows. から follows the cause clause.	genki::ch06 grammar::kara_because
+Japanese Grammar	"つかれた {{c1::から}}、もう ねます。(I&#x27;m tired, so I&#x27;m going to sleep now.)"	Casual: plain past + から. The reason comes first, result second.	genki::ch06 grammar::kara_because
+Japanese Grammar	にほんご が すき {{c1::だから}}、まいにち べんきょう します。(Because I like Japanese, I study every day.)	noun/な-adj + だから = because it is [noun/adj]. だ is required before から with nouns and な-adjectives.	genki::ch06 grammar::kara_because
+Japanese Grammar	"{{c1::さむい から}}、まどを しめて ください。(It&#x27;s cold, so please close the window.)"	"い-adj + から: no だ needed. さむいから = because it&#x27;s cold."	genki::ch06 grammar::kara_because
+Japanese Grammar	メアリーさん は {{c1::かみ が ながい}} です。(Mary has long hair.)	X は Y が Adj: describing a feature of someone. Y が marks the body part/feature, Adj describes it.	genki::ch07 grammar::appearance_ga
+Japanese Grammar	たなかさん は {{c1::め が おおきい}} です。(Tanaka-san has big eyes.)	め が おおきい = eyes are big. This structure is used for physical descriptions: body part + が + adjective.	genki::ch07 grammar::appearance_ga
+Japanese Grammar	あの やま は {{c1::かたち が きれい}} です。(That mountain has a beautiful shape.)	Not only for people — works for objects too: かたち が きれい = shape is beautiful.	genki::ch07 grammar::appearance_ga
+Japanese Grammar	この りょうり は {{c1::あまくて}} おいしい です。(This dish is sweet and delicious.)	あまい → あまくて. い-adjective て-form joins two qualities. No negative meaning — purely additive.	genki::ch07 grammar::adj_te_connecting
+Japanese Grammar	かれ は {{c1::まじめで}} やさしい です。(He is serious and kind.)	まじめ (な-adj) → まじめで. な-adjective て-form: add で to the adjective stem.	genki::ch07 grammar::adj_te_connecting
+Japanese Grammar	"きのう は {{c1::つかれて}}、なにも できませんでした。(I was tired yesterday and couldn&#x27;t do anything.)"	"Verb て-form (つかれる→つかれて) connecting cause and result. て can imply &#x27;and therefore&#x27;."	genki::ch07 grammar::adj_te_connecting
+Japanese Grammar	このしごと は {{c1::たいへんで}} おかね も すくない です。(This job is tough and the pay is low.)	たいへん (な-adj) → たいへんで. Connects two negative attributes about the same topic.	genki::ch07 grammar::adj_te_connecting
+Japanese Grammar	"としょかん へ ほん を {{c1::かりに いきます}}。(I&#x27;m going to the library to borrow books.)"	Verb stem + に行く = go to do ~. Purpose of movement. かりる → かり + に行く.	genki::ch07 grammar::verb_stem_ni_iku
+Japanese Grammar	ともだち が あそび{{c1::に きました}}。(My friend came to hang out.)	Verb stem + に来る = come to do ~. あそぶ → あそび + に来る.	genki::ch07 grammar::verb_stem_ni_iku
+Japanese Grammar	"うち に ごはん を {{c1::たべに かえります}}。(I&#x27;m going home to eat.)"	Verb stem + に帰る = go/come home to do ~. たべる → たべ + に帰る.	genki::ch07 grammar::verb_stem_ni_iku
+Japanese Grammar	デパート へ くつ を {{c1::かいに いきました}}。(I went to the department store to buy shoes.)	かう → かい + に行く. Purpose clause with movement verb. へ or に marks the destination.	genki::ch07 grammar::verb_stem_ni_iku
+Japanese Grammar	"A:「きょう、いっしょに いく？」B:「{{c1::うん、いく}}よ。」(A: Going together today? B: Yeah, I&#x27;m going.)"	Informal: drop ます → dictionary form. うん = yes (casual). よ adds assertion. Use with close friends/family only.	genki::ch08 grammar::informal_speech
+Japanese Grammar	"「あした、ひま？」「{{c1::ちょっと むずかしい}} かな。」(Free tomorrow? / That&#x27;s a bit tough.)"	Informal question: drop ですか → rising intonation or ？ alone. かな = I wonder / not sure (self-directed).	genki::ch08 grammar::informal_speech
+Japanese Grammar	「もう たべた？」「{{c1::まだ}} 。」(Did you eat already? / Not yet.)	Informal past: たべた (plain past). まだ alone = not yet. Short answers are natural in casual speech.	genki::ch08 grammar::informal_speech
+Japanese Grammar	「これ、だれの？」「{{c1::わたし の}}。」(Whose is this? / Mine.)	Informal: drop です entirely. の at end makes it a possessive pronoun. Very common in casual conversation.	genki::ch08 grammar::informal_speech
+Japanese Grammar	わたし は おんがく を きく {{c1::のが すきです}}。(I like listening to music.)	verb plain form + のが好きです = like doing ~. の nominalizes the verb clause, making it a noun phrase.	genki::ch08 grammar::verb_no_ga_suki
+Japanese Grammar	"かれ は そと で はしる {{c1::のが すきじゃ ありません}}。(He doesn&#x27;t like running outside.)"	Negative: のが好きじゃありません / のが好きではありません.	genki::ch08 grammar::verb_no_ga_suki
+Japanese Grammar	にほんご を べんきょうする {{c1::のが たのしい}} です。(Studying Japanese is fun.)	の nominalizes the verb phrase → subject of たのしい. の + が + い-adjective works the same way.	genki::ch08 grammar::verb_no_ga_suki
+Japanese Grammar	あなた は なに を する {{c1::のが すきですか}}。(What do you like doing?)	Question form: なに を する のが好きですか. の wraps the whole action into a noun.	genki::ch08 grammar::verb_no_ga_suki
+Japanese Grammar	{{c1::なにか}} たべます か。(Would you like something to eat?)	なにか = something. Used in positive sentences and questions. Compare: なにも + negative = nothing.	genki::ch08 grammar::nanika_nanimo
+Japanese Grammar	れいぞうこ に {{c1::なにも}} ありません。(There is nothing in the refrigerator.)	なにも + negative verb = nothing / not anything. Must be paired with negative.	genki::ch08 grammar::nanika_nanimo
+Japanese Grammar	{{c1::どこか}} に いきたい です。(I want to go somewhere.)	どこか = somewhere. どこにも + negative = nowhere. Pattern: question word + か = some~, + も + neg = no~.	genki::ch08 grammar::nanika_nanimo
+Japanese Grammar	だれか {{c1::きましたか}}。— いいえ、{{c2::だれも きませんでした}}。(Did someone come? — No, nobody came.)	だれか = someone (positive). だれも + negative = nobody. This か/も pattern applies to: なに、どこ、だれ、いつ.	genki::ch08 grammar::nanika_nanimo
+Japanese Grammar	"しゅくだい を {{c1::まだ していません}}。(I haven&#x27;t done my homework yet.)"	"まだ + ていません = not yet done. まだ emphasizes that an expected action hasn&#x27;t happened."	genki::ch09 grammar::mada_teinai
+Japanese Grammar	"かれ は {{c1::まだ きていません}}。(He hasn&#x27;t come yet.)"	まだ + ていません with movement verbs. Implies you expected him to arrive by now.	genki::ch09 grammar::mada_teinai
+Japanese Grammar	「レポート、だした？」「{{c1::まだ です}}。」(Did you submit the report? / Not yet.)	Short answer: まだです = not yet (polite). Very natural in conversation.	genki::ch09 grammar::mada_teinai
+Japanese Grammar	"あしたは しけん が ある {{c1::から}}、はやく ねます。(Because there&#x27;s an exam tomorrow, I&#x27;m going to sleep early.)"	Plain form + から = because ~. In informal/plain speech, から follows the plain form directly.	genki::ch09 grammar::kara_because_plain
+Japanese Grammar	"おなか が すいた {{c1::から}}、なにか たべよう。(I&#x27;m hungry, so let&#x27;s eat something.)"	Casual: すいた (plain past) + から + volitional. Giving a reason in informal speech.	genki::ch09 grammar::kara_because_plain
+Japanese Grammar	"たかい {{c1::から}}、かいません。(Because it&#x27;s expensive, I won&#x27;t buy it.)"	い-adj + から without だ in casual/plain speech. たかいから = because it's expensive.	genki::ch09 grammar::kara_because_plain
+Japanese Grammar	あかい {{c1::の}} と あおい {{c2::の}} と、どちら が すきですか。(Which do you like, the red one or the blue one?)	adjective + の = the [adj] one. の substitutes for a previously mentioned noun. Avoids repetition.	genki::ch10 grammar::adj_no_pronoun
+Japanese Grammar	この かばん は ちいさい です。もっと おおきい {{c1::の}} は ありますか。(This bag is small. Do you have a bigger one?)	おおきいの = the big one. Used in shopping, comparison, etc. to refer back to a noun already mentioned.	genki::ch10 grammar::adj_no_pronoun
+Japanese Grammar	"わたし の くるま は ふるい です。あなた の {{c1::は}} あたらしい ですね。(My car is old. Yours is new, isn&#x27;t it.)"	あなたの(くるま)は → あなたのは. の replaces the noun when context is clear. は follows の directly.	genki::ch10 grammar::adj_no_pronoun
+Japanese Grammar	らいねん、にほん に いく {{c1::つもりです}}。(I intend to go to Japan next year.)	verb plain form + つもりです = intend to / plan to. Expresses a personal intention or plan.	genki::ch10 grammar::tsumori
+Japanese Grammar	だいがくいん に いく {{c1::つもりは ありません}}。(I have no intention of going to graduate school.)	Negative intention: つもりはありません = have no intention of doing ~.	genki::ch10 grammar::tsumori
+Japanese Grammar	"かれ は くる {{c1::つもりだった}} けど、こられませんでした。(He intended to come, but couldn&#x27;t.)"	"つもりだった = had intended to (but didn&#x27;t follow through). Past intention that wasn&#x27;t realized."	genki::ch10 grammar::tsumori
+Japanese Grammar	なつやすみ は りょこう する {{c1::つもりです}}。どこ に いく つもりですか。(I plan to travel during summer vacation. Where do you plan to go?)	"つもりですか = what are your plans? Natural way to ask about someone&#x27;s intentions."	genki::ch10 grammar::tsumori
+Japanese Grammar	"にほんご が {{c1::うまく なりました}}。(My Japanese has improved. / I&#x27;ve gotten good at Japanese.)"	い-adj + くなる = become [adj]. うまい → うまく + なる. Change of state.	genki::ch10 grammar::adj_naru
+Japanese Grammar	そと が {{c1::くらく なって きました}}。(It's been getting dark outside.)	くなってきました = has been becoming [adj]. くなる + てきた = gradual change toward present.	genki::ch10 grammar::adj_naru
+Japanese Grammar	"べんきょう する と、かんじ が {{c1::すき に なります}}。(If you study, you&#x27;ll come to like kanji.)"	な-adj + になる = become [na-adj]. すき(な) → すきになる. に instead of く for な-adjectives.	genki::ch10 grammar::adj_naru
+Japanese Grammar	おとな に {{c1::なりたい}} です。(I want to become an adult.)	noun + になりたい = want to become [noun]. に marks the target state with なる.	genki::ch10 grammar::adj_naru
+Japanese Grammar	しゅうまつ に {{c1::どこかに}} いきたい です。(I want to go somewhere on the weekend.)	どこかに = somewhere (to). Used with verbs of movement in positive sentences.	genki::ch10 grammar::doko_ka_mo
+Japanese Grammar	"きょう は {{c1::どこにも}} いきません。(I&#x27;m not going anywhere today.)"	どこにも + negative = nowhere / not anywhere. も intensifies the negative.	genki::ch10 grammar::doko_ka_mo
+Japanese Grammar	"{{c1::なにか}} かいたい です。でも、{{c2::なにも}} ほしい もの が ありません。(I want to buy something. But there&#x27;s nothing I want.)"	なにか (something, positive) vs なにも + negative (nothing). Same pattern for どこ、だれ、いつ.	genki::ch10 grammar::doko_ka_mo
+Japanese Grammar	つくえ の うえ に ほん {{c1::や}} ノート が あります。(There are things like books and notebooks on the desk.)	A や B = A and B (and so on). Non-exhaustive list — implies there are other items too. と lists exhaustively.	genki::ch11 grammar::noun_ya_noun
+Japanese Grammar	やすみの ひ は えいが {{c1::や}} かいもの に いきます。(On days off I go to things like movies and shopping.)	や creates an open-ended list of examples. The listener understands these are representative, not complete.	genki::ch11 grammar::noun_ya_noun
+Japanese Grammar	スーパー で やさい {{c1::や}} くだもの {{c2::や}} にく を かいます。(I buy things like vegetables, fruit, and meat at the supermarket.)	や can be repeated for 3+ items: A や B や C. Still non-exhaustive — there may be other purchases.	genki::ch11 grammar::noun_ya_noun
+Japanese Grammar	かぜ を ひいた {{c1::んです}}。(The thing is, I caught a cold.)	plain form + んです = explaining a situation, giving background, or seeking understanding. の(ん)です adds an explanatory nuance.	genki::ch12 grammar::ndesu
+Japanese Grammar	どうして ちこく した {{c1::んですか}}。(Why is it that you were late?)	んですか in a question = asking for an explanation. More probing than just どうしてちこくしましたか.	genki::ch12 grammar::ndesu
+Japanese Grammar	"じつは、にほん に いく {{c1::んですが}}、おすすめ の ばしょ は ありますか。(Actually, I&#x27;m going to Japan — do you have any recommended places?)"	んですが at end of clause = I have this situation, and... Sets up context before making a request or question.	genki::ch12 grammar::ndesu
+Japanese Grammar	あたまが いたい {{c1::んです}}。(The thing is, I have a headache.)	"い-adj + んです. Explains why you look unwell, can&#x27;t concentrate, etc. Context-providing function."	genki::ch12 grammar::ndesu
+Japanese Grammar	この かんじ は {{c1::どう よむ んですか}}。(How is it that you read this kanji?)	んですか seeking explanation/clarification. Softer and more natural than どうよみますか in conversation.	genki::ch12 grammar::ndesu
+Japanese Grammar	この ラーメン は {{c1::からすぎます}}。(This ramen is too spicy.)	い-adj stem + すぎる = too [adj]. からい → から + すぎる. すぎる conjugates like a Group 2 verb.	genki::ch12 grammar::sugiru
+Japanese Grammar	きのう {{c1::たべすぎました}}。(I ate too much yesterday.)	verb stem + すぎる = do too much. たべる → たべ + すぎる → たべすぎました.	genki::ch12 grammar::sugiru
+Japanese Grammar	この かばん は {{c1::たかすぎて}} かえません。(This bag is too expensive to buy.)	"すぎて connects to a result: too [adj] to do ~. たかすぎて = because it&#x27;s too expensive."	genki::ch12 grammar::sugiru
+Japanese Grammar	"さいきん {{c1::はたらきすぎて}} います。(I&#x27;ve been working too much lately.)"	はたらく → はたらき + すぎる → すぎています. ている with すぎる = ongoing excessive state.	genki::ch12 grammar::sugiru
+Japanese Grammar	はやく いしゃ に いった {{c1::ほうが いいです}}。(You had better go to the doctor soon.)	past plain + ほうがいいです = you had better ~. Used for advice. Past form here, unlike たい which uses present.	genki::ch12 grammar::hou_ga_ii
+Japanese Grammar	"そんな に のまない {{c1::ほうが いいです}}よ。(You&#x27;d better not drink that much.)"	"Negative advice: ない + ほうがいいです = it&#x27;s better not to ~. Polite but firm recommendation."	genki::ch12 grammar::hou_ga_ii
+Japanese Grammar	もっと やさい を たべた {{c1::ほうが いい}} と おもいます。(I think you should eat more vegetables.)	ほうがいい + と思います softens the advice further — expressing your opinion rather than directing.	genki::ch12 grammar::hou_ga_ii
+Japanese Grammar	"あめ が ふって いる {{c1::ので}}、でかけません。(Because it&#x27;s raining, I won&#x27;t go out.)"	plain form + ので = because (polite/objective reason). More formal and softer than から.	genki::ch12 grammar::node
+Japanese Grammar	"しゅくだい が ある {{c1::ので}}、パーティー に いけません。(I can&#x27;t go to the party because I have homework.)"	ので is preferred in formal situations: work, school, requests to superiors. から sounds more assertive.	genki::ch12 grammar::node
+Japanese Grammar	"この えいが は こわい {{c1::ので}}、こどもには むりです。(Because this movie is scary, it&#x27;s not suitable for children.)"	い-adj + ので. No だ needed for い-adjectives before ので.	genki::ch12 grammar::node
+Japanese Grammar	"びょうき な {{c1::ので}}、がっこう を やすみます。(Because I&#x27;m sick, I&#x27;ll be absent from school.)"	な-adj/noun + な + ので. Note the な before ので — different from から which uses だ.	genki::ch12 grammar::node
+Japanese Grammar	あした は あめ が ふる {{c1::でしょう}}。(It will probably rain tomorrow.)	plain form + でしょう = probably ~. Expresses conjecture. Common in weather forecasts.	genki::ch12 grammar::deshou
+Japanese Grammar	かれ は もう しって いる {{c1::でしょう}}。(He probably already knows.)	でしょう with ている: ongoing state + probably. Softer than definite assertion.	genki::ch12 grammar::deshou
+Japanese Grammar	この もんだい は むずかしい {{c1::でしょう}}。(This problem is probably difficult.)	"い-adj + でしょう. Hedges a statement — you think it&#x27;s true but aren&#x27;t certain."	genki::ch12 grammar::deshou
+Japanese Grammar	"やまださん は きて いない {{c1::でしょう}}か。(I wonder if Yamada-san hasn&#x27;t come.)"	でしょうか at end = I wonder if ~ / Don't you think ~? Seeking agreement or musing aloud.	genki::ch12 grammar::deshou
+Japanese Grammar	このりょうり は {{c1::おいしそう}} です。(This food looks delicious.)	い-adj stem + そうです = looks/seems [adj] (based on appearance). おいしい → おいし + そう。Note: いい→よさそう。	genki::ch13 grammar::souda_appearance
+Japanese Grammar	そと が {{c1::さむそう}} です ね。(It looks cold outside.)	さむい → さむ + そう. Based on visual evidence. Different from ～そうです (hearsay = I heard that).	genki::ch13 grammar::souda_appearance
+Japanese Grammar	かれ は {{c1::たのしそうに}} わらって います。(He is laughing happily.)	そう + に = in a [adj]-looking way. Used as an adverb: たのしそうに = looking happy.	genki::ch13 grammar::souda_appearance
+Japanese Grammar	このしごと は {{c1::たいへんそう}} です。(This job looks tough.)	な-adj stem + そう: たいへん + そう. な-adjectives drop な before そう.	genki::ch13 grammar::souda_appearance
+Japanese Grammar	この おかし を たべ{{c1::てみて}} ください。(Please try eating this snack.)	"て-form + みる = try doing ~. Implies doing something to see what it&#x27;s like. みる = to see (the result)."	genki::ch13 grammar::temiru
+Japanese Grammar	"いちど やって{{c1::みます}}。(I&#x27;ll give it a try.)"	"やってみます = I&#x27;ll try doing it. やる → やって + みます. Common way to volunteer to attempt something."	genki::ch13 grammar::temiru
+Japanese Grammar	にほんご で はなして{{c1::みました}} が、むずかしかった です。(I tried speaking in Japanese, but it was difficult.)	てみました = tried doing (past). Results can follow with が (but).	genki::ch13 grammar::temiru
+Japanese Grammar	あの レストラン に いって{{c1::みたい}} です。(I want to try going to that restaurant.)	てみたい = want to try doing ~. Combines てみる + たい.	genki::ch13 grammar::temiru
+Japanese Grammar	"にほん に いく {{c1::なら}}、ぜひ きょうと に よって ください。(If you&#x27;re going to Japan, please definitely stop by Kyoto.)"	"plain form + なら = if (that&#x27;s the case) / if you&#x27;re going to ~. Based on information received from the listener."	genki::ch13 grammar::nara_conditional
+Japanese Grammar	すし が すきな {{c1::なら}}、あの みせ が おすすめ です。(If you like sushi, that restaurant is recommended.)	"な-adj + なら (no だ before なら with な-adj). Gives advice based on the listener&#x27;s stated preference."	genki::ch13 grammar::nara_conditional
+Japanese Grammar	"やすい {{c1::なら}}、かいます。(If it&#x27;s cheap, I&#x27;ll buy it.)"	い-adj + なら. Unlike たら/ば, なら implies the condition is based on something already known or said.	genki::ch13 grammar::nara_conditional
+Japanese Grammar	"がくせい {{c1::なら}}、わりびき が あります。(If you&#x27;re a student, there&#x27;s a discount.)"	noun + なら. Giving conditional information relevant to the listener's stated situation.	genki::ch13 grammar::nara_conditional
+Japanese Grammar	あたらしい パソコン が {{c1::ほしい}} です。(I want a new computer.)	ほしい = want (a thing). The desired item is marked with が. ほしい is an い-adjective.	genki::ch14 grammar::hoshii
+Japanese Grammar	なに が {{c1::ほしいですか}}。(What do you want?)	Asking about desires. が marks the desired object. ほしい conjugates like い-adjectives.	genki::ch14 grammar::hoshii
+Japanese Grammar	"もう なにも {{c1::ほしく ありません}}。(I don&#x27;t want anything anymore.)"	Negative: ほしくない / ほしくありません. もうなにも = nothing anymore.	genki::ch14 grammar::hoshii
+Japanese Grammar	こどもの ころ、ゲームが {{c1::ほしかった}} です。(When I was a child, I wanted a game.)	Past: ほしかった. ほしい conjugates exactly like い-adjectives through all tenses.	genki::ch14 grammar::hoshii
+Japanese Grammar	あした あめ が ふる {{c1::かもしれません}}。(It might rain tomorrow.)	plain form + かもしれません = might / maybe ~. Less certain than でしょう. Polite form.	genki::ch14 grammar::kamoshiremasen
+Japanese Grammar	かれ は もう うち に いる {{c1::かもしれない}}。(He might already be home.)	Casual: かもしれない (plain form). かもしれません is the polite version.	genki::ch14 grammar::kamoshiremasen
+Japanese Grammar	この かぜ は インフルエンザ {{c1::かもしれません}}。(This cold might be the flu.)	noun + かもしれません. No だ before かもしれません with nouns.	genki::ch14 grammar::kamoshiremasen
+Japanese Grammar	"まにあわない {{c1::かもしれません}} が、いって みます。(I might not make it in time, but I&#x27;ll try going.)"	Acknowledging uncertainty before taking action. が = but / even so.	genki::ch14 grammar::kamoshiremasen
+Japanese Grammar	"いしゃ に いった {{c1::ら どうですか}}。(Why don&#x27;t you go to the doctor?)"	"past plain + らどうですか = why don&#x27;t you ~? / how about doing ~? Gentle suggestion."	genki::ch14 grammar::tara_dou
+Japanese Grammar	"すこし やすんだ {{c1::ら どうですか}}。(Why don&#x27;t you rest a little?)"	やすむ → やすんだ + らどうですか. Advice offered with care, not as a command.	genki::ch14 grammar::tara_dou
+Japanese Grammar	"ともだち に そうだんした {{c1::らどうですか}}。(Why don&#x27;t you consult a friend?)"	そうだんする → そうだんした + らどうですか. Suggesting seeking help from others.	genki::ch14 grammar::tara_dou
+Japanese Grammar	"もっと べんきょう {{c1::しよう}}。(Let&#x27;s study more. / I&#x27;ll study more.)"	Volitional plain form: する→しよう, くる→こよう. Group 1: u→おう. Group 2: stem+よう. Used for self-decision or casual invitation.	genki::ch15 grammar::volitional
+Japanese Grammar	"いっしょに いこう か。— {{c1::うん、いこう}}。(Shall we go together? / Yeah, let&#x27;s go.)"	いく→いこう. Volitional in casual invitation. か at end makes it a suggestion question.	genki::ch15 grammar::volitional
+Japanese Grammar	"もう {{c1::ねよう}}。つかれた。(Let&#x27;s sleep now. I&#x27;m tired.)"	ねる→{{c1::ねよう}}. Group 2 volitional: stem + よう. Self-directed decision in casual speech.	genki::ch15 grammar::volitional
+Japanese Grammar	"あきらめない で、{{c1::がんばろう}}。(Don&#x27;t give up, let&#x27;s do our best.)"	がんばる→{{c1::がんばろう}}. Group 1 volitional: replace う with おう. Motivational/encouraging use.	genki::ch15 grammar::volitional
+Japanese Grammar	"らいねん にほん に いこう {{c1::と おもって います}}。(I&#x27;m thinking of going to Japan next year.)"	"Volitional + と思っています = I&#x27;m thinking of doing ~ / planning to ~. Less committed than つもり."	genki::ch15 grammar::volitional_to_omou
+Japanese Grammar	"しごと を かえよう {{c1::と おもって いる}} んですが、どう おもいますか。(I&#x27;m thinking of changing jobs — what do you think?)"	んですが after と思っている introduces a situation before asking for input.	genki::ch15 grammar::volitional_to_omou
+Japanese Grammar	"もっと うんどう しよう {{c1::と おもって います}}。(I&#x27;m thinking about exercising more.)"	しよう = volitional of する. と思っています expresses an ongoing intention, not yet acted on.	genki::ch15 grammar::volitional_to_omou
+Japanese Grammar	"りょこう の まえ に ホテル を よやく し{{c1::ておきます}}。(I&#x27;ll reserve a hotel in advance before the trip.)"	て-form + おく = do something in advance / leave something done. Implies preparation for a future situation.	genki::ch15 grammar::te_oku
+Japanese Grammar	れいぞうこ に のみもの を いれ{{c1::ておきました}}。(I put drinks in the fridge ahead of time.)	ておきました = did [something] in advance (past). The action was done to prepare for something.	genki::ch15 grammar::te_oku
+Japanese Grammar	かんじ を もう すこし おぼえ{{c1::ておいた ほうが いい}} です よ。(You should memorize a few more kanji in advance.)	"ておいたほうがいい = it&#x27;s better to do [prep action] in advance. Common study/travel advice."	genki::ch15 grammar::te_oku
+Japanese Grammar	"パーティー の まえ に へや を かたづけ{{c1::ておきます}}。(I&#x27;ll tidy up the room before the party.)"	かたづける → かたづけて + おく. Preparation action done so the room is ready when guests arrive.	genki::ch15 grammar::te_oku
+Japanese Grammar	これ は {{c1::わたし が にほん で かった}} おみやげ です。(This is a souvenir I bought in Japan.)	Extended relative clause with place: [subject が location で verb] + noun. All modifiers precede the noun.	genki::ch15 grammar::relative_clause_adv
+Japanese Grammar	"{{c1::せんせい が すすめた}} ほん を よんで います。(I&#x27;m reading the book my teacher recommended.)"	すすめる (recommend) → すすめた. The relative clause identifies which book specifically.	genki::ch15 grammar::relative_clause_adv
+Japanese Grammar	"{{c1::むずかしくて よめない}} かんじ が まだ たくさん あります。(There are still many kanji I can&#x27;t read because they&#x27;re difficult.)"	Adjective て-form + potential negative as relative clause: むずかしくて よめない modifies かんじ.	genki::ch15 grammar::relative_clause_adv
+Japanese Grammar	このえいが は {{c1::おもしろくない}} です。(This movie is not interesting.)	い-adj polite negative: drop い → くない + です. おもしろい → おもしろくない。	genki::ch05 grammar::i_adj_polite_neg
+Japanese Grammar	"このかばん は {{c1::たかくない}} です。やすい ですよ。(This bag is not expensive. It&#x27;s cheap!)"	たかい → たかくない + です. Correcting a false assumption with the negative.	genki::ch05 grammar::i_adj_polite_neg
+Japanese Grammar	"きょう は {{c1::さむくない}} です ね。(It&#x27;s not cold today, is it?)"	さむい → さむくない. ね at end seeks agreement.	genki::ch05 grammar::i_adj_polite_neg
+Japanese Grammar	きのう は {{c1::さむくなかった}} です。(Yesterday was not cold.)	い-adj polite past negative: くなかった + です. さむい → さむくなかった。	genki::ch05 grammar::i_adj_polite_past_neg
+Japanese Grammar	その えいが は {{c1::おもしろくなかった}} です。(That movie was not interesting.)	おもしろい → おもしろくなかった + です. Reporting past opinion.	genki::ch05 grammar::i_adj_polite_past_neg
+Japanese Grammar	このスープ は {{c1::あつくない}}。(This soup is not hot.)	い-adj plain negative: くない (no です). Used in casual speech, relative clauses, before と/のに/から etc.	genki::ch05 grammar::i_adj_plain_neg
+Japanese Grammar	"べつに {{c1::むずかしくない}} よ。(It&#x27;s not particularly difficult.)"	べつに + plain negative = not particularly ~. むずかしい → むずかしくない.	genki::ch05 grammar::i_adj_plain_neg
+Japanese Grammar	"こどもの ころ、なっとう が {{c1::すきじゃなかった}} けど、いま は すき です。(When I was a child, I didn&#x27;t like natto, but now I do.)"	すき(な) plain past negative: すきじゃなかった. Or for い-adj: adjective + くなかった (no です).	genki::ch05 grammar::i_adj_plain_past_neg
+Japanese Grammar	"あの えいが は あまり {{c1::よくなかった}} な。(That movie wasn&#x27;t very good.)"	いい → よくない → よくなかった. Irregular: いい uses よ- in all negative/past forms.	genki::ch05 grammar::i_adj_plain_past_neg
+Japanese Grammar	むかし、このちいき は {{c1::しずか でした}}。(This area used to be quiet.)	な-adj polite past: adj + でした. しずか(な) → しずかでした.	genki::ch05 grammar::na_adj_polite_past
+Japanese Grammar	かれ は むかし {{c1::げんき でした}} が、いま は びょうき です。(He used to be energetic, but now he is sick.)	げんき(な) → げんきでした. Past state with な-adjective using でした.	genki::ch05 grammar::na_adj_polite_past
+Japanese Grammar	"このしごと は {{c1::たいへんだ}} ね。(This job is tough, isn&#x27;t it.)"	な-adj plain present: adj + だ. Used in casual speech instead of adjective + です.	genki::ch05 grammar::na_adj_plain
+Japanese Grammar	かれ は {{c1::まじめだ}} と おもいます。(I think he is serious.)	な-adj + だ before と思います in plain form reported speech.	genki::ch05 grammar::na_adj_plain
+Japanese Grammar	このへや は {{c1::しずかじゃない}}。(This room is not quiet.)	な-adj plain negative: adj + じゃない (casual) or ではない (more formal plain).	genki::ch05 grammar::na_adj_plain_neg
+Japanese Grammar	"かれ は あまり {{c1::しんせつじゃない}} と おもう。(I think he&#x27;s not very kind.)"	Plain negative in embedded clause: じゃない + と思う. Casual reporting of opinion.	genki::ch05 grammar::na_adj_plain_neg
+Japanese Grammar	"むかし、かれ は {{c1::げんきだった}} けど、いまは つかれて いる。(He used to be energetic, but now he&#x27;s tired.)"	な-adj plain past: adj + だった. げんき → げんきだった. Casual past tense.	genki::ch05 grammar::na_adj_plain_past
+Japanese Grammar	"その レストラン は {{c1::にぎやかだった}} が、いま は しまって いる。(That restaurant used to be lively, but now it&#x27;s closed.)"	にぎやか → にぎやかだった. Plain past + が (but) for contrast.	genki::ch05 grammar::na_adj_plain_past
+Japanese Grammar	"【casual・ともだちと】このりんご は {{c1::りんごじゃない}}よ、なしだよ。(This isn&#x27;t an apple, it&#x27;s a pear!)"	じゃない = casual negative copula. Use with close friends, family, or in informal settings.	genki::ch02 grammar::jya_nai_casual
+Japanese Grammar	【formal・じゅぎょうで】これ は にほんご {{c1::では ありません}}。えいご です。(This is not Japanese. It is English.)	ではありません = polite/formal negative copula. Use in class, business, or formal speech.	genki::ch02 grammar::dewa_arimasen_formal
+Japanese Grammar	"【casual・ともだちと】かれ は がくせい {{c1::じゃない}} と おもう。(I don&#x27;t think he&#x27;s a student.)"	じゃない in embedded clauses in casual speech. Contraction of ではない.	genki::ch02 grammar::jya_nai_casual
+Japanese Grammar	【formal・しごとで】このけいかく は かんせい {{c1::では ありません}}。もうすこし じかん が かかります。(This plan is not complete. It needs a little more time.)	ではありません in workplace/formal context. More careful and professional than じゃありません.	genki::ch02 grammar::dewa_arimasen_formal
+Japanese Grammar	【polite・ふつう】すみません、もう すこし {{c1::ゆっくり はなして ください}}。(Excuse me, please speak a little more slowly.)	てください = standard polite request. Fine for most situations: strangers, teachers in class, shops.	genki::ch06 grammar::te_kudasai_polite
+Japanese Grammar	【formal・しごと/目上】レポート を らいしゅう まで に だして {{c1::くださいません か}}。(Would you be so kind as to submit the report by next week?)	てくださいませんか = more formal/deferential request. Use with superiors, clients, or formal letters.	genki::ch06 grammar::te_kudasaimasen_ka
+Japanese Grammar	【polite・ふつう】ここ に なまえ を かいて {{c1::ください}}。(Please write your name here.)	てください for clear, everyday polite requests. Standard in shops, offices, classrooms.	genki::ch06 grammar::te_kudasai_polite
+Japanese Grammar	【formal・目上】しょうしょう おまちして {{c1::くださいません か}}。(Would you mind waiting for just a moment?)	おまちしてくださいませんか = very formal waiting request. しょうしょう = a brief moment (formal).	genki::ch06 grammar::te_kudasaimasen_ka
+Japanese Grammar	【polite・ふつう】しゃしん を とっ{{c1::ても いいですか}}。(May I take a photo?)	てもいいですか = standard polite permission request. Fine for most situations.	genki::ch06 grammar::temo_ii_polite
+Japanese Grammar	【formal・しごと/目上】すこし そうだん させて いただいても {{c1::よろしい でしょうか}}。(Would it be all right if I consulted with you for a moment?)	よろしいでしょうか = very formal permission. よろしい = polite form of いい. でしょうか = formal question.	genki::ch06 grammar::yoroshii_deshou_ka
+Japanese Grammar	【polite・ふつう】この いす を つかっ{{c1::ても いいですか}}。(May I use this chair?)	Everyday permission: てもいいですか is natural and polite enough for public spaces.	genki::ch06 grammar::temo_ii_polite
+Japanese Grammar	【formal・かいぎ】はいって{{c1::よろしい でしょうか}}。(May I come in?)	Entering a superior's office or a formal meeting room: よろしいでしょうか is much more appropriate.	genki::ch06 grammar::yoroshii_deshou_ka
+Japanese Adverbs	ずっと	All along; the whole time; continuously	common_word jlpt::n4
+Japanese Adverbs	すぐ（に）	Right away; immediately; soon	common_word jlpt::n5
+Japanese Adverbs	もっと	More	common_word jlpt::n5
+Japanese Adverbs	かなり	Quite; fairly; considerably	common_word jlpt::n3
+Japanese Adverbs	大分（だいぶ）	Considerably; quite a bit	common_word jlpt::n3
+Japanese Adverbs	殆ど（ほとんど）	Almost; mostly; hardly (with negative)	common_word jlpt::n4
+Japanese Adverbs	大体（だいたい）	Generally; roughly; approximately	common_word jlpt::n4
+Japanese Adverbs	ゆっくり	Slowly; leisurely	common_word jlpt::n5
+Japanese Adverbs	はっきり	Clearly; distinctly	common_word jlpt::n3
+Japanese Adverbs	きちんと	Properly; neatly; precisely	common_word jlpt::n3
+Japanese Adverbs	ちゃんと	Properly; correctly; as expected (casual)	common_word jlpt::n4
+Japanese Adverbs	きっと	Surely; certainly; definitely	common_word jlpt::n3
+Japanese Adverbs	やっぱり	after all	genki::ch17
+Japanese Adverbs	是非（ぜひ）	By all means; definitely (used in requests and invitations)	common_word jlpt::n4
+Japanese Vocabulary	形（かたち）	(physical) form; shape; figure	common_word jlpt::n4
+Japanese Adjectives	上手い（うまい）	skillful; good; expert; clever (bit informal)	
+Japanese Kanji	供える	そなえる	common_word kanji::ch16
+Japanese Kanji	始める	はじめる	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	始まる	はじまる	common_word jlpt::n5 kanji::ch16
+Japanese Kanji	考える	かんがえる	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	開ける	あける	common_word jlpt::n5 kanji::ch16
+Japanese Kanji	開く	あく・ひらく	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	運ぶ	はこぶ	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	動く	うごく	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	動かす	うごかす	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	教える	おしえる	common_word jlpt::n5 kanji::ch16
+Japanese Kanji	全く	まったく	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	全て	すべて	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	子供	こども	common_word jlpt::n5 kanji::ch16
+Japanese Kanji	提供	ていきょう	common_word jlpt::n1 kanji::ch16
+Japanese Kanji	世界	せかい	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	世話	せわ	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	世代	せだい	common_word jlpt::n1 kanji::ch16
+Japanese Kanji	視界	しかい	common_word kanji::ch16
+Japanese Kanji	限界	げんかい	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	政界	せいかい	common_word kanji::ch16
+Japanese Kanji	全部	ぜんぶ	common_word jlpt::n5 kanji::ch16
+Japanese Kanji	全国	ぜんこく	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	テニス部	テニスぶ	kanji::ch16
+Japanese Kanji	部長	ぶちょう	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	開始	かいし	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	始発	しはつ	common_word jlpt::n1 kanji::ch16
+Japanese Kanji	一週間	いっしゅうかん	common_word kanji::ch16
+Japanese Kanji	週末	しゅうまつ	common_word kanji::ch16
+Japanese Kanji	以外	いがい	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	以上	いじょう	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	以下	いか	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	以内	いない	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	以前	いぜん	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	考え	かんがえ	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	考古学	こうこがく	common_word jlpt::n1 kanji::ch16
+Japanese Kanji	参考	さんこう	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	開店	かいてん	common_word kanji::ch16
+Japanese Kanji	本屋	ほんや	common_word kanji::ch16
+Japanese Kanji	魚屋	さかなや	kanji::ch16
+Japanese Kanji	屋上	おくじょう	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	屋内	おくない	common_word kanji::ch16
+Japanese Kanji	夕方	ゆうがた	common_word jlpt::n5 kanji::ch16
+Japanese Kanji	読み方	よみかた	common_word kanji::ch16
+Japanese Kanji	両方	りょうほう	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	方法	ほうほう	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	運命	うんめい	common_word jlpt::n1 kanji::ch16
+Japanese Kanji	運がいい	うんがいい	kanji::ch16
+Japanese Kanji	自動車	じどうしゃ	common_word jlpt::n5 kanji::ch16
+Japanese Kanji	動詞	どうし	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	教会	きょうかい	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	教科書	きょうかしょ	common_word jlpt::n3 kanji::ch16
+Japanese Kanji	キリスト教	キリストきょう	common_word kanji::ch16
+Japanese Kanji	研究室	けんきゅうしつ	common_word jlpt::n4 kanji::ch16
+Japanese Kanji	地下室	ちかしつ	common_word kanji::ch16
+Japanese Kanji	待合室	まちあいしつ	common_word jlpt::n2 kanji::ch16
+Japanese Verbs	供える（そなえる）	to offer to the gods; to make an offering	kanji::ch16
+Japanese Verbs	考える（かんがえる）	to think; to consider	kanji::ch16
+Japanese Verbs	開く（あく）	to open; to become open <em>(intransitive)</em>	kanji::ch16
+Japanese Verbs	開く（ひらく）	to open; to unfold; to establish	kanji::ch16
+Japanese Verbs	運ぶ（はこぶ）	to carry; to transport	kanji::ch16
+Japanese Verbs	動く（うごく）	to move <em>(intransitive)</em>	kanji::ch16
+Japanese Verbs	動かす（うごかす）	to move something <em>(transitive)</em>	kanji::ch16
+Japanese Adverbs	全く（まったく）	completely; entirely; truly	kanji::ch16 leech
+Japanese Adverbs	全て（すべて）	all; everything; entirely	kanji::ch16
+Japanese Vocabulary	提供（ていきょう）	offer; provision; supply	kanji::ch16 leech
+Japanese Vocabulary	世界（せかい）	world; society	kanji::ch16
+Japanese Vocabulary	世話（せわ）	care; looking after	kanji::ch16
+Japanese Vocabulary	世代（せだい）	generation	kanji::ch16
+Japanese Vocabulary	視界（しかい）	field of vision; visibility	kanji::ch16 leech
+Japanese Vocabulary	限界（げんかい）	limit; bound	kanji::ch16 leech
+Japanese Vocabulary	政界（せいかい）	political world; political circles	kanji::ch16
+Japanese Vocabulary	全部（ぜんぶ）	all; the whole; everything	kanji::ch16
+Japanese Vocabulary	全国（ぜんこく）	the whole country; nationwide	kanji::ch16
+Japanese Vocabulary	テニス部（テニスぶ）	tennis club	kanji::ch16
+Japanese Vocabulary	部長（ぶちょう）	department head; club leader	kanji::ch16
+Japanese Vocabulary	開始（かいし）	start; commencement	kanji::ch16 leech
+Japanese Vocabulary	始発（しはつ）	first train; first bus	kanji::ch16
+Japanese Grammar	一週間（いっしゅうかん）	one week (week counting)	kanji::ch16
+Japanese Vocabulary	以外（いがい）	except; other than; apart from	kanji::ch16 leech
+Japanese Vocabulary	以上（いじょう）	more than; above; beyond	kanji::ch16
+Japanese Vocabulary	以下（いか）	less than; below; under	kanji::ch16
+Japanese Vocabulary	以内（いない）	within; inside of	kanji::ch16
+Japanese Vocabulary	以前（いぜん）	before; previously; formerly	kanji::ch16
+Japanese Vocabulary	考え（かんがえ）	thought; idea; opinion	kanji::ch16
+Japanese Vocabulary	考古学（こうこがく）	archaeology	kanji::ch16
+Japanese Vocabulary	参考（さんこう）	reference; consultation	kanji::ch16
+Japanese Vocabulary	開店（かいてん）	opening of a shop	kanji::ch16
+Japanese Vocabulary	魚屋（さかなや）	fish shop; fishmonger	kanji::ch16
+Japanese Vocabulary	屋上（おくじょう）	rooftop	kanji::ch16
+Japanese Vocabulary	屋内（おくない）	indoors; interior	kanji::ch16
+Japanese Vocabulary	夕方（ゆうがた）	evening; dusk	kanji::ch16
+Japanese Vocabulary	読み方（よみかた）	way of reading; how to read	kanji::ch16
+Japanese Vocabulary	両方（りょうほう）	both; both sides	kanji::ch16
+Japanese Vocabulary	方法（ほうほう）	method; way; means	kanji::ch16
+Japanese Vocabulary	運命（うんめい）	fate; destiny	kanji::ch16
+Japanese Vocabulary	運がいい（うんがいい）	to be lucky; to have good luck	kanji::ch16
+Japanese Vocabulary	自動車（じどうしゃ）	automobile; car	kanji::ch16
+Japanese Vocabulary	動詞（どうし）	verb <em>(grammar term)</em>	kanji::ch16
+Japanese Vocabulary	教会（きょうかい）	church	kanji::ch16
+Japanese Vocabulary	教科書（きょうかしょ）	textbook	kanji::ch16
+Japanese Vocabulary	キリスト教（キリストきょう）	Christianity	kanji::ch16
+Japanese Vocabulary	研究室（けんきゅうしつ）	research lab; professor's office	kanji::ch16
+Japanese Vocabulary	地下室（ちかしつ）	basement; cellar	kanji::ch16
+Japanese Vocabulary	待合室（まちあいしつ）	waiting room	kanji::ch16
+Japanese Verbs	上げる（あげる）	to give	
+Japanese Verbs	呉れる（くれる）	to give [to me]	
+Japanese Vocabulary	駅員（えきいん）	station attendant	genki::ch16
+Japanese Vocabulary	大きさ（おおきさ）	size	genki::ch16
+Japanese Vocabulary	親（おや）	parent	genki::ch16
+Japanese Vocabulary	期末試験（きまつしけん）	final examination	genki::ch16
+Japanese Vocabulary	研究（けんきゅう）	research	genki::ch16
+Japanese Vocabulary	ごみ	garbage	genki::ch16
+Japanese Vocabulary	奨学金（しょうがくきん）	scholarship	genki::ch16
+Japanese Vocabulary	親せき（しんせき）	relatives	genki::ch16
+Japanese Vocabulary	推薦状（すいせんじょう）	letter of recommendation	genki::ch16 leech
+Japanese Vocabulary	台風（たいふう）	typhoon	genki::ch16
+Japanese Vocabulary	日（ひ）	day	genki::ch16
+Japanese Vocabulary	ファイル	file; portfolio	genki::ch16
+Japanese Vocabulary	目覚まし時計（めざましどけい）	alarm clock	genki::ch16
+Japanese Vocabulary	お客さん（おきゃくさん）	guest; visitor; client; customer	genki::ch17
+Japanese Vocabulary	男（おとこ）	man	genki::ch17
+Japanese Vocabulary	お湯（おゆ）	hot water	genki::ch17
+Japanese Vocabulary	女（おんな）	woman	genki::ch17
+Japanese Vocabulary	かぎ	lock; key	genki::ch17
+Japanese Vocabulary	紙（かみ）	paper	genki::ch17
+Japanese Vocabulary	コンタクト	contact lenses	genki::ch17
+Japanese Vocabulary	最低（さいてい）	the lowest; the worst	genki::ch17
+Japanese Vocabulary	サラリーマン	salaryman; company employee	genki::ch17
+Japanese Vocabulary	残業（ざんぎょう）	overtime work	genki::ch17
+Japanese Vocabulary	首相（しゅしょう）	prime minister	genki::ch17
+Japanese Vocabulary	ショッピングモール	shopping mall	genki::ch17
+Japanese Vocabulary	スプーン	spoon	genki::ch17
+Japanese Vocabulary	宝くじ（たからくじ）	lottery	genki::ch17
+Japanese Vocabulary	違い（ちがい）	difference	genki::ch17
+Japanese Vocabulary	動物園（どうぶつえん）	zoo	genki::ch17
+Japanese Vocabulary	ニュース	news	genki::ch17
+Japanese Vocabulary	パンダ	panda	genki::ch17
+Japanese Vocabulary	ヒーター	heater	genki::ch17
+Japanese Vocabulary	ひげ	beard	genki::ch17
+Japanese Vocabulary	秘密（ひみつ）	secret	genki::ch17
+Japanese Vocabulary	ブーツ	boots	genki::ch17
+Japanese Vocabulary	寮（りょう）	dormitory	genki::ch17
+Japanese Vocabulary	旅行会社（りょこうがいしゃ）	travel agency	genki::ch17
+Japanese Verbs	おごる&nbsp;	to treat (someone) to a meal	genki::ch16
+Japanese Verbs	落ち込む（おちこむ）	to get depressed	genki::ch16
+Japanese Verbs	困る（こまる）	to have difficulty	genki::ch16
+Japanese Verbs	連れていく（つれていく）	to take (someone) to (a place)	genki::ch16
+Japanese Verbs	直す（なおす）	to correct; to fix	genki::ch16
+Japanese Verbs	道に迷う（みちにまよう）	to become lost; to lose one's way	genki::ch16
+Japanese Verbs	見つかる（みつかる）	to be found	genki::ch16
+Japanese Verbs	迎えに行く（むかえにいく）	to go to pick up	genki::ch16
+Japanese Verbs	訳す（やくす）	to translate	genki::ch16
+Japanese Verbs	笑う（わらう）	to laugh	genki::ch16
+Japanese Verbs	アイロンをかける&nbsp;	to iron (clothes)	genki::ch16
+Japanese Verbs	集める（あつめる）	to collect	genki::ch16
+Japanese Verbs	乗り遅れる（のりおくれる）	to miss (a train, bus, etc.)	genki::ch16
+Japanese Verbs	見せる（みせる）	to show	genki::ch16
+Japanese Verbs	朝寝坊する（あさねぼうする）	to oversleep	genki::ch16
+Japanese Verbs	案内する（あんないする）	to show (someone) around	genki::ch16
+Japanese Verbs	説明する（せつめいする）	to explain	genki::ch16
+Japanese Verbs	迎えに来る（むかえにくる）	to come to pick up	genki::ch16
+Japanese Verbs	選ぶ（えらぶ）	to choose; to select	genki::ch17
+Japanese Verbs	お湯を沸かす（おゆをわかす）	to boil water	genki::ch17
+Japanese Verbs	髪をとかす（かみをとかす）	to comb one's hair	genki::ch17
+Japanese Verbs	込む（こむ）	to get crowded	genki::ch17
+Japanese Verbs	宝くじに当たる（たからくじにあたる）	to win a lottery	genki::ch17
+Japanese Verbs	脱ぐ（ぬぐ）	to take off (clothes)	genki::ch17
+Japanese Verbs	ひげをそる	to shave one's beard	genki::ch17
+Japanese Verbs	かぎをかける&nbsp;	to lock	genki::ch17
+Japanese Verbs	慣れる（なれる）	to get used to...	genki::ch17
+Japanese Verbs	お祈りする（おいのりする）	to pray	genki::ch17
+Japanese Verbs	化粧する（けしょうする）	to put makeup on	genki::ch17
+Japanese Verbs	就職する（しゅうしょくする）	to get a full-time job	genki::ch17
+Japanese Verbs	する&nbsp;	to wear small items (necktie, watch, etc.)	genki::ch17
+Japanese Verbs	離婚する（りこんする）	to get a divorce	genki::ch17
+Japanese Adverbs	ええと	well...; let me see...	genki::ch16
+Japanese Adverbs	今日中に（きょうじゅうに）	by the end of today	genki::ch16
+Japanese Adverbs	この間（このあいだ）	the other day	genki::ch16
+Japanese Adverbs	このぐらい	about this much	genki::ch16
+Japanese Adverbs	ごめん	"I&#x27;m sorry. (casual)"	genki::ch16
+Japanese Adverbs	これから	from now on	genki::ch16
+Japanese Adverbs	失礼します（しつれいします）	Excuse me.; Sorry to interrupt you.	genki::ch16
+Japanese Adverbs	自分で（じぶんで）	(do something) by oneself	genki::ch16
+Japanese Adverbs	授業中に（じゅぎょうちゅうに）	in class; during the class	genki::ch16
+Japanese Adverbs	ほかの	other	genki::ch16
+Japanese Adverbs	おめでとうございます	Congratulations!	genki::ch17
+Japanese Adverbs	〜かな（あ）	I wonder... (casual)	genki::ch17
+Japanese Adverbs	ずいぶん	very	genki::ch17
+Japanese Adverbs	そうか	I see. (casual)	genki::ch17
+Japanese Adverbs	それに	moreover; ...	genki::ch17
+Japanese Adverbs	例えば（たとえば）	for example	genki::ch17
+Japanese Adverbs	〜に比べて（〜にくらべて）	compared with...	genki::ch17
+Japanese Adverbs	〜によると	according to...	genki::ch17
+Japanese Adjectives	危ない（あぶない）	dangerous	genki::ch17
+Japanese Adjectives	うらやましい	envious	genki::ch17
+Japanese Vocabulary	昨夜（ゆうべ）	last night; yesterday evening	

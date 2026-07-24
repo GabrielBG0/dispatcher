@@ -74,11 +74,53 @@ async def test_run_vocab_word_enrichment_fills_blank_meanings(session_factory):
 
     db = session_factory()
     ryokou = db.query(Vocab).filter(Vocab.kanji_form == "旅行").one()
-    assert "travel" in ryokou.meaning
+    assert ryokou.meaning == "travel / trip"  # single sense, no numbering
     assert ryokou.part_of_speech == "verb"  # "Suru verb" maps to verb
     assert ryokou.jlpt_level == "jlpt-n4"
     jikan = db.query(Vocab).filter(Vocab.kanji_form == "時間").one()
     assert jikan.meaning == "time"  # untouched, already had a meaning
+    db.close()
+
+
+MULTI_SENSE_WORDS_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "掛ける",
+            "is_common": True,
+            "jlpt": ["jlpt-n3"],
+            "japanese": [{"word": "掛ける", "reading": "かける"}],
+            "senses": [
+                {"english_definitions": ["to hang up"], "parts_of_speech": ["Ichidan verb"]},
+                {"english_definitions": ["to sit"], "parts_of_speech": ["Ichidan verb"]},
+                {"english_definitions": ["to spend (time/money)"], "parts_of_speech": ["Ichidan verb"]},
+                {"english_definitions": ["to make (a call)"], "parts_of_speech": ["Ichidan verb"]},
+            ],
+        }
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_run_vocab_word_enrichment_caps_meaning_at_top_two_senses(session_factory):
+    db = session_factory()
+    db.add(Vocab(kanji_form="掛ける", hiragana_form="かける", meaning="", part_of_speech="general", status="available"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_words", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=MULTI_SENSE_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_vocab_word_enrichment(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    db = session_factory()
+    kakeru = db.query(Vocab).filter(Vocab.kanji_form == "掛ける").one()
+    assert kakeru.meaning == "1 - to hang up. 2 - to sit"  # only the top 2 of 4 senses, numbered
     db.close()
 
 

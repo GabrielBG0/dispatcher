@@ -130,6 +130,10 @@ export default function DashboardPage() {
                 <div className="label">already seen in class</div>
               </div>
               <div className="stat-tile">
+                <div className="value">{overview.words_excluded}</div>
+                <div className="label">excluded</div>
+              </div>
+              <div className="stat-tile">
                 <div className="value">{overview.weeks_remaining ?? "—"}</div>
                 <div className="label">weeks remaining</div>
               </div>

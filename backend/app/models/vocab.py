@@ -21,4 +21,5 @@ class Vocab(Base):
         Integer, ForeignKey("batches.batch_number"), nullable=True, index=True
     )
     needs_kanji_reading: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    usually_kana: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     source: Mapped[str] = mapped_column(String, nullable=False, default="")

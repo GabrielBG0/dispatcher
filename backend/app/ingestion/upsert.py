@@ -121,31 +121,43 @@ def upsert_kanji_schedule_rows(
 
 
 def apply_seen_in_class(db: Session, anki_rows: list[ParsedAnkiRow]) -> UpsertStats:
-    """Marks vocab rows as seen_in_class when any field of an Anki export row
-    exactly matches their kanji_form or hiragana_form, and records every CJK
+    """Marks vocab rows as seen_in_class when a match candidate from an Anki
+    export row is an exact kanji_form match, and records every CJK
     character encountered as pre_n3 kanji coverage.
+
+    Deliberately kanji_form-only, never a hiragana/reading fallback: a
+    real deck mixes cards that name a specific kanji spelling not in the
+    vocab table (e.g. "会う（あう）" where 会う isn't a vocab row) with
+    cards that are just teaching kana itself (a "Hiragana" deck card for
+    the letter い). A reading-based fallback matched both indiscriminately
+    against the wrong homophone (合う, coincidentally sharing あう) and
+    against unrelated vocab words that merely share a kana letter (胃,
+    毛, 子...) with no connection to what was actually studied. Kana-only
+    vocab rows aren't lost by dropping the fallback -- their kanji_form
+    equals their hiragana_form, so they already match via kanji_form.
 
     Field-generic by design (see anki_export_parser docstring): real column
     layout is unconfirmed, so this matches on field *content*, not position.
     """
     stats = UpsertStats()
 
-    vocab_by_form: dict[str, list[Vocab]] = {}
+    vocab_by_kanji_form: dict[str, list[Vocab]] = {}
     for v in db.query(Vocab).all():
-        vocab_by_form.setdefault(v.kanji_form, []).append(v)
-        vocab_by_form.setdefault(v.hiragana_form, []).append(v)
+        vocab_by_kanji_form.setdefault(v.kanji_form, []).append(v)
 
     all_kanji_chars: set[str] = set()
     matched_vocab_ids: set[int] = set()
 
     for row in anki_rows:
         all_kanji_chars |= row.kanji_chars
-        for field_val in row.fields:
-            if not field_val:
-                continue
-            for v in vocab_by_form.get(field_val, []):
+        for candidate in row.match_candidates:
+            for v in vocab_by_kanji_form.get(candidate, []):
                 if v.id not in matched_vocab_ids and v.status != "seen_in_class":
                     v.status = "seen_in_class"
+                    # A word already sitting in a draft batch must be pulled
+                    # out of it -- it's no longer eligible for selection.
+                    v.assigned_batch = None
+                    v.needs_kanji_reading = False
                     matched_vocab_ids.add(v.id)
                     stats.updated += 1
 

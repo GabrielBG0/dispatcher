@@ -16,7 +16,7 @@ is what makes re-runs a no-op ("never re-fetch the same entry").
 """
 
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import httpx
 from bs4 import BeautifulSoup
@@ -34,6 +34,7 @@ _RETRYABLE = (httpx.TransportError, httpx.HTTPStatusError)
 class JishoWordSense:
     english_definitions: list[str]
     parts_of_speech: list[str]
+    tags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -101,6 +102,7 @@ class JishoClient:
                 JishoWordSense(
                     english_definitions=s.get("english_definitions", []),
                     parts_of_speech=s.get("parts_of_speech", []),
+                    tags=s.get("tags", []),
                 )
                 for s in entry.get("senses", [])
             ]

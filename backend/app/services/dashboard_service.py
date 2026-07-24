@@ -26,6 +26,7 @@ class DashboardOverview:
     words_seen_in_class: int
     words_available: int
     words_assigned: int
+    words_excluded: int
     study_end_date: date | None
     weeks_remaining: int | None
     behind_pace: bool
@@ -37,6 +38,7 @@ def get_overview(db: Session, today: date) -> DashboardOverview:
     words_seen_in_class = db.query(Vocab).filter(Vocab.status == "seen_in_class").count()
     words_available = db.query(Vocab).filter(Vocab.status == "available").count()
     words_assigned = db.query(Vocab).filter(Vocab.status == "assigned").count()
+    words_excluded = db.query(Vocab).filter(Vocab.status == "excluded").count()
 
     study_config = db.query(StudyConfig).one_or_none()
     study_end_date = None
@@ -64,6 +66,7 @@ def get_overview(db: Session, today: date) -> DashboardOverview:
         words_seen_in_class=words_seen_in_class,
         words_available=words_available,
         words_assigned=words_assigned,
+        words_excluded=words_excluded,
         study_end_date=study_end_date,
         weeks_remaining=weeks_remaining,
         behind_pace=behind_pace,

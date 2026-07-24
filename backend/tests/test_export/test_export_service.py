@@ -4,7 +4,7 @@ import pytest
 
 from app.models.batch import Batch
 from app.models.kanji import Kanji
-from app.models.kanji_schedule import KanjiSchedule
+from app.models.kanji_coverage import KanjiCoverage
 from app.models.vocab import Vocab
 from app.services import export_service
 
@@ -16,12 +16,12 @@ def _seed_finalized_batch(db):
     ai.stroke_data = json.dumps(["M1,1", "M2,2"])
     db.add(ai)
     db.flush()
-    db.add(KanjiSchedule(kanji_id=ai.id, batch_number=1))
+    db.add(KanjiCoverage(kanji_id=ai.id, coverage_source="n3_batch", batch_number=1))
 
     inu = Kanji(kanji="犬")  # scheduled elsewhere, not this batch's target
     db.add(inu)
     db.flush()
-    db.add(KanjiSchedule(kanji_id=inu.id, batch_number=2))
+    db.add(KanjiCoverage(kanji_id=inu.id, coverage_source="n3_batch", batch_number=2))
 
     db.add(
         Vocab(
@@ -94,7 +94,7 @@ def test_build_kanji_pdf_pages_warns_on_missing_stroke_or_enrichment_data(db_ses
     bare = Kanji(kanji="猫")  # no meanings/readings/stroke_data at all
     db_session.add(bare)
     db_session.flush()
-    db_session.add(KanjiSchedule(kanji_id=bare.id, batch_number=1))
+    db_session.add(KanjiCoverage(kanji_id=bare.id, coverage_source="n3_batch", batch_number=1))
     db_session.commit()
 
     pages, warnings = export_service.build_kanji_pdf_pages(db_session, batch_n=1)

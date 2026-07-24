@@ -20,6 +20,7 @@ class VocabCandidate:
     kanji_form: str
     hiragana_form: str
     kanji_chars: frozenset[str]  # component kanji, precomputed by the caller
+    usually_kana: bool = False
 
 
 @dataclass(frozen=True)

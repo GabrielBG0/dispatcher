@@ -29,16 +29,18 @@ def test_overview_counts_vocab_by_status(db_session):
             _make_vocab("available"),
             _make_vocab("available"),
             _make_vocab("assigned", batch=1),
+            _make_vocab("excluded"),
         ]
     )
     db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
     db_session.commit()
 
     overview = dashboard_service.get_overview(db_session, today=date(2026, 7, 27))
-    assert overview.words_total == 4
+    assert overview.words_total == 5
     assert overview.words_seen_in_class == 1
     assert overview.words_available == 2
     assert overview.words_assigned == 1
+    assert overview.words_excluded == 1
 
 
 def test_overview_computes_weeks_remaining_and_study_end_date(db_session):

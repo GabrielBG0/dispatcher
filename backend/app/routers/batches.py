@@ -1,12 +1,22 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.services import batch_service
 
 router = APIRouter(prefix="/api/batches", tags=["batches"])
+
+
+class BulkWordsPayload(BaseModel):
+    vocab_ids: list[int]
+    exclude: bool = False
+
+
+def _replacement_dict(r: batch_service.ReplacementCandidate | None) -> dict | None:
+    return r.__dict__ if r is not None else None
 
 
 @router.post("/{batch_n}/generate")
@@ -49,12 +59,43 @@ def eligible_replacements(batch_n: int, db: Session = Depends(get_db)) -> list[d
 
 
 @router.delete("/{batch_n}/words/{vocab_id}")
-def remove_word(batch_n: int, vocab_id: int, db: Session = Depends(get_db)) -> dict:
+def remove_word(batch_n: int, vocab_id: int, exclude: bool = False, db: Session = Depends(get_db)) -> dict:
     try:
-        batch_service.remove_word(db, batch_n, vocab_id)
+        batch_service.remove_word(db, batch_n, vocab_id, exclude=exclude)
     except batch_service.BatchServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"ok": True}
+
+
+@router.post("/{batch_n}/words/bulk-remove")
+def bulk_remove_words(batch_n: int, payload: BulkWordsPayload, db: Session = Depends(get_db)) -> dict:
+    try:
+        removed = batch_service.remove_words(db, batch_n, payload.vocab_ids, exclude=payload.exclude)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"removed_vocab_ids": removed}
+
+
+@router.post("/{batch_n}/words/{vocab_id}/replace")
+def replace_word(batch_n: int, vocab_id: int, exclude: bool = False, db: Session = Depends(get_db)) -> dict:
+    try:
+        replacement = batch_service.replace_word(db, batch_n, vocab_id, exclude=exclude)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"removed_vocab_id": vocab_id, "added": _replacement_dict(replacement)}
+
+
+@router.post("/{batch_n}/words/bulk-replace")
+def bulk_replace_words(batch_n: int, payload: BulkWordsPayload, db: Session = Depends(get_db)) -> dict:
+    try:
+        results = batch_service.replace_words(db, batch_n, payload.vocab_ids, exclude=payload.exclude)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {
+        "results": [
+            {"removed_vocab_id": removed_id, "added": _replacement_dict(added)} for removed_id, added in results
+        ]
+    }
 
 
 @router.post("/{batch_n}/words/{vocab_id}")

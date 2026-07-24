@@ -1,6 +1,6 @@
 from tests.conftest import FIXTURES_DIR, SEED_DIR
 
-from app.ingestion.anki_export_parser import parse_anki_export
+from app.ingestion.anki_export_parser import ParsedAnkiRow, parse_anki_export
 from app.ingestion.kanji_schedule_parser import parse_kanji_schedule
 from app.ingestion.upsert import (
     apply_seen_in_class,
@@ -140,3 +140,115 @@ def test_apply_seen_in_class_is_idempotent(db_session):
 
     assert second.inserted == 0
     assert second.updated == 0
+
+
+def test_apply_seen_in_class_clears_stale_batch_assignment(db_session):
+    # A word can already be sitting in a draft batch (assigned before this
+    # Anki export was imported/re-imported). Marking it seen_in_class must
+    # pull it out of that batch -- it's no longer eligible for selection --
+    # not just flip status and leave assigned_batch/needs_kanji_reading stale.
+    vocab_parsed = parse_vocab_list(VOCAB_PATH)
+    upsert_vocab_rows(db_session, vocab_parsed.rows, source="jlpt_n3_vocabulary.xls")
+
+    kirei_vocab = db_session.query(Vocab).filter(Vocab.hiragana_form == "きれい").first()
+    kirei_vocab.status = "assigned"
+    kirei_vocab.assigned_batch = 3
+    kirei_vocab.needs_kanji_reading = True
+    db_session.commit()
+
+    anki_parsed = parse_anki_export(ANKI_FIXTURE_PATH)
+    apply_seen_in_class(db_session, anki_parsed.rows)
+
+    db_session.refresh(kirei_vocab)
+    assert kirei_vocab.status == "seen_in_class"
+    assert kirei_vocab.assigned_batch is None
+    assert kirei_vocab.needs_kanji_reading is False
+
+
+def test_apply_seen_in_class_never_matches_on_bare_reading_alone(db_session):
+    # 空く and 開く are both read あく but are genuinely different words.
+    # Matching is kanji_form-only by design (no reading fallback at all),
+    # so a bare-reading candidate never matches anything, even when only
+    # one of the two vocab rows happens to share that reading.
+    aku_1 = Vocab(kanji_form="空く", hiragana_form="あく", meaning="to become empty", part_of_speech="verb", status="available")
+    aku_2 = Vocab(kanji_form="開く", hiragana_form="あく", meaning="to open", part_of_speech="verb", status="available")
+    db_session.add_all([aku_1, aku_2])
+    db_session.commit()
+
+    row = ParsedAnkiRow(fields=["あく"], match_candidates=["あく"])
+    stats = apply_seen_in_class(db_session, [row])
+
+    assert stats.updated == 0
+    db_session.refresh(aku_1)
+    db_session.refresh(aku_2)
+    assert aku_1.status == "available"
+    assert aku_2.status == "available"
+
+
+def test_apply_seen_in_class_kanji_form_match_disambiguates_homophones(db_session):
+    # Same あく homophone pair, but this time the Anki field gives the
+    # kanji spelling too ("開く（あく）", reduced by paren-stripping to
+    # the candidate "開く") -- the exact kanji_form match identifies 開く
+    # unambiguously, leaving 空く untouched.
+    aku_1 = Vocab(kanji_form="空く", hiragana_form="あく", meaning="to become empty", part_of_speech="verb", status="available")
+    aku_2 = Vocab(kanji_form="開く", hiragana_form="あく", meaning="to open", part_of_speech="verb", status="available")
+    db_session.add_all([aku_1, aku_2])
+    db_session.commit()
+
+    row = ParsedAnkiRow(fields=["開く（あく）"], match_candidates=["開く"])
+    stats = apply_seen_in_class(db_session, [row])
+
+    assert stats.updated == 1
+    db_session.refresh(aku_1)
+    db_session.refresh(aku_2)
+    assert aku_1.status == "available"
+    assert aku_2.status == "seen_in_class"
+
+
+def test_apply_seen_in_class_does_not_substitute_a_different_homophone(db_session):
+    # Real regression: a "Kanji" deck row ["Japanese Kanji", "会う", "あう",
+    # tags] names 会う, which isn't in the vocab table. 合う is, and
+    # happens to share the reading あう. With kanji_form-only matching,
+    # neither the bare "会う" candidate nor the bare "あう" candidate
+    # matches anything -- 合う is correctly left untouched, since the deck
+    # never actually named it.
+    au_gou = Vocab(kanji_form="合う", hiragana_form="あう", meaning="to fit/match", part_of_speech="verb", status="available")
+    db_session.add(au_gou)
+    db_session.commit()
+
+    row = ParsedAnkiRow(
+        fields=["Japanese Kanji", "会う", "あう", "common_word jlpt::n5"],
+        kanji_chars={"会"},
+        match_candidates=["Japanese Kanji", "会う", "あう", "common_word jlpt::n5"],
+    )
+    stats = apply_seen_in_class(db_session, [row])
+
+    assert stats.updated == 0
+    db_session.refresh(au_gou)
+    assert au_gou.status == "available"
+
+    # Same false-attribution risk via a combined field instead of separate
+    # columns: "会う（あう）" reduces to candidate "会う", which still
+    # isn't in the vocab table -- must not fall back to 合う either.
+    row2 = ParsedAnkiRow(fields=["会う（あう）"], kanji_chars={"会"}, match_candidates=["会う"])
+    stats2 = apply_seen_in_class(db_session, [row2])
+
+    assert stats2.updated == 0
+    db_session.refresh(au_gou)
+    assert au_gou.status == "available"
+
+
+def test_apply_seen_in_class_matches_kana_only_vocab_via_kanji_form(db_session):
+    # Kana-only vocab rows store kanji_form == hiragana_form, so they
+    # match through the same exact kanji_form lookup as kanji-bearing
+    # words -- no separate reading-based path is needed for them.
+    kirei = Vocab(kanji_form="きれい", hiragana_form="きれい", meaning="pretty", part_of_speech="adjective", status="available")
+    db_session.add(kirei)
+    db_session.commit()
+
+    row = ParsedAnkiRow(fields=["きれい"], match_candidates=["きれい"])
+    stats = apply_seen_in_class(db_session, [row])
+
+    assert stats.updated == 1
+    db_session.refresh(kirei)
+    assert kirei.status == "seen_in_class"

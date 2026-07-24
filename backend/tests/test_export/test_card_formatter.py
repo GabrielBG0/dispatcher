@@ -20,3 +20,12 @@ def test_kanji_reading_card_no_reading_on_front():
     card = format_kanji_reading_card(fields)
     assert card.front == "例えば"
     assert card.back == "たとえば"
+
+
+def test_vocab_card_usually_kana_shows_kana_first():
+    fields = VocabCardFields(
+        kanji_form="有る", hiragana_form="ある", meaning="to be, to exist", usually_kana=True
+    )
+    card = format_vocab_card(fields)
+    assert card.front == "ある（有る）"
+    assert card.back == "to be, to exist"

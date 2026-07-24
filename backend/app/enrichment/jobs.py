@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db import SessionLocal
-from app.enrichment.jisho_client import JishoClient
+from app.enrichment.jisho_client import JishoClient, JishoWordSense
 from app.enrichment.kanjivg_client import build_stroke_index, download_archive, stroke_paths_to_json
 from app.models.enrichment_job import EnrichmentJob
 from app.models.kanji import Kanji
@@ -69,6 +69,19 @@ def get_job(job_id: int, session_factory: SessionFactory = SessionLocal) -> dict
         db.close()
 
 
+def format_meaning(senses: list[JishoWordSense], limit: int = 2) -> str:
+    """Top `limit` senses, each sense's definitions slash-joined. A single
+    surviving sense is rendered plain; two or more get "1 - ", "2 - " ...
+    prefixes so multi-meaning words read as a numbered list, e.g.:
+    "1 - to put in / to insert. 2 - to admit / to accept"."""
+    groups = [
+        " / ".join(s.english_definitions) for s in senses[:limit] if s.english_definitions
+    ]
+    if len(groups) <= 1:
+        return groups[0] if groups else ""
+    return ". ".join(f"{i} - {group}" for i, group in enumerate(groups, start=1))
+
+
 def _pos_from_jisho(parts_of_speech: list[str]) -> str:
     lowered_tags = [t.lower() for t in parts_of_speech]
     for keyword, mapped in _POS_PRIORITY:
@@ -109,9 +122,7 @@ async def run_vocab_word_enrichment(
                     results[0] if results else None,
                 )
                 if match and match.senses:
-                    row.meaning = "; ".join(
-                        ", ".join(s.english_definitions) for s in match.senses if s.english_definitions
-                    )
+                    row.meaning = format_meaning(match.senses)
                     row.part_of_speech = _pos_from_jisho(match.senses[0].parts_of_speech)
                     row.jlpt_level = match.jlpt[0] if match.jlpt else row.jlpt_level
                     row.source = f"{row.source},jisho".strip(",") if row.source else "jisho"

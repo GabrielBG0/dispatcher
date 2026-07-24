@@ -36,6 +36,7 @@ export interface BatchWord {
   meaning: string;
   is_target_linked: boolean;
   needs_kanji_reading: boolean;
+  usually_kana: boolean;
   covers_target_kanji: string[];
 }
 
@@ -52,6 +53,20 @@ export interface ReplacementCandidate {
   vocab_id: number;
   kanji_form: string;
   hiragana_form: string;
+  usually_kana: boolean;
+}
+
+export interface ReplaceResult {
+  removed_vocab_id: number;
+  added: ReplacementCandidate | null;
+}
+
+export interface BulkRemoveResult {
+  removed_vocab_ids: number[];
+}
+
+export interface BulkReplaceResult {
+  results: ReplaceResult[];
 }
 
 export interface PdfWarning {
@@ -71,6 +86,7 @@ export interface DashboardOverview {
   words_seen_in_class: number;
   words_available: number;
   words_assigned: number;
+  words_excluded: number;
   study_end_date: string | null;
   weeks_remaining: number | null;
   behind_pace: boolean;

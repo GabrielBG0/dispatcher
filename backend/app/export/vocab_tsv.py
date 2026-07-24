@@ -23,11 +23,17 @@ class VocabExportRow:
     hiragana_form: str
     meaning: str
     part_of_speech: str
+    usually_kana: bool = False
 
 
 def _row_line(row: VocabExportRow) -> str:
     card = format_vocab_card(
-        VocabCardFields(kanji_form=row.kanji_form, hiragana_form=row.hiragana_form, meaning=row.meaning)
+        VocabCardFields(
+            kanji_form=row.kanji_form,
+            hiragana_form=row.hiragana_form,
+            meaning=row.meaning,
+            usually_kana=row.usually_kana,
+        )
     )
     return f"{card.front}\t{card.back}\t{TAGS}\n"
 

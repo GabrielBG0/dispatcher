@@ -11,6 +11,7 @@ class VocabCardFields:
     kanji_form: str
     hiragana_form: str
     meaning: str
+    usually_kana: bool = False
 
 
 @dataclass(frozen=True)
@@ -21,7 +22,12 @@ class Card:
 
 def format_vocab_card(fields: VocabCardFields) -> Card:
     is_kana_only = fields.kanji_form == fields.hiragana_form
-    front = fields.kanji_form if is_kana_only else f"{fields.kanji_form}（{fields.hiragana_form}）"
+    if is_kana_only:
+        front = fields.kanji_form
+    elif fields.usually_kana:
+        front = f"{fields.hiragana_form}（{fields.kanji_form}）"
+    else:
+        front = f"{fields.kanji_form}（{fields.hiragana_form}）"
     return Card(front=front, back=fields.meaning)
 
 
