@@ -120,6 +120,24 @@ def _load_target_kanji(schedule: dict[str, int], coverage: set[str], batch_n: in
     return {k for k, b in schedule.items() if b == batch_n} - coverage
 
 
+def _load_finalized_target_kanji(db: Session, batch_n: int) -> set[str]:
+    """The kanji this batch actually covered at finalize time, read back from
+    its own KanjiCoverage rows instead of _load_target_kanji's dynamic
+    schedule. Necessary because finalizing batch_n adds its kanji to
+    coverage, which shrinks the pool of still-unknown kanji and makes
+    _load_schedule repack *every* batch's slice -- including batch_n's own,
+    with kanji that were never actually assigned to it. Once finalized, a
+    batch's target kanji are historical fact, not a live schedule slot.
+    """
+    rows = (
+        db.query(Kanji)
+        .join(KanjiCoverage, KanjiCoverage.kanji_id == Kanji.id)
+        .filter(KanjiCoverage.coverage_source == "n3_batch", KanjiCoverage.batch_number == batch_n)
+        .all()
+    )
+    return {row.kanji for row in rows}
+
+
 def _load_candidates(db: Session) -> list[VocabCandidate]:
     rows = db.query(Vocab).filter(Vocab.status == "available").all()
     return [
@@ -283,9 +301,12 @@ def get_batch_detail(db: Session, batch_n: int) -> BatchDetail:
     if batch is None:
         raise BatchServiceError(f"batch {batch_n} does not exist")
 
-    schedule = _load_schedule(db)
-    coverage = _load_coverage(db)
-    target_kanji = _load_target_kanji(schedule, coverage, batch_n)
+    if batch.status == "draft":
+        schedule = _load_schedule(db)
+        coverage = _load_coverage(db)
+        target_kanji = _load_target_kanji(schedule, coverage, batch_n)
+    else:
+        target_kanji = _load_finalized_target_kanji(db, batch_n)
 
     vocab_rows = db.query(Vocab).filter(Vocab.assigned_batch == batch_n).all()
     words: list[BatchWordDetail] = []

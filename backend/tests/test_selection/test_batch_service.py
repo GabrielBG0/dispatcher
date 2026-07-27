@@ -225,6 +225,34 @@ def test_finalize_adds_target_kanji_to_coverage(db_session):
     )
 
 
+def test_get_batch_detail_target_kanji_stable_after_finalize(db_session):
+    # Regression: get_batch_detail used to recompute target_kanji via the
+    # live schedule even for finalized batches. Finalizing batch 1 adds its
+    # kanji to coverage, which shrinks the "still unknown" pool and makes
+    # _load_schedule repack every batch -- including batch 1's own slot --
+    # with whatever kanji now lands there. That showed the *next* batch's
+    # kanji under batch 1's coverage grid, all with 0 covering words.
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=2))
+    _seed_kanji(db_session, "愛", 1)
+    _seed_kanji(db_session, "犬", 1)
+    _seed_kanji(db_session, "時", 2)
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    before = batch_service.get_batch_detail(db_session, batch_n=1)
+    assert set(before.target_kanji) == {"愛", "犬"}
+
+    batch_service.finalize_batch(db_session, batch_n=1)
+
+    after = batch_service.get_batch_detail(db_session, batch_n=1)
+    assert set(after.target_kanji) == {"愛", "犬"}
+    assert after.target_kanji_coverage["愛"] != []
+    assert after.target_kanji_coverage["犬"] != []
+
+
 def test_finalize_adds_target_kanji_even_without_covering_words(db_session):
     # Spec step 8: finalization adds the *full* target set to coverage,
     # unconditionally -- not just kanji that happened to get a covering word.
