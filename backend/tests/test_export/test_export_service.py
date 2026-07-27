@@ -49,16 +49,16 @@ def _seed_finalized_batch(db):
 def test_export_vocab_combined(db_session):
     _seed_finalized_batch(db_session)
     files = export_service.export_vocab(db_session, batch_n=1, split_by_pos=False)
-    assert set(files) == {"vocab.tsv"}
-    lines = files["vocab.tsv"].strip("\n").split("\n")
+    assert set(files) == {"Japanese Complete Vocab.tsv"}
+    lines = files["Japanese Complete Vocab.tsv"].strip("\n").split("\n")
     assert len(lines) == 2  # only batch 1's two words, not the batch-2 one
 
 
 def test_export_vocab_split_by_pos(db_session):
     _seed_finalized_batch(db_session)
     files = export_service.export_vocab(db_session, batch_n=1, split_by_pos=True)
-    assert set(files) == {"general_vocab.tsv"}
-    assert files["general_vocab.tsv"].count("\n") == 2
+    assert set(files) == {"Japanese Vocabulary.tsv"}
+    assert files["Japanese Vocabulary.tsv"].count("\n") == 2
 
 
 def test_export_kanji_readings_only_includes_needs_reading_rows(db_session):

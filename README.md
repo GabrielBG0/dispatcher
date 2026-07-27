@@ -175,14 +175,16 @@ Once a draft exists:
 
 Works on any batch, though it's meant for finalized ones:
 
-- **Vocab Anki deck** — download as one combined TSV, or check "split by
-  part of speech" for separate `verbs.tsv` / `adjectives.tsv` /
-  `adverbs.tsv` / `general_vocab.tsv` files. Each row is
-  `front\tback\ttags`, e.g. `例えば（たとえば）\tfor example\tjlpt::n3
-  source::n3_supplement`; kana-only words use just the kana as the front
-  (no redundant reading in parentheses).
-- **Kanji reading deck** — one TSV, `kanji\treading\ttags`, containing only
-  the words flagged `needs_kanji_reading` in that batch.
+- **Vocab Anki deck** — download as one combined `Japanese Complete
+  Vocab.tsv`, or check "split by part of speech" for separate `Japanese
+  Verbs.tsv` / `Japanese Adjectives.tsv` / `Japanese Adverbs.tsv` /
+  `Japanese Vocabulary.tsv` files, named to match the existing Anki deck
+  structure. Each row is `front\tback\ttags`, e.g. `例えば（たとえば）\tfor
+  example\tjlpt::n3 source::n3_supplement`; kana-only words use just the
+  kana as the front (no redundant reading in parentheses).
+- **Kanji reading deck** — one TSV, `Japanese Kanji.tsv`,
+  `kanji\treading\ttags`, containing only the words flagged
+  `needs_kanji_reading` in that batch.
 - **Weekly kanji PDF** — one page per target kanji: stroke-order diagram
   (from KanjiVG), on'yomi/kun'yomi readings, and meanings, for handing out
   or presenting in class. **Check for missing data** first — it lists any

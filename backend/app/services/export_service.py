@@ -53,7 +53,7 @@ def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str
     ]
     if split_by_pos:
         return export_vocab_tsv_split_by_pos(rows)
-    return {"vocab.tsv": export_vocab_tsv_combined(rows)}
+    return {"Japanese Complete Vocab.tsv": export_vocab_tsv_combined(rows)}
 
 
 def export_kanji_readings(db: Session, batch_n: int) -> str:

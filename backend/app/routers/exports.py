@@ -26,7 +26,7 @@ def get_kanji_tsv(batch_n: int, db: Session = Depends(get_db)) -> dict:
         content = export_service.export_kanji_readings(db, batch_n)
     except export_service.ExportServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    return {"kanji_readings.tsv": content}
+    return {"Japanese Kanji.tsv": content}
 
 
 @router.get("/{batch_n}/pdf")

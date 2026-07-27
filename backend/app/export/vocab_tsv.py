@@ -10,10 +10,10 @@ from app.export.card_formatter import VocabCardFields, format_vocab_card
 TAGS = "jlpt::n3 source::n3_supplement"
 
 _POS_FILE_NAMES = {
-    "verb": "verbs.tsv",
-    "adjective": "adjectives.tsv",
-    "adverb": "adverbs.tsv",
-    "general": "general_vocab.tsv",
+    "verb": "Japanese Verbs.tsv",
+    "adjective": "Japanese Adjectives.tsv",
+    "adverb": "Japanese Adverbs.tsv",
+    "general": "Japanese Vocabulary.tsv",
 }
 
 
