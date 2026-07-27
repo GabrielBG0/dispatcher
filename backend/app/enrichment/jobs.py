@@ -82,7 +82,7 @@ def format_meaning(senses: list[JishoWordSense], limit: int = 2) -> str:
     return ". ".join(f"{i} - {group}" for i, group in enumerate(groups, start=1))
 
 
-def _pos_from_jisho(parts_of_speech: list[str]) -> str:
+def pos_from_jisho(parts_of_speech: list[str]) -> str:
     lowered_tags = [t.lower() for t in parts_of_speech]
     for keyword, mapped in _POS_PRIORITY:
         if any(keyword in tag for tag in lowered_tags):
@@ -123,7 +123,7 @@ async def run_vocab_word_enrichment(
                 )
                 if match and match.senses:
                     row.meaning = format_meaning(match.senses)
-                    row.part_of_speech = _pos_from_jisho(match.senses[0].parts_of_speech)
+                    row.part_of_speech = pos_from_jisho(match.senses[0].parts_of_speech)
                     row.jlpt_level = match.jlpt[0] if match.jlpt else row.jlpt_level
                     row.source = f"{row.source},jisho".strip(",") if row.source else "jisho"
                 else:

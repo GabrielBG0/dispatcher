@@ -21,6 +21,7 @@ class VocabCandidate:
     hiragana_form: str
     kanji_chars: frozenset[str]  # component kanji, precomputed by the caller
     usually_kana: bool = False
+    status: str = "available"  # lets select_batch tell apart available/seen_in_class in full_candidate_pool
 
 
 @dataclass(frozen=True)
@@ -35,13 +36,18 @@ class SelectedWord:
     is_target_linked: bool
     needs_kanji_reading: bool
     covers_target_kanji: frozenset[str]
+    used_seen_in_class_fallback: bool = False
 
 
 @dataclass
 class SelectionWarning:
-    kind: str  # e.g. "no_eligible_covering_word"
+    kind: str  # "no_eligible_covering_word" | "covered_by_seen_in_class_fallback"
     detail: str
     kanji: str | None = None
+    # cause is only populated for "no_eligible_covering_word": one of
+    # "no_vocab_in_source" | "blocked_by_future_kanji" | "other_status_exclusion"
+    cause: str | None = None
+    blocking_kanji: str | None = None  # populated only when cause == "blocked_by_future_kanji"
 
 
 @dataclass

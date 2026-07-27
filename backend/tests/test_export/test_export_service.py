@@ -69,6 +69,25 @@ def test_export_kanji_readings_only_includes_needs_reading_rows(db_session):
     assert lines[0].startswith("愛犬\tあいけん")
 
 
+def test_export_vocab_tags_seen_in_class_fallback_words(db_session):
+    db_session.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    ai = Kanji(kanji="愛")
+    db_session.add(ai)
+    db_session.flush()
+    db_session.add(KanjiCoverage(kanji_id=ai.id, coverage_source="n3_batch", batch_number=1))
+    db_session.add(
+        Vocab(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet dog", part_of_speech="general",
+            status="seen_in_class", assigned_batch=1, needs_kanji_reading=True,
+        )
+    )
+    db_session.commit()
+
+    files = export_service.export_vocab(db_session, batch_n=1, split_by_pos=False)
+    content = files["Japanese Complete Vocab.tsv"]
+    assert "seen_in_class_fallback" in content
+
+
 def test_export_rejects_non_finalized_batch(db_session):
     db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
     db_session.commit()

@@ -59,12 +59,14 @@ th { color: #666; font-weight: 600; font-size: 0.8rem; text-transform: uppercase
 .pill.warn { background: var(--warn-bg); color: #b45309; }
 .pill.behind { background: #fee2e2; color: var(--danger); }
 .pill.kana { background: #ede9fe; color: #6d28d9; }
+.pill.fallback { background: #fef3c7; color: #92400e; }
 
 .warning-box {
   background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px;
   padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.88rem;
 }
 .warning-box ul { margin: 0.3rem 0 0; padding-left: 1.2rem; }
+.warning-box li.info { color: #444; }
 
 .error-box {
   background: #fef2f2; border: 1px solid #fecaca; color: var(--danger);
@@ -87,13 +89,15 @@ th { color: #666; font-weight: 600; font-size: 0.8rem; text-transform: uppercase
 .word-row .word-meaning { color: #666; font-size: 0.85rem; }
 .word-row .word-actions { display: flex; gap: 0.4rem; align-items: center; }
 .word-row.just-replaced { border-color: var(--accent); background: #eff6ff; }
+.word-row.seen-in-class-fallback { border-color: #f59e0b; background: #fffbeb; }
 
 .target-kanji-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .target-kanji-chip {
   border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem;
-  min-width: 3rem; text-align: center; font-size: 1.1rem;
+  min-width: 3rem; text-align: center; font-size: 1.1rem; cursor: pointer;
 }
 .target-kanji-chip.uncovered { border-color: var(--danger); background: #fef2f2; }
+.target-kanji-chip.selected { border-color: var(--accent); background: #eff6ff; box-shadow: 0 0 0 2px var(--accent) inset; }
 .target-kanji-chip .cover-count { display: block; font-size: 0.7rem; color: #666; margin-top: 0.2rem; }
 
 .modal-overlay {

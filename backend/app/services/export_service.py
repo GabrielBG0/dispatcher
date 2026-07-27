@@ -15,6 +15,7 @@ from app.models.batch import Batch
 from app.models.kanji import Kanji
 from app.models.kanji_coverage import KanjiCoverage
 from app.models.vocab import Vocab
+from app.services.batch_service import is_seen_in_class_fallback
 
 
 class ExportServiceError(Exception):
@@ -48,6 +49,7 @@ def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str
             meaning=v.meaning,
             part_of_speech=v.part_of_speech,
             usually_kana=v.usually_kana,
+            used_seen_in_class_fallback=is_seen_in_class_fallback(v),
         )
         for v in _batch_vocab_rows(db, batch_n)
     ]
@@ -64,6 +66,7 @@ def export_kanji_readings(db: Session, batch_n: int) -> str:
             hiragana_form=v.hiragana_form,
             meaning=v.meaning,
             part_of_speech=v.part_of_speech,
+            used_seen_in_class_fallback=is_seen_in_class_fallback(v),
         )
         for v in _batch_vocab_rows(db, batch_n)
         if v.needs_kanji_reading

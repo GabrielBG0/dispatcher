@@ -26,7 +26,13 @@ export interface GenerateBatchResult {
   behind_pace: boolean;
   selected_count: number;
   target_kanji_coverage: Record<string, number[]>;
-  warnings: { kind: string; detail: string; kanji: string | null }[];
+  warnings: {
+    kind: string;
+    detail: string;
+    kanji: string | null;
+    cause?: string | null;
+    blocking_kanji?: string | null;
+  }[];
 }
 
 export interface BatchWord {
@@ -38,6 +44,7 @@ export interface BatchWord {
   needs_kanji_reading: boolean;
   usually_kana: boolean;
   covers_target_kanji: string[];
+  used_seen_in_class_fallback: boolean;
 }
 
 export interface BatchDetail {
@@ -47,6 +54,38 @@ export interface BatchDetail {
   target_kanji: string[];
   target_kanji_coverage: Record<string, number[]>;
   words: BatchWord[];
+}
+
+export interface KanjiWordOption {
+  vocab_id: number;
+  kanji_form: string;
+  hiragana_form: string;
+  meaning: string;
+  usually_kana: boolean;
+  status: string;
+  assigned_batch: number | null;
+  assigned_batch_status: string | null;
+  core_rank: number | null;
+}
+
+export interface JishoWordSuggestion {
+  kanji_form: string;
+  hiragana_form: string;
+  meaning: string;
+  part_of_speech: string;
+  jlpt: string[];
+  is_common: boolean;
+  includable: boolean;
+  blocking_kanji: string | null;
+  blocking_batch: number | null;
+  seen_kanji: string[];
+}
+
+export interface KanjiWordOptions {
+  kanji: string;
+  in_batch: KanjiWordOption[];
+  other_batches: KanjiWordOption[];
+  top_common: KanjiWordOption[];
 }
 
 export interface ReplacementCandidate {

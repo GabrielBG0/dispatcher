@@ -3,7 +3,7 @@ containing only rows where needs_kanji_reading was true at selection time.
 """
 
 from app.export.card_formatter import VocabCardFields, format_kanji_reading_card
-from app.export.vocab_tsv import TAGS, VocabExportRow
+from app.export.vocab_tsv import VocabExportRow, tags_for_row
 
 
 def export_kanji_reading_tsv(rows: list[VocabExportRow]) -> str:
@@ -12,5 +12,5 @@ def export_kanji_reading_tsv(rows: list[VocabExportRow]) -> str:
         card = format_kanji_reading_card(
             VocabCardFields(kanji_form=row.kanji_form, hiragana_form=row.hiragana_form, meaning=row.meaning)
         )
-        lines.append(f"{card.front}\t{card.back}\t{TAGS}\n")
+        lines.append(f"{card.front}\t{card.back}\t{tags_for_row(row)}\n")
     return "".join(lines)

@@ -58,6 +58,65 @@ def eligible_replacements(batch_n: int, db: Session = Depends(get_db)) -> list[d
     return [r.__dict__ for r in batch_service.get_eligible_replacements(db, batch_n)]
 
 
+@router.get("/{batch_n}/kanji/{kanji}")
+def kanji_word_options(batch_n: int, kanji: str, db: Session = Depends(get_db)) -> dict:
+    try:
+        result = batch_service.get_kanji_word_options(db, batch_n, kanji)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {
+        "kanji": result.kanji,
+        "in_batch": [w.__dict__ for w in result.in_batch],
+        "other_batches": [w.__dict__ for w in result.other_batches],
+        "top_common": [w.__dict__ for w in result.top_common],
+    }
+
+
+@router.get("/{batch_n}/kanji/{kanji}/jisho-search")
+async def jisho_search(batch_n: int, kanji: str, db: Session = Depends(get_db)) -> dict:
+    try:
+        suggestions = await batch_service.search_jisho_word_suggestions(db, batch_n, kanji)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"kanji": kanji, "jisho_suggestions": [s.__dict__ for s in suggestions]}
+
+
+@router.post("/{batch_n}/kanji-words/{vocab_id}/include")
+def include_kanji_word(batch_n: int, vocab_id: int, db: Session = Depends(get_db)) -> dict:
+    try:
+        batch_service.manual_include_word(db, batch_n, vocab_id)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True}
+
+
+@router.post("/{batch_n}/kanji-words/{vocab_id}/exclude")
+def exclude_kanji_word(batch_n: int, vocab_id: int, db: Session = Depends(get_db)) -> dict:
+    try:
+        batch_service.manual_exclude_word(db, batch_n, vocab_id)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True}
+
+
+class ImportJishoWordPayload(BaseModel):
+    kanji_form: str
+    hiragana_form: str
+    meaning: str
+    part_of_speech: str = "general"
+
+
+@router.post("/{batch_n}/kanji-words/import-jisho")
+def import_jisho_word(batch_n: int, payload: ImportJishoWordPayload, db: Session = Depends(get_db)) -> dict:
+    try:
+        vocab_id = batch_service.import_and_include_jisho_word(
+            db, batch_n, payload.kanji_form, payload.hiragana_form, payload.meaning, payload.part_of_speech
+        )
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True, "vocab_id": vocab_id}
+
+
 @router.delete("/{batch_n}/words/{vocab_id}")
 def remove_word(batch_n: int, vocab_id: int, exclude: bool = False, db: Session = Depends(get_db)) -> dict:
     try:

@@ -1,6 +1,8 @@
 from datetime import date
 
+import httpx
 import pytest
+import respx
 
 from app.models.batch import Batch
 from app.models.kanji import Kanji
@@ -94,6 +96,107 @@ def test_regenerate_can_reselect_a_word_already_in_the_batch(db_session):
     vocab = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one()
     assert vocab.status == "assigned"
     assert vocab.assigned_batch == 1
+
+
+def test_generate_draft_uses_seen_in_class_fallback_when_no_fresh_word_covers_target(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+            status="seen_in_class",
+        )
+    )
+    db_session.commit()
+
+    result = batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+
+    assert len(result.selected) == 1
+    assert result.selected[0].used_seen_in_class_fallback is True
+
+    vocab = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one()
+    assert vocab.status == "seen_in_class"  # never promoted to "assigned"
+    assert vocab.assigned_batch == 1
+
+    detail = batch_service.get_batch_detail(db_session, batch_n=1)
+    assert detail.words[0].used_seen_in_class_fallback is True
+
+
+def test_generate_draft_regeneration_clears_stale_fallback_assignment_without_flipping_status(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+            status="seen_in_class",
+        )
+    )
+    db_session.commit()
+
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+
+    vocab = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one()
+    assert vocab.status == "seen_in_class"  # never flips to "available"
+    assert vocab.assigned_batch == 1
+
+
+def test_finalize_does_not_promote_fallback_words_status(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+            status="seen_in_class",
+        )
+    )
+    db_session.commit()
+
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    batch_service.finalize_batch(db_session, batch_n=1)
+
+    vocab = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one()
+    assert vocab.status == "seen_in_class"
+
+
+def test_remove_word_restores_fallback_word_to_seen_in_class_not_available(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+            status="seen_in_class",
+        )
+    )
+    db_session.commit()
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one().id
+
+    batch_service.remove_word(db_session, batch_n=1, vocab_id=vocab_id)
+
+    vocab = db_session.get(Vocab, vocab_id)
+    assert vocab.status == "seen_in_class"
+    assert vocab.assigned_batch is None
+
+
+def test_remove_word_with_exclude_still_excludes_a_fallback_word(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+            status="seen_in_class",
+        )
+    )
+    db_session.commit()
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one().id
+
+    batch_service.remove_word(db_session, batch_n=1, vocab_id=vocab_id, exclude=True)
+
+    vocab = db_session.get(Vocab, vocab_id)
+    assert vocab.status == "excluded"
+    assert vocab.assigned_batch is None
 
 
 def test_finalize_adds_target_kanji_to_coverage(db_session):
@@ -545,3 +648,393 @@ def test_load_schedule_excludes_already_known_kanji(db_session):
 
     assert "赤" not in schedule
     assert set(schedule) == {"愛", "犬"}
+
+
+def test_manual_include_word_assigns_an_available_word(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    vocab = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available"
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    batch_service.manual_include_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+    db_session.refresh(vocab)
+    assert vocab.status == "assigned"
+    assert vocab.assigned_batch == 1
+
+
+def test_manual_include_word_preserves_seen_in_class_status(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    vocab = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="seen_in_class"
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    batch_service.manual_include_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+    db_session.refresh(vocab)
+    assert vocab.status == "seen_in_class"  # never promoted to "assigned"
+    assert vocab.assigned_batch == 1
+
+    detail = batch_service.get_batch_detail(db_session, batch_n=1)
+    assert detail.words[0].used_seen_in_class_fallback is True
+
+
+def test_manual_include_word_steals_from_another_draft_batch(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=1))
+    _seed_kanji(db_session, "愛", 1)
+    _seed_kanji(db_session, "犬", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
+    vocab = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+        status="assigned", assigned_batch=2, needs_kanji_reading=True,
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    batch_service.manual_include_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+    db_session.refresh(vocab)
+    assert vocab.assigned_batch == 1
+    assert vocab.status == "assigned"
+
+
+def test_manual_include_word_refuses_to_steal_from_finalized_batch(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=1))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(Batch(batch_number=2, status="finalized", weekly_target_used=126))
+    vocab = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+        status="assigned", assigned_batch=2, needs_kanji_reading=True,
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.manual_include_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+    db_session.refresh(vocab)
+    assert vocab.assigned_batch == 2  # untouched
+
+
+def test_manual_include_word_refuses_future_kanji_word(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=2))
+    _seed_kanji(db_session, "行", 1)
+    _seed_kanji(db_session, "旅", 9)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    vocab = Vocab(
+        kanji_form="旅行", hiragana_form="りょこう", meaning="travel", part_of_speech="general", status="available"
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.manual_include_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+
+def test_manual_exclude_word_removes_and_excludes_an_in_batch_word(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    vocab = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+        status="assigned", assigned_batch=1, needs_kanji_reading=True,
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    batch_service.manual_exclude_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+    db_session.refresh(vocab)
+    assert vocab.status == "excluded"
+    assert vocab.assigned_batch is None
+
+
+def test_manual_exclude_word_excludes_an_unassigned_word_directly(db_session):
+    vocab = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available"
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    batch_service.manual_exclude_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+    db_session.refresh(vocab)
+    assert vocab.status == "excluded"
+    assert vocab.assigned_batch is None
+
+
+def test_manual_exclude_word_refuses_a_word_assigned_to_a_different_batch(db_session):
+    db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
+    vocab = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+        status="assigned", assigned_batch=2, needs_kanji_reading=True,
+    )
+    db_session.add(vocab)
+    db_session.commit()
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.manual_exclude_word(db_session, batch_n=1, vocab_id=vocab.id)
+
+
+def test_get_kanji_word_options_splits_by_location_and_ranks_top_common(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=1))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
+    in_batch_word = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+        status="assigned", assigned_batch=1, needs_kanji_reading=True,
+    )
+    other_batch_word = Vocab(
+        kanji_form="愛猫", hiragana_form="あいねこ", meaning="cat lover", part_of_speech="general",
+        status="assigned", assigned_batch=2, needs_kanji_reading=True,
+    )
+    available_word = Vocab(
+        kanji_form="愛情", hiragana_form="あいじょう", meaning="affection", part_of_speech="general",
+        status="available",
+    )
+    unrelated_word = Vocab(
+        kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general", status="available"
+    )
+    db_session.add_all([in_batch_word, other_batch_word, available_word, unrelated_word])
+    db_session.commit()
+
+    # get_kanji_word_options is purely local/DB-bound -- no network call, so
+    # no respx mock is needed (and none is registered: an attempted call
+    # would raise inside respx if this regressed back to touching Jisho).
+    with respx.mock(assert_all_called=False):
+        options = batch_service.get_kanji_word_options(db_session, batch_n=1, kanji="愛")
+
+    assert {w.vocab_id for w in options.in_batch} == {in_batch_word.id}
+    assert {w.vocab_id for w in options.other_batches} == {other_batch_word.id}
+    other = options.other_batches[0]
+    assert other.assigned_batch == 2
+    assert other.assigned_batch_status == "draft"
+    top_common_ids = {w.vocab_id for w in options.top_common}
+    assert top_common_ids == {in_batch_word.id, other_batch_word.id, available_word.id}
+    assert unrelated_word.id not in top_common_ids  # doesn't contain 愛
+
+
+def test_get_kanji_word_options_rejects_nonexistent_batch(db_session):
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.get_kanji_word_options(db_session, batch_n=99, kanji="愛")
+
+
+def _jisho_word(word, reading, jlpt, is_common, meaning, pos):
+    return {
+        "slug": word,
+        "is_common": is_common,
+        "jlpt": jlpt,
+        "japanese": [{"word": word, "reading": reading}],
+        "senses": [{"english_definitions": [meaning], "parts_of_speech": [pos]}],
+    }
+
+
+@pytest.mark.asyncio
+async def test_search_jisho_word_suggestions_prefers_n3_tier_and_excludes_local_words(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(
+        Vocab(kanji_form="投資", hiragana_form="とうし", meaning="investment", part_of_speech="noun", status="available")
+    )
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [
+            _jisho_word("投", "とう", [], False, "throw", "Noun"),  # bare kanji, must be dropped
+            _jisho_word("投票", "とうひょう", ["jlpt-n3"], True, "voting", "Suru verb"),
+            _jisho_word("投資", "とうし", ["jlpt-n1"], True, "investment", "Suru verb"),  # already local
+        ],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        suggestions = await batch_service.search_jisho_word_suggestions(db_session, batch_n=1, kanji="投")
+
+    forms = [s.kanji_form for s in suggestions]
+    assert forms == ["投票"]  # 投資 excluded as already-local; n3 tier preferred over the (excluded) n1 word
+    assert suggestions[0].part_of_speech == "verb"
+    assert suggestions[0].meaning == "voting"
+    assert suggestions[0].includable is True  # 票 isn't scheduled anywhere -> orphan, not future
+    assert suggestions[0].blocking_kanji is None
+    assert suggestions[0].blocking_batch is None
+
+
+@pytest.mark.asyncio
+async def test_search_jisho_word_suggestions_flags_words_combining_with_an_already_seen_kanji(db_session):
+    # 話 is already known (pre_n3 baseline); 投 is this batch's new target
+    # kanji. 投話 (made up) pairs them -- seen_kanji must list 話. 投資's
+    # other kanji (資) was never seen -> seen_kanji stays empty.
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    seen = Kanji(kanji="話")
+    db_session.add(seen)
+    db_session.flush()
+    db_session.add(KanjiCoverage(kanji_id=seen.id, coverage_source="pre_n3", batch_number=None))
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [
+            _jisho_word("投話", "とうわ", [], True, "made-up word", "Noun"),
+            _jisho_word("投資", "とうし", [], True, "investment", "Noun"),
+        ],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        suggestions = await batch_service.search_jisho_word_suggestions(db_session, batch_n=1, kanji="投")
+
+    by_form = {s.kanji_form: s for s in suggestions}
+    assert by_form["投話"].seen_kanji == ["話"]
+    assert by_form["投資"].seen_kanji == []
+
+
+@pytest.mark.asyncio
+async def test_search_jisho_word_suggestions_marks_a_suggestion_blocked_by_skip_ahead_guard(db_session):
+    # new_card_weeks=2 keeps 投 and 票 in separate output batches -- 票 ends
+    # up scheduled for a later batch than 1, so 投票 must come back flagged
+    # includable=False even though it's still shown for context.
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=2))
+    _seed_kanji(db_session, "投", 1)
+    _seed_kanji(db_session, "票", 9)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [_jisho_word("投票", "とうひょう", ["jlpt-n3"], True, "voting", "Suru verb")],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        suggestions = await batch_service.search_jisho_word_suggestions(db_session, batch_n=1, kanji="投")
+
+    assert len(suggestions) == 1
+    assert suggestions[0].includable is False
+    assert suggestions[0].blocking_kanji == "票"
+    assert suggestions[0].blocking_batch == 2  # repacked: only 2 kanji total over 2 weeks
+
+
+@pytest.mark.asyncio
+async def test_search_jisho_word_suggestions_falls_back_to_common_tier_when_no_n3_match(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [
+            _jisho_word("投資", "とうし", ["jlpt-n1"], True, "investment", "Noun"),
+            _jisho_word("投影", "とうえい", [], False, "projection", "Noun"),
+        ],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        suggestions = await batch_service.search_jisho_word_suggestions(db_session, batch_n=1, kanji="投")
+
+    forms = [s.kanji_form for s in suggestions]
+    assert forms == ["投資"]  # no n3 tier, falls back to the common-tagged word
+
+
+@pytest.mark.asyncio
+async def test_search_jisho_word_suggestions_falls_back_to_all_when_no_n3_or_common_match(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [_jisho_word("投影", "とうえい", [], False, "projection", "Noun")],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        suggestions = await batch_service.search_jisho_word_suggestions(db_session, batch_n=1, kanji="投")
+
+    assert [s.kanji_form for s in suggestions] == ["投影"]
+
+
+@pytest.mark.asyncio
+async def test_search_jisho_word_suggestions_raises_on_jisho_failure(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(500))
+        with pytest.raises(batch_service.BatchServiceError, match="Could not reach Jisho"):
+            await batch_service.search_jisho_word_suggestions(db_session, batch_n=1, kanji="投")
+
+
+@pytest.mark.asyncio
+async def test_search_jisho_word_suggestions_rejects_nonexistent_batch(db_session):
+    with pytest.raises(batch_service.BatchServiceError):
+        await batch_service.search_jisho_word_suggestions(db_session, batch_n=99, kanji="投")
+
+
+def test_import_and_include_jisho_word_creates_and_assigns_a_new_vocab_row(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    vocab_id = batch_service.import_and_include_jisho_word(
+        db_session, batch_n=1, kanji_form="投票", hiragana_form="とうひょう", meaning="voting", part_of_speech="verb"
+    )
+
+    vocab = db_session.get(Vocab, vocab_id)
+    assert vocab.kanji_form == "投票"
+    assert vocab.source == "jisho"
+    assert vocab.status == "assigned"
+    assert vocab.assigned_batch == 1
+
+
+def test_import_and_include_jisho_word_reuses_an_existing_matching_row(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    existing = Vocab(
+        kanji_form="投票", hiragana_form="とうひょう", meaning="voting", part_of_speech="verb", status="excluded"
+    )
+    db_session.add(existing)
+    db_session.commit()
+
+    vocab_id = batch_service.import_and_include_jisho_word(
+        db_session, batch_n=1, kanji_form="投票", hiragana_form="とうひょう", meaning="voting", part_of_speech="verb"
+    )
+
+    assert vocab_id == existing.id
+    assert db_session.query(Vocab).filter(Vocab.kanji_form == "投票").count() == 1
+
+
+def test_import_and_include_jisho_word_does_not_persist_when_include_fails(db_session):
+    # 投票 contains 票, scheduled for a later batch than 1 and not yet known
+    # -- skip-ahead guard should block it, and the import must not leave a
+    # dangling vocab row behind.
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=2))
+    _seed_kanji(db_session, "投", 1)
+    _seed_kanji(db_session, "票", 9)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.import_and_include_jisho_word(
+            db_session, batch_n=1, kanji_form="投票", hiragana_form="とうひょう",
+            meaning="voting", part_of_speech="verb",
+        )
+
+    db_session.rollback()
+    assert db_session.query(Vocab).filter(Vocab.kanji_form == "投票").count() == 0

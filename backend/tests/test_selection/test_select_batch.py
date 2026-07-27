@@ -5,7 +5,7 @@ from app.selection.select_batch import compute_weekly_target, select_batch
 from app.selection.types import SelectionConfig, VocabCandidate
 
 
-def make_candidate(id_, kanji_form, hiragana_form=None):
+def make_candidate(id_, kanji_form, hiragana_form=None, status="available"):
     from app.kanji_utils import extract_kanji
 
     return VocabCandidate(
@@ -13,6 +13,7 @@ def make_candidate(id_, kanji_form, hiragana_form=None):
         kanji_form=kanji_form,
         hiragana_form=hiragana_form or kanji_form,
         kanji_chars=frozenset(extract_kanji(kanji_form)),
+        status=status,
     )
 
 
@@ -217,6 +218,111 @@ def test_filler_fills_remaining_quota_after_target_linked_exhausted():
     assert ids == {1, 2}
     filler_selection = next(w for w in result.selected if w.vocab_id == 2)
     assert filler_selection.is_target_linked is False
+
+
+def test_seen_in_class_fallback_covers_kanji_with_no_fresh_word():
+    # Only a seen-in-class word contains 愛; no fresh candidate covers it.
+    seen = make_candidate(1, "愛犬", "あいけん", status="seen_in_class")
+    result = select_batch(
+        [],
+        coverage=set(),
+        schedule={"愛": 1},
+        target_kanji={"愛"},
+        batch_n=1,
+        config=DEFAULT_CONFIG,
+        today=TODAY,
+        full_candidate_pool=[seen],
+    )
+    assert [w.vocab_id for w in result.selected] == [1]
+    assert result.selected[0].used_seen_in_class_fallback is True
+    assert result.target_kanji_coverage["愛"] == [1]
+    assert len(result.warnings) == 1
+    assert result.warnings[0].kind == "covered_by_seen_in_class_fallback"
+
+
+def test_skip_ahead_guard_still_blocks_seen_in_class_fallback():
+    # 旅行 is seen-in-class but 旅 is a future kanji -> even fallback must
+    # not use it; warning should explain why via cause/blocking_kanji.
+    seen = make_candidate(1, "旅行", "りょこう", status="seen_in_class")
+    result = select_batch(
+        [],
+        coverage=set(),
+        schedule={"旅": 9, "行": 1},
+        target_kanji={"行"},
+        batch_n=1,
+        config=DEFAULT_CONFIG,
+        today=TODAY,
+        full_candidate_pool=[seen],
+    )
+    assert result.selected == []
+    assert len(result.warnings) == 1
+    warning = result.warnings[0]
+    assert warning.kind == "no_eligible_covering_word"
+    assert warning.cause == "blocked_by_future_kanji"
+    assert warning.blocking_kanji == "旅"
+
+
+def test_no_eligible_word_cause_is_no_vocab_in_source_when_pool_is_empty():
+    result = select_batch(
+        [],
+        coverage=set(),
+        schedule={"愛": 1},
+        target_kanji={"愛"},
+        batch_n=1,
+        config=DEFAULT_CONFIG,
+        today=TODAY,
+        full_candidate_pool=[],
+    )
+    assert result.warnings[0].cause == "no_vocab_in_source"
+
+
+def test_seen_in_class_fallback_word_covering_two_targets_resolves_both_with_one_warning():
+    # One seen-in-class word covers both 愛 and 犬. It gets fallback-selected
+    # when the first of the two (sorted order) is processed, and since that
+    # single word covers both target kanji, the second is already covered
+    # by the same pick -- no separate warning for it.
+    seen = make_candidate(1, "愛犬", "あいけん", status="seen_in_class")
+    result = select_batch(
+        [],
+        coverage=set(),
+        schedule={"愛": 1, "犬": 1},
+        target_kanji={"愛", "犬"},
+        batch_n=1,
+        config=DEFAULT_CONFIG,
+        today=TODAY,
+        full_candidate_pool=[seen],
+    )
+    assert [w.vocab_id for w in result.selected] == [1]
+    assert result.target_kanji_coverage["愛"] == [1]
+    assert result.target_kanji_coverage["犬"] == [1]
+    assert len(result.warnings) == 1
+    assert result.warnings[0].kind == "covered_by_seen_in_class_fallback"
+
+
+def test_seen_in_class_fallback_does_not_count_against_weekly_target():
+    # daily_minimum=0 zeroes the pacing floor, and today == study_end_date
+    # clamps remaining_weeks to 1, so weekly_target == remaining_words == 2
+    # (the two fresh filler candidates) -- a quota the fallback word must
+    # not eat into. If the fallback counted toward the quota, only one of
+    # the two fresh fillers would get selected.
+    seen = make_candidate(1, "愛犬", "あいけん", status="seen_in_class")
+    filler_1 = make_candidate(2, "時間", "じかん")
+    filler_2 = make_candidate(3, "国語", "こくご")
+    config = SelectionConfig(daily_minimum=0, study_end_date=date(2026, 7, 27))
+    result = select_batch(
+        [filler_1, filler_2],
+        coverage=set(),
+        schedule={"愛": 1},
+        target_kanji={"愛"},
+        batch_n=1,
+        config=config,
+        today=date(2026, 7, 27),
+        full_candidate_pool=[seen],
+    )
+    ids = {w.vocab_id for w in result.selected}
+    assert ids == {1, 2, 3}  # fallback word plus both fresh fillers
+    fallback_selection = next(w for w in result.selected if w.vocab_id == 1)
+    assert fallback_selection.used_seen_in_class_fallback is True
 
 
 def test_zero_coverage_default_run_produces_sane_result():

@@ -9,6 +9,11 @@ from app.export.card_formatter import VocabCardFields, format_vocab_card
 
 TAGS = "jlpt::n3 source::n3_supplement"
 
+# Tag applied to a word selected via the seen-in-class fallback (see
+# select_batch's SelectedWord.used_seen_in_class_fallback) -- marks it in
+# Anki as a word the student already knew, not a fresh import.
+FALLBACK_TAG = "seen_in_class_fallback"
+
 _POS_FILE_NAMES = {
     "verb": "Japanese Verbs.tsv",
     "adjective": "Japanese Adjectives.tsv",
@@ -24,6 +29,11 @@ class VocabExportRow:
     meaning: str
     part_of_speech: str
     usually_kana: bool = False
+    used_seen_in_class_fallback: bool = False
+
+
+def tags_for_row(row: VocabExportRow) -> str:
+    return f"{TAGS} {FALLBACK_TAG}" if row.used_seen_in_class_fallback else TAGS
 
 
 def _row_line(row: VocabExportRow) -> str:
@@ -35,7 +45,7 @@ def _row_line(row: VocabExportRow) -> str:
             usually_kana=row.usually_kana,
         )
     )
-    return f"{card.front}\t{card.back}\t{TAGS}\n"
+    return f"{card.front}\t{card.back}\t{tags_for_row(row)}\n"
 
 
 def export_vocab_tsv_combined(rows: list[VocabExportRow]) -> str:

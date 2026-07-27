@@ -4,12 +4,14 @@ app.selection -- select_batch itself never touches SQLAlchemy.
 """
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, timedelta
 
 from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.enrichment.jisho_client import JishoClient
+from app.enrichment.jobs import format_meaning, pos_from_jisho
 from app.ingestion.bccwj_frequency_loader import load_bccwj_frequency_subset
 from app.kanji_utils import extract_kanji
 from app.models.batch import Batch
@@ -18,9 +20,13 @@ from app.models.kanji_coverage import KanjiCoverage
 from app.models.kanji_schedule import KanjiSchedule
 from app.models.study_config import StudyConfig
 from app.models.vocab import Vocab
-from app.selection.classify import classify_word_kanji, orphan_kanji_count
+from app.selection.classify import classify_word_kanji, has_future_kanji, orphan_kanji_count
 from app.selection.select_batch import select_batch
 from app.selection.types import SelectionConfig, SelectionResult, VocabCandidate
+
+# Jisho word-search results are capped the same way the local top-10 list
+# is, so the online fallback panel doesn't dwarf the rest of the UI.
+JISHO_SUGGESTION_LIMIT = 10
 
 BCCWJ_SUBSET_PATH = settings.seed_dir / "bccwj_n3_frequency_subset.tsv"
 
@@ -128,6 +134,36 @@ def _load_candidates(db: Session) -> list[VocabCandidate]:
     ]
 
 
+def _load_full_candidate_pool(db: Session) -> list[VocabCandidate]:
+    """Every vocab row regardless of status, tagged with its current status.
+    Used only by select_batch's diagnostic + seen-in-class fallback
+    machinery -- never as a primary selection pool (see _load_candidates).
+    """
+    rows = db.query(Vocab).all()
+    return [
+        VocabCandidate(
+            id=v.id,
+            kanji_form=v.kanji_form,
+            hiragana_form=v.hiragana_form,
+            kanji_chars=frozenset(extract_kanji(v.kanji_form)),
+            usually_kana=v.usually_kana,
+            status=v.status,
+        )
+        for v in rows
+    ]
+
+
+def is_seen_in_class_fallback(vocab: Vocab) -> bool:
+    """True iff this vocab row's current batch assignment came from the
+    seen-in-class fallback in select_batch, not the strict/normal pass.
+    Derived, not stored: a normal selection always flips status to
+    "assigned"; a fallback selection deliberately leaves status as
+    "seen_in_class" (see generate_draft_batch) -- no schema migration
+    needed, since this app has no Alembic step, only additive create_all().
+    """
+    return vocab.status == "seen_in_class"
+
+
 def generate_draft_batch(db: Session, batch_n: int, today: date) -> SelectionResult:
     existing = db.get(Batch, batch_n)
     if existing is not None and existing.status != "draft":
@@ -147,8 +183,15 @@ def generate_draft_batch(db: Session, batch_n: int, today: date) -> SelectionRes
     db.query(Vocab).filter(Vocab.assigned_batch == batch_n, Vocab.status == "assigned").update(
         {Vocab.status: "available", Vocab.assigned_batch: None, Vocab.needs_kanji_reading: False}
     )
+    # Same clear for a stale seen-in-class fallback assignment -- but this
+    # one must NOT flip status to "available", since the word was never a
+    # fresh/unused word to begin with.
+    db.query(Vocab).filter(Vocab.assigned_batch == batch_n, Vocab.status == "seen_in_class").update(
+        {Vocab.assigned_batch: None, Vocab.needs_kanji_reading: False}
+    )
 
     candidates = _load_candidates(db)
+    full_candidate_pool = _load_full_candidate_pool(db)
     frequency_lookup = load_bccwj_frequency_subset(BCCWJ_SUBSET_PATH)
 
     result = select_batch(
@@ -162,6 +205,7 @@ def generate_draft_batch(db: Session, batch_n: int, today: date) -> SelectionRes
         ),
         today=today,
         frequency_lookup=frequency_lookup,
+        full_candidate_pool=full_candidate_pool,
     )
 
     if existing is None:
@@ -174,7 +218,8 @@ def generate_draft_batch(db: Session, batch_n: int, today: date) -> SelectionRes
         vocab_rows = db.query(Vocab).filter(Vocab.id.in_(selected_by_id.keys())).all()
         for v in vocab_rows:
             w = selected_by_id[v.id]
-            v.status = "assigned"
+            if not w.used_seen_in_class_fallback:
+                v.status = "assigned"
             v.assigned_batch = batch_n
             v.needs_kanji_reading = w.needs_kanji_reading
 
@@ -220,6 +265,7 @@ class BatchWordDetail:
     needs_kanji_reading: bool
     usually_kana: bool
     covers_target_kanji: list[str]
+    used_seen_in_class_fallback: bool
 
 
 @dataclass
@@ -260,6 +306,7 @@ def get_batch_detail(db: Session, batch_n: int) -> BatchDetail:
                 needs_kanji_reading=v.needs_kanji_reading,
                 usually_kana=v.usually_kana,
                 covers_target_kanji=covers,
+                used_seen_in_class_fallback=is_seen_in_class_fallback(v),
             )
         )
 
@@ -293,7 +340,11 @@ def _take_out_of_batch(db: Session, batch_n: int, vocab_id: int, exclude: bool) 
     vocab = db.query(Vocab).filter(Vocab.id == vocab_id, Vocab.assigned_batch == batch_n).one_or_none()
     if vocab is None:
         return None
-    vocab.status = "excluded" if exclude else "available"
+    if exclude:
+        vocab.status = "excluded"
+    elif not is_seen_in_class_fallback(vocab):
+        vocab.status = "available"
+    # else: leave status as "seen_in_class" -- restoring, not un-assigning a fresh word.
     vocab.assigned_batch = None
     vocab.needs_kanji_reading = False
     return vocab
@@ -315,9 +366,270 @@ def _assign_word(db: Session, batch_n: int, vocab_id: int) -> None:
     classes = classify_word_kanji(candidate, known_kanji, schedule, batch_n)
     covers_target = bool(candidate.kanji_chars & target_kanji)
 
-    vocab.status = "assigned"
+    # A seen_in_class word being manually (or fallback-) included keeps its
+    # status -- it isn't a fresh/unused word, so it must not be "used up"
+    # the way normal assignment marks a word (see is_seen_in_class_fallback).
+    if vocab.status != "seen_in_class":
+        vocab.status = "assigned"
     vocab.assigned_batch = batch_n
     vocab.needs_kanji_reading = covers_target and orphan_kanji_count(classes) == 0
+
+
+def _passes_skip_ahead_guard(db: Session, batch_n: int, kanji_form: str) -> bool:
+    schedule = _load_schedule(db)
+    coverage = _load_coverage(db)
+    future_kanji = {k for k, b in schedule.items() if b > batch_n} - coverage
+    return not (frozenset(extract_kanji(kanji_form)) & future_kanji)
+
+
+def manual_include_word(db: Session, batch_n: int, vocab_id: int) -> None:
+    """Manually assigns vocab_id into batch_n regardless of its current
+    status or assignment -- available, seen_in_class, excluded, or already
+    assigned to a different *draft* batch (in which case it's moved here,
+    un-assigning it from the other batch first). Refuses to steal from a
+    finalized/exported batch, and still enforces the skip-ahead guard --
+    this manual panel doesn't get to bypass that invariant.
+    """
+    _require_draft_batch(db, batch_n)
+    vocab = db.get(Vocab, vocab_id)
+    if vocab is None:
+        raise BatchServiceError(f"vocab {vocab_id} does not exist")
+
+    if vocab.assigned_batch is not None and vocab.assigned_batch != batch_n:
+        other_batch = db.get(Batch, vocab.assigned_batch)
+        if other_batch is not None and other_batch.status != "draft":
+            raise BatchServiceError(
+                f"vocab {vocab_id} is locked in batch {vocab.assigned_batch} (status={other_batch.status})"
+            )
+        vocab.assigned_batch = None
+        vocab.needs_kanji_reading = False
+
+    if not _passes_skip_ahead_guard(db, batch_n, vocab.kanji_form):
+        raise BatchServiceError(f"vocab {vocab_id} is not eligible for batch {batch_n} (skip-ahead guard)")
+
+    _assign_word(db, batch_n, vocab_id)
+    db.commit()
+
+
+def manual_exclude_word(db: Session, batch_n: int, vocab_id: int) -> None:
+    """Permanently excludes vocab_id. If it's currently in batch_n, this is
+    exactly remove_word(..., exclude=True). If it's unassigned (available,
+    seen_in_class, or already excluded), it's marked excluded directly --
+    no assigned_batch requirement, since it was never in any batch to begin
+    with. Refuses if it's assigned to a *different* batch -- remove it from
+    that batch's own review page first.
+    """
+    vocab = db.get(Vocab, vocab_id)
+    if vocab is None:
+        raise BatchServiceError(f"vocab {vocab_id} does not exist")
+
+    if vocab.assigned_batch == batch_n:
+        remove_word(db, batch_n, vocab_id, exclude=True)
+        return
+
+    if vocab.assigned_batch is not None:
+        raise BatchServiceError(
+            f"vocab {vocab_id} is assigned to a different batch ({vocab.assigned_batch}); "
+            "remove it from there first"
+        )
+
+    vocab.status = "excluded"
+    db.commit()
+
+
+@dataclass
+class KanjiWordOption:
+    vocab_id: int
+    kanji_form: str
+    hiragana_form: str
+    meaning: str
+    usually_kana: bool
+    status: str
+    assigned_batch: int | None
+    assigned_batch_status: str | None
+    core_rank: int | None
+
+
+@dataclass
+class JishoWordSuggestion:
+    kanji_form: str
+    hiragana_form: str
+    meaning: str
+    part_of_speech: str
+    jlpt: list[str]
+    is_common: bool
+    includable: bool
+    # Populated only when includable is False: the not-yet-known kanji
+    # (other than the one being searched) that pushes this word to a later
+    # batch, and the batch it's currently scheduled for.
+    blocking_kanji: str | None = None
+    blocking_batch: int | None = None
+    # Any kanji in this word (other than the one being searched) that's
+    # already known -- i.e. it pairs this batch's new kanji with one
+    # you've already seen, which is worth flagging at a glance.
+    seen_kanji: list[str] = field(default_factory=list)
+
+
+@dataclass
+class KanjiWordOptions:
+    kanji: str
+    in_batch: list[KanjiWordOption]
+    other_batches: list[KanjiWordOption]
+    top_common: list[KanjiWordOption]
+
+
+def get_kanji_word_options(db: Session, batch_n: int, kanji: str) -> KanjiWordOptions:
+    """Powers the batch review page's per-kanji drill-down: every local
+    vocab-table word containing `kanji`, split into what's already in this
+    batch, what's claimed by other batches, and (regardless of status) the
+    10 most common words containing it -- so the user can see the full
+    picture and decide what to include or exclude. Purely local/DB-bound
+    (no network call), so this stays fast on the common path -- the Jisho
+    search is a separate, explicitly-triggered action (search_jisho_word_suggestions).
+    """
+    if db.get(Batch, batch_n) is None:
+        raise BatchServiceError(f"batch {batch_n} does not exist")
+
+    frequency_lookup = load_bccwj_frequency_subset(BCCWJ_SUBSET_PATH)
+    batch_status_by_number = {b.batch_number: b.status for b in db.query(Batch).all()}
+    containing = [v for v in db.query(Vocab).all() if kanji in extract_kanji(v.kanji_form)]
+
+    def _to_option(v: Vocab) -> KanjiWordOption:
+        freq = frequency_lookup.get(v.kanji_form)
+        return KanjiWordOption(
+            vocab_id=v.id,
+            kanji_form=v.kanji_form,
+            hiragana_form=v.hiragana_form,
+            meaning=v.meaning,
+            usually_kana=v.usually_kana,
+            status=v.status,
+            assigned_batch=v.assigned_batch,
+            assigned_batch_status=batch_status_by_number.get(v.assigned_batch) if v.assigned_batch else None,
+            core_rank=freq.core_rank if freq else None,
+        )
+
+    def _rank_key(v: Vocab) -> tuple:
+        freq = frequency_lookup.get(v.kanji_form)
+        rank = freq.core_rank if freq and freq.core_rank is not None else math.inf
+        return (rank, len(v.kanji_form), v.id)
+
+    in_batch = [_to_option(v) for v in containing if v.assigned_batch == batch_n]
+    other_batches = [_to_option(v) for v in containing if v.assigned_batch is not None and v.assigned_batch != batch_n]
+    top_common = [_to_option(v) for v in sorted(containing, key=_rank_key)[:10]]
+
+    return KanjiWordOptions(kanji=kanji, in_batch=in_batch, other_batches=other_batches, top_common=top_common)
+
+
+async def search_jisho_word_suggestions(db: Session, batch_n: int, kanji: str) -> list[JishoWordSuggestion]:
+    """Explicitly-triggered online search (a "Search Jisho" button, not part
+    of the default panel load): looks up words containing `kanji` on Jisho,
+    so the user can see options the local N3 vocab list is blind to, whether
+    or not local words already exist for this kanji. Prefers N3-tagged
+    words, then falls back to merely common words, then whatever Jisho
+    returned at all if neither tier has anything. The bare kanji character
+    itself (a single-character "word") is dropped, as is any word whose
+    written form already matches a local vocab row -- this is meant to
+    surface new options, not duplicate what the local sections already show
+    (dedup is deliberately by kanji_form only, not the full natural key, so
+    a local word already covering this kanji form is never re-suggested
+    regardless of its reading).
+
+    Each suggestion is also tagged with `includable`, checked against the
+    same skip-ahead guard `manual_include_word` will enforce -- shown for
+    context (a suggestion isn't hidden just because it's blocked right now)
+    but flagged (with which kanji/batch is blocking it) so a multi-select
+    can't be used to pick a guaranteed failure, and the UI labels it
+    "for later" instead. `seen_kanji` separately lists any of the word's
+    other kanji that are already known (coverage, not just "not future") --
+    a word pairing this batch's new kanji with one already seen reinforces
+    prior learning, worth flagging at a glance.
+
+    Raises BatchServiceError (rather than swallowing the failure) if Jisho
+    can't be reached -- this is now a foreground, user-triggered action, so
+    the failure needs to reach the UI as an error, not look identical to
+    "Jisho had nothing new".
+    """
+    if db.get(Batch, batch_n) is None:
+        raise BatchServiceError(f"batch {batch_n} does not exist")
+
+    exclude_kanji_forms = {v.kanji_form for v in db.query(Vocab).all() if kanji in extract_kanji(v.kanji_form)}
+
+    client = JishoClient()
+    try:
+        results = await client.search_words(kanji)
+    except Exception as exc:  # noqa: BLE001 - re-raised as a BatchServiceError, not swallowed
+        raise BatchServiceError(f"Could not reach Jisho: {exc}") from exc
+    finally:
+        await client.aclose()
+
+    candidates = [
+        r
+        for r in results
+        if r.word and len(r.word) > 1 and kanji in r.word and r.senses and r.word not in exclude_kanji_forms
+    ]
+    n3_tier = [r for r in candidates if "jlpt-n3" in r.jlpt]
+    common_tier = [r for r in candidates if r.is_common]
+    tier = n3_tier or common_tier or candidates
+
+    schedule = _load_schedule(db)
+    coverage = _load_coverage(db)
+    future_kanji = {k for k, b in schedule.items() if b > batch_n} - coverage
+
+    def _blocking_kanji(word: str) -> str | None:
+        blockers = frozenset(extract_kanji(word)) & future_kanji
+        return min(blockers, key=lambda k: (schedule.get(k, math.inf), k)) if blockers else None
+
+    suggestions = []
+    for r in tier[:JISHO_SUGGESTION_LIMIT]:
+        blocking_kanji = _blocking_kanji(r.word)
+        other_chars = frozenset(extract_kanji(r.word)) - {kanji}
+        suggestions.append(
+            JishoWordSuggestion(
+                kanji_form=r.word,
+                hiragana_form=r.reading or r.word,
+                meaning=format_meaning(r.senses),
+                part_of_speech=pos_from_jisho(r.senses[0].parts_of_speech),
+                jlpt=r.jlpt,
+                is_common=r.is_common,
+                includable=blocking_kanji is None,
+                blocking_kanji=blocking_kanji,
+                blocking_batch=schedule.get(blocking_kanji) if blocking_kanji else None,
+                seen_kanji=sorted(other_chars & coverage),
+            )
+        )
+    return suggestions
+
+
+def import_and_include_jisho_word(
+    db: Session, batch_n: int, kanji_form: str, hiragana_form: str, meaning: str, part_of_speech: str
+) -> int:
+    """Turns a Jisho suggestion into a real vocab row (reusing one that
+    already matches the natural key, if a prior import already created it)
+    and immediately runs it through manual_include_word -- same draft-only
+    and skip-ahead-guard rules as any other manual include. Nothing is
+    persisted if the include fails: the insert is only flushed, not
+    committed, until manual_include_word's own commit at the end, so a
+    rejected word leaves no orphaned row behind.
+    """
+    vocab = (
+        db.query(Vocab)
+        .filter(Vocab.kanji_form == kanji_form, Vocab.hiragana_form == hiragana_form, Vocab.meaning == meaning)
+        .one_or_none()
+    )
+    if vocab is None:
+        vocab = Vocab(
+            kanji_form=kanji_form,
+            hiragana_form=hiragana_form,
+            meaning=meaning,
+            part_of_speech=part_of_speech or "general",
+            status="available",
+            source="jisho",
+        )
+        db.add(vocab)
+        db.flush()
+
+    manual_include_word(db, batch_n, vocab.id)
+    return vocab.id
 
 
 def _best_replacement(db: Session, batch_n: int, exclude_ids: set[int]) -> ReplacementCandidate | None:
