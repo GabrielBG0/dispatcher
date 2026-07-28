@@ -16,12 +16,15 @@ from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db import SessionLocal
 from app.enrichment.jisho_client import JishoClient, JishoWordSense
+from app.enrichment.kana_kanji import KanaKanjiOutcome, find_kanji_form, format_meaning_groups
 from app.enrichment.kanjivg_client import build_stroke_index, download_archive, stroke_paths_to_json
+from app.kanji_utils import extract_kanji
 from app.models.enrichment_job import EnrichmentJob
 from app.models.kanji import Kanji
 from app.models.vocab import Vocab
@@ -73,13 +76,11 @@ def format_meaning(senses: list[JishoWordSense], limit: int = 2) -> str:
     """Top `limit` senses, each sense's definitions slash-joined. A single
     surviving sense is rendered plain; two or more get "1 - ", "2 - " ...
     prefixes so multi-meaning words read as a numbered list, e.g.:
-    "1 - to put in / to insert. 2 - to admit / to accept"."""
-    groups = [
-        " / ".join(s.english_definitions) for s in senses[:limit] if s.english_definitions
-    ]
-    if len(groups) <= 1:
-        return groups[0] if groups else ""
-    return ". ".join(f"{i} - {group}" for i, group in enumerate(groups, start=1))
+    "1 - to put in / to insert. 2 - to admit / to accept". Delegates to
+    kana_kanji.format_meaning_groups (the shared implementation also used to
+    preview a candidate's meaning on the Vocab Review page) so there's one
+    formatting rule, not two."""
+    return format_meaning_groups([s.english_definitions for s in senses], limit=limit)
 
 
 def pos_from_jisho(parts_of_speech: list[str]) -> str:
@@ -131,6 +132,73 @@ async def run_vocab_word_enrichment(
                     job.not_found += 1
             except Exception:  # noqa: BLE001 - one bad lookup shouldn't abort the whole job
                 row.source = f"{row.source},jisho_error".strip(",") if row.source else "jisho_error"
+                job.not_found += 1
+
+            job.completed += 1
+            db.commit()
+
+        job.status = "completed"
+        job.finished_at = datetime.now(timezone.utc)
+        db.commit()
+    except Exception as exc:  # noqa: BLE001
+        job.status = "failed"
+        job.error = str(exc)
+        job.finished_at = datetime.now(timezone.utc)
+        db.commit()
+        raise
+    finally:
+        if owns_client:
+            await client.aclose()
+        db.close()
+
+
+async def run_kana_kanji_form_enrichment(
+    job_id: int, session_factory: SessionFactory = SessionLocal, client: JishoClient | None = None
+) -> None:
+    """Fills in the real kanji spelling for vocab rows whose `kanji_form` is
+    currently kana-only (e.g. kanji_form="そう" for a word that's actually
+    僧), using Jisho word search + the row's stored `meaning` to disambiguate
+    homophones -- see enrichment/kana_kanji.py for the matching rules.
+    Rows Jisho has no kanji-bearing entry for, or where the match is
+    ambiguous/unconfident, are left untouched and counted as `not_found`.
+    """
+    db = session_factory()
+    job = db.get(EnrichmentJob, job_id)
+    if job is None:
+        db.close()
+        return
+
+    job.status = "running"
+    job.started_at = datetime.now(timezone.utc)
+    db.commit()
+
+    owns_client = client is None
+    client = client or JishoClient()
+    try:
+        rows = [r for r in db.query(Vocab).all() if not extract_kanji(r.kanji_form)]
+        job.total = len(rows)
+        db.commit()
+
+        for row in rows:
+            try:
+                results = await client.search_words(row.hiragana_form)
+                result = find_kanji_form(row.hiragana_form, row.meaning or "", results)
+                if result.outcome is KanaKanjiOutcome.MATCHED:
+                    row.kanji_form = result.kanji_form
+                    row.usually_kana = result.usually_kana
+                    row.source = f"{row.source},jisho".strip(",") if row.source else "jisho"
+                    try:
+                        db.commit()
+                    except IntegrityError:
+                        # Natural-key collision (kanji_form, hiragana_form, meaning) with
+                        # another row -- extremely rare, but a bad write here shouldn't
+                        # take the rest of the job down with it.
+                        db.rollback()
+                        job.not_found += 1
+                else:
+                    job.not_found += 1
+            except Exception:  # noqa: BLE001 - one bad lookup shouldn't abort the whole job
+                db.rollback()
                 job.not_found += 1
 
             job.completed += 1

@@ -4,6 +4,7 @@ import DashboardPage from "./pages/DashboardPage";
 import ImportPage from "./pages/ImportPage";
 import BatchReviewPage from "./pages/BatchReviewPage";
 import ExportPage from "./pages/ExportPage";
+import VocabReviewPage from "./pages/VocabReviewPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             Dashboard
           </NavLink>
           <NavLink to="/import">Import</NavLink>
+          <NavLink to="/vocab-review">Vocab Review</NavLink>
           <NavLink to="/batches">Batch Review</NavLink>
           <NavLink to="/export">Export</NavLink>
         </nav>
@@ -23,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/import" element={<ImportPage />} />
+          <Route path="/vocab-review" element={<VocabReviewPage />} />
           <Route path="/batches" element={<BatchReviewPage />} />
           <Route path="/export" element={<ExportPage />} />
         </Routes>

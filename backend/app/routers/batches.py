@@ -175,6 +175,32 @@ def toggle_reading(batch_n: int, vocab_id: int, db: Session = Depends(get_db)) -
     return {"needs_kanji_reading": needs_reading}
 
 
+class EditWordPayload(BaseModel):
+    kanji_form: str | None = None
+    hiragana_form: str | None = None
+    meaning: str | None = None
+    part_of_speech: str | None = None
+    usually_kana: bool | None = None
+
+
+@router.post("/{batch_n}/words/{vocab_id}/edit")
+def edit_word(batch_n: int, vocab_id: int, payload: EditWordPayload, db: Session = Depends(get_db)) -> dict:
+    try:
+        batch_service.edit_word(
+            db,
+            batch_n,
+            vocab_id,
+            kanji_form=payload.kanji_form,
+            hiragana_form=payload.hiragana_form,
+            meaning=payload.meaning,
+            part_of_speech=payload.part_of_speech,
+            usually_kana=payload.usually_kana,
+        )
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True}
+
+
 @router.post("/{batch_n}/words/{vocab_id}/swap")
 def swap_word(batch_n: int, vocab_id: int, replacement_vocab_id: int, db: Session = Depends(get_db)) -> dict:
     try:

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { ApiError } from "../api/client";
 import {
   addWord,
   bulkRemoveWords,
   bulkReplaceWords,
+  editWord,
   excludeKanjiWord,
   finalizeBatch,
   generateDraft,
@@ -19,14 +19,38 @@ import {
   toggleReading,
   unfinalizeBatch,
 } from "../api/batches";
+import { ApiError } from "../api/client";
+import { getExportPreview } from "../api/exports";
 import type {
   BatchDetail,
+  EditWordPayload,
+  ExportPreviewWord,
   GenerateBatchResult,
   JishoWordSuggestion,
   KanjiWordOption,
   KanjiWordOptions,
   ReplacementCandidate,
 } from "../api/types";
+
+const POS_OPTIONS = ["verb", "adjective", "adverb", "general"];
+
+type EditDraft = {
+  kanji_form: string;
+  hiragana_form: string;
+  meaning: string;
+  part_of_speech: string;
+  usually_kana: boolean;
+};
+
+function draftFromWord(w: ExportPreviewWord): EditDraft {
+  return {
+    kanji_form: w.kanji_form,
+    hiragana_form: w.hiragana_form,
+    meaning: w.meaning,
+    part_of_speech: w.part_of_speech,
+    usually_kana: w.usually_kana,
+  };
+}
 
 type ConfirmAction = { kind: "remove" | "replace"; vocabIds: number[] };
 
@@ -231,6 +255,14 @@ export default function BatchReviewPage() {
   const [jishoSuggestions, setJishoSuggestions] = useState<JishoWordSuggestion[] | null>(null);
   const [jishoSearchLoading, setJishoSearchLoading] = useState(false);
   const [jishoSearchError, setJishoSearchError] = useState<string | null>(null);
+
+  const [previewSplitByPos, setPreviewSplitByPos] = useState(true);
+  const [previewWords, setPreviewWords] = useState<ExportPreviewWord[] | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [drafts, setDrafts] = useState<Record<number, EditDraft>>({});
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
 
   async function load(n: number) {
     setLoading(true);
@@ -504,6 +536,72 @@ export default function BatchReviewPage() {
     }
   }
 
+  async function loadPreview() {
+    setPreviewLoading(true);
+    setPreviewError(null);
+    try {
+      setPreviewWords(await getExportPreview(batchN, previewSplitByPos));
+    } catch (err) {
+      setPreviewError(err instanceof ApiError ? err.message : "Failed to load export preview");
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  const isFinalized = detail?.status === "finalized" || detail?.status === "exported";
+
+  useEffect(() => {
+    if (isFinalized) {
+      loadPreview();
+    } else {
+      setPreviewWords(null);
+      setPreviewError(null);
+      setDrafts({});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFinalized, previewSplitByPos, batchN]);
+
+  function getDraft(w: ExportPreviewWord): EditDraft {
+    return drafts[w.vocab_id] ?? draftFromWord(w);
+  }
+
+  function updateDraft(w: ExportPreviewWord, patch: Partial<EditDraft>) {
+    setDrafts((prev) => ({ ...prev, [w.vocab_id]: { ...getDraft(w), ...patch } }));
+  }
+
+  async function saveWord(w: ExportPreviewWord) {
+    const draft = getDraft(w);
+    setSavingId(w.vocab_id);
+    setEditError(null);
+    const payload: EditWordPayload = {
+      kanji_form: draft.kanji_form,
+      hiragana_form: draft.hiragana_form,
+      meaning: draft.meaning,
+      part_of_speech: draft.part_of_speech,
+      usually_kana: draft.usually_kana,
+    };
+    try {
+      await editWord(batchN, w.vocab_id, payload);
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[w.vocab_id];
+        return next;
+      });
+      await Promise.all([loadPreview(), load(batchN)]);
+    } catch (err) {
+      setEditError(err instanceof ApiError ? err.message : "Failed to save changes");
+    } finally {
+      setSavingId(null);
+    }
+  }
+
+  const sortedPreviewWords = previewWords
+    ? [...previewWords].sort(
+        (a, b) => a.vocab_card.deck.localeCompare(b.vocab_card.deck) || a.kanji_form.localeCompare(b.kanji_form),
+      )
+    : [];
+  const readingPreviewWords = sortedPreviewWords.filter((w) => w.kanji_reading_card !== null);
+
   const isDraft = detail?.status === "draft";
   const targetLinkedCount = detail?.words.filter((w) => w.is_target_linked).length ?? 0;
   const fillerCount = (detail?.words.length ?? 0) - targetLinkedCount;
@@ -578,6 +676,160 @@ export default function BatchReviewPage() {
               </ul>
             </div>
           )}
+        </section>
+      )}
+
+      {detail && isFinalized && (
+        <section className="card">
+          <div className="upload-row" style={{ justifyContent: "space-between" }}>
+            <h3 style={{ marginTop: 0 }}>Export preview — vocab cards</h3>
+            <label>
+              <input
+                type="checkbox"
+                checked={previewSplitByPos}
+                onChange={(e) => setPreviewSplitByPos(e.target.checked)}
+              />{" "}
+              split by part of speech
+            </label>
+          </div>
+          <p style={{ marginTop: "-0.5rem", color: "#666", fontSize: "0.85rem" }}>
+            Exactly what each card's front, back, and deck will be in the Anki export. Edit a field and click Save
+            to fix a wrong deck or a malformed front before you export.
+          </p>
+          {previewError && <div className="error-box">{previewError}</div>}
+          {previewLoading && <p>Loading…</p>}
+          {editError && <div className="error-box">{editError}</div>}
+
+          <div className="word-list">
+            {sortedPreviewWords.map((w) => {
+              const draft = getDraft(w);
+              return (
+                <div className="word-row" key={w.vocab_id} style={{ alignItems: "flex-start" }}>
+                  <div className="preview-card">
+                    <div className="preview-card-label">
+                      <span className="pill">{w.vocab_card.deck}</span>
+                      {w.covers_target_kanji.length > 0 && (
+                        <span className="pill ok" style={{ marginLeft: "0.4rem" }}>
+                          covers {w.covers_target_kanji.join(", ")}
+                        </span>
+                      )}
+                    </div>
+                    <div className="preview-front">{w.vocab_card.front}</div>
+                    <div className="preview-back">{w.vocab_card.back}</div>
+                  </div>
+                  <div className="preview-fields">
+                    <div className="field-row">
+                      <label>Kanji form</label>
+                      <input
+                        type="text"
+                        value={draft.kanji_form}
+                        onChange={(e) => updateDraft(w, { kanji_form: e.target.value })}
+                      />
+                    </div>
+                    <div className="field-row">
+                      <label>Hiragana form</label>
+                      <input
+                        type="text"
+                        value={draft.hiragana_form}
+                        onChange={(e) => updateDraft(w, { hiragana_form: e.target.value })}
+                      />
+                    </div>
+                    <div className="field-row">
+                      <label>Meaning</label>
+                      <input
+                        type="text"
+                        value={draft.meaning}
+                        onChange={(e) => updateDraft(w, { meaning: e.target.value })}
+                      />
+                    </div>
+                    <div className="field-row">
+                      <label>Part of speech</label>
+                      <select
+                        value={draft.part_of_speech}
+                        onChange={(e) => updateDraft(w, { part_of_speech: e.target.value })}
+                      >
+                        {POS_OPTIONS.map((p) => (
+                          <option key={p} value={p}>
+                            {p}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="field-row">
+                      <label>Usually kana</label>
+                      <input
+                        type="checkbox"
+                        checked={draft.usually_kana}
+                        onChange={(e) => updateDraft(w, { usually_kana: e.target.checked })}
+                      />
+                    </div>
+                  </div>
+                  <div className="word-actions">
+                    <button className="primary" disabled={savingId === w.vocab_id} onClick={() => saveWord(w)}>
+                      Save
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            {previewWords !== null && previewWords.length === 0 && (
+              <p style={{ color: "#666" }}>No words in this batch.</p>
+            )}
+          </div>
+        </section>
+      )}
+
+      {detail && isFinalized && (
+        <section className="card">
+          <h3 style={{ marginTop: 0 }}>Export preview — kanji reading cards</h3>
+          <p style={{ marginTop: "-0.5rem", color: "#666", fontSize: "0.85rem" }}>
+            Front/back for the separate kanji-reading deck, generated only for words with "reading card" checked.
+          </p>
+          {previewError && <div className="error-box">{previewError}</div>}
+          {previewLoading && <p>Loading…</p>}
+
+          <div className="word-list">
+            {readingPreviewWords.map((w) => {
+              const draft = getDraft(w);
+              return (
+                <div className="word-row" key={w.vocab_id} style={{ alignItems: "flex-start" }}>
+                  <div className="preview-card">
+                    <div className="preview-card-label">
+                      <span className="pill">{w.kanji_reading_card!.deck}</span>
+                    </div>
+                    <div className="preview-front">{w.kanji_reading_card!.front}</div>
+                    <div className="preview-back">{w.kanji_reading_card!.back}</div>
+                  </div>
+                  <div className="preview-fields">
+                    <div className="field-row">
+                      <label>Kanji form</label>
+                      <input
+                        type="text"
+                        value={draft.kanji_form}
+                        onChange={(e) => updateDraft(w, { kanji_form: e.target.value })}
+                      />
+                    </div>
+                    <div className="field-row">
+                      <label>Hiragana form</label>
+                      <input
+                        type="text"
+                        value={draft.hiragana_form}
+                        onChange={(e) => updateDraft(w, { hiragana_form: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="word-actions">
+                    <button className="primary" disabled={savingId === w.vocab_id} onClick={() => saveWord(w)}>
+                      Save
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            {previewWords !== null && readingPreviewWords.length === 0 && (
+              <p style={{ color: "#666" }}>No words in this batch have a reading card.</p>
+            )}
+          </div>
         </section>
       )}
 

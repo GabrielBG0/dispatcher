@@ -91,9 +91,10 @@ cache are created automatically on first run — no migrations to run.
 
 ## Usage guide
 
-The UI has four screens, meant to be used roughly in this order the first
-time: **Import → Dashboard (study config) → Batch Review → Export**, then
-Batch Review/Export weekly after that.
+The UI has five screens, meant to be used roughly in this order the first
+time: **Import → Vocab Review → Dashboard (study config) → Batch Review →
+Export**, then Batch Review/Export weekly after that (Vocab Review is an
+as-needed cleanup screen, not a weekly step).
 
 ### 1. Import
 
@@ -110,7 +111,7 @@ it's safe to re-import after fixing a source file.
 Each upload reports rows parsed, rows inserted/updated/skipped, and any
 per-row warnings (e.g. an unparseable line) inline — nothing fails silently.
 
-Below the uploads, three **enrichment** jobs backfill data the source files
+Below the uploads, four **enrichment** jobs backfill data the source files
 don't already have, by calling Jisho.org and the KanjiVG project:
 
 - **Kanji stroke data (KanjiVG)** — stroke-order SVG paths for the kanji
@@ -119,6 +120,13 @@ don't already have, by calling Jisho.org and the KanjiVG project:
   meanings for kanji missing them.
 - **Vocab word meanings (Jisho)** — fills in meaning/part-of-speech for
   vocab rows that came in with a blank meaning.
+- **Kana-only word kanji forms (Jisho)** — for vocab rows whose
+  `kanji_form` is currently just the kana reading again (e.g. そう instead
+  of 僧), searches Jisho for a kanji spelling and fills it in, using the
+  row's stored `meaning` to pick the right homophone. Words genuinely
+  written kana-only get flagged `usually_kana` instead of a wrong guess;
+  rows Jisho has no confident match for are left untouched and counted in
+  the "not found" total below.
 
 Each job shows a live progress bar (`completed/total`, polled every 1.5s)
 and is safe to re-run — already-enriched rows are skipped. If a job
@@ -126,11 +134,50 @@ finishes with items Jisho or KanjiVG had no data for, a warning banner
 reports how many, so those rows can be reviewed instead of silently staying
 blank.
 
+Below that, **Duplicate vocab words** scans for rows with the exact same
+spelling (`kanji_form` + `hiragana_form`) whose stored meanings actually
+overlap — typically left behind by importing the same word list twice
+(the shipped DB has ~1100 rows from a stray second `jlpt_n3_vocab.csv`
+import overlapping the main `.xls` list). Rows that share a spelling but
+have unrelated meanings are real homophones (e.g. かし = 貸し "loan" vs 菓子
+"pastry") and are never flagged. Each group shows every row with a
+recommended keeper preselected; groups where only one row is already
+`assigned`/`seen_in_class` are marked safe to resolve outright, but groups
+where two or more rows are already in use are flagged for manual review
+since they may already be baked into two different exported decks.
+Resolving deletes the row(s) you don't keep and never edits the survivor's
+data. Run the kana-only-word-forms job above first — filling in a real
+kanji spelling can turn what looked like a duplicate into two genuinely
+different words (or vice versa).
+
 A frequency signal from a BCCWJ corpus subset (used only as a tie-break
 during word selection — shorter/more common words are preferred) is loaded
 automatically from `backend/seed/` and needs no import step.
 
-### 2. Dashboard
+### 2. Vocab Review
+
+The "1234 of 1234 not found" warning after the kana-only-word-forms job
+means the *easy* matches are already resolved and what's left needs a human
+— not that the job is broken. This screen is where that happens: it lists
+every vocab row still spelled kana-only, paginated and searchable by
+reading or meaning. Per word you can:
+
+- **Look up on Jisho** — fetches every kanji-bearing candidate for that
+  reading, ranked by how well its definitions overlap the word's stored
+  meaning (score shown alongside each one); click a candidate to fill in
+  the kanji form field (and its "usually kana" flag, if Jisho tags it that
+  way).
+- Edit the **kanji form** or **meaning** directly and **Save** — no need to
+  wait on a Jisho match if you already know the answer.
+- **No kanji form exists** — confirms a word is genuinely kana-only (これ,
+  とても, particles, etc.) so it's marked reviewed and drops out of this
+  list for good, instead of reappearing on every future scan.
+
+A word already `assigned`/`seen_in_class` shows its status and batch number
+so you know if you're correcting a word that might already be in an
+exported Anki deck.
+
+### 3. Dashboard
 
 - **Study config** — set the start date, new-card weeks, review-buffer
   weeks, and daily minimum word count, then Save. This must be set before
@@ -142,7 +189,7 @@ automatically from `backend/seed/` and needs no import step.
 - **Batch history** — every batch generated so far, its status
   (draft/finalized), the weekly target used, and word count.
 
-### 3. Batch Review
+### 4. Batch Review
 
 Enter a batch number and click **Generate draft** to run the selection
 algorithm for that week (uses target kanji from the schedule, current
@@ -171,18 +218,19 @@ Once a draft exists:
   that — the batch goes back to draft and its words become available
   again (used if a mistake was found post-finalization).
 
-### 4. Export
+### 5. Export
 
 Works on any batch, though it's meant for finalized ones:
 
 - **Vocab Anki deck** — download as one combined `Japanese Complete
-  Vocab.tsv`, or check "split by part of speech" for separate `Japanese
-  Verbs.tsv` / `Japanese Adjectives.tsv` / `Japanese Adverbs.tsv` /
-  `Japanese Vocabulary.tsv` files, named to match the existing Anki deck
-  structure. Each row is `front\tback\ttags`, e.g. `例えば（たとえば）\tfor
+  Vocab - Batch N.tsv`, or check "split by part of speech" for separate
+  `Japanese Verbs - Batch N.tsv` / `Japanese Adjectives - Batch N.tsv` /
+  `Japanese Adverbs - Batch N.tsv` / `Japanese Vocabulary - Batch N.tsv`
+  files, named to match the existing Anki deck structure with the batch
+  number appended. Each row is `front\tback\ttags`, e.g. `例えば（たとえば）\tfor
   example\tjlpt::n3 source::n3_supplement`; kana-only words use just the
   kana as the front (no redundant reading in parentheses).
-- **Kanji reading deck** — one TSV, `Japanese Kanji.tsv`,
+- **Kanji reading deck** — one TSV, `Japanese Kanji - Batch N.tsv`,
   `kanji\treading\ttags`, containing only the words flagged
   `needs_kanji_reading` in that batch.
 - **Weekly kanji PDF** — one page per target kanji: stroke-order diagram
@@ -199,7 +247,8 @@ whenever the backend is running.
 
 | Area | Routes |
 |---|---|
-| Import | `POST /api/imports/vocab-list`, `/kanji-schedule`, `/anki-export`; `POST /api/imports/enrich/{vocab-words,kanji-meanings,kanjivg}`; `GET /api/imports/jobs/{id}` |
+| Import | `POST /api/imports/vocab-list`, `/kanji-schedule`, `/anki-export`; `POST /api/imports/enrich/{vocab-words,kana-kanji-forms,kanji-meanings,kanjivg}`; `GET /api/imports/jobs/{id}` |
+| Vocab | `GET /api/vocab`; `PATCH /api/vocab/{id}`; `GET /api/vocab/{id}/kanji-candidates`; `POST /api/vocab/{id}/confirm-kana-only`; `GET /api/vocab/duplicates`; `POST /api/vocab/duplicates/resolve` |
 | Batches | `POST /api/batches/{n}/generate`; `GET /api/batches/{n}`; `GET /api/batches/{n}/eligible-replacements`; `POST/DELETE /api/batches/{n}/words/{vocab_id}`; `POST .../toggle-reading`, `.../swap`; `POST /api/batches/{n}/finalize`, `/unfinalize` |
 | Export | `GET /api/exports/{n}/vocab-tsv`, `/kanji-tsv`, `/pdf`, `/pdf/warnings` |
 | Config | `GET/PUT /api/config` |

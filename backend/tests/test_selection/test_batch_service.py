@@ -603,6 +603,59 @@ def test_edits_rejected_on_finalized_batch(db_session):
         batch_service.toggle_reading(db_session, batch_n=1, vocab_id=vocab_id)
 
 
+def test_edit_word_updates_fields_on_a_finalized_batch(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+    batch_service.generate_draft_batch(db_session, batch_n=1, today=date(2026, 7, 27))
+    batch_service.finalize_batch(db_session, batch_n=1)
+    vocab_id = db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").one().id
+
+    batch_service.edit_word(
+        db_session, batch_n=1, vocab_id=vocab_id, meaning="pet dog", part_of_speech="verb", usually_kana=True
+    )
+
+    updated = db_session.get(Vocab, vocab_id)
+    assert updated.meaning == "pet dog"
+    assert updated.part_of_speech == "verb"
+    assert updated.usually_kana is True
+    assert updated.kanji_form == "愛犬"  # untouched fields left alone
+
+
+def test_edit_word_rejects_vocab_not_in_this_batch(db_session):
+    db_session.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    other = Vocab(kanji_form="犬", hiragana_form="いぬ", meaning="dog", part_of_speech="general", status="available")
+    db_session.add(other)
+    db_session.commit()
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.edit_word(db_session, batch_n=1, vocab_id=other.id, meaning="dog (revised)")
+
+
+def test_edit_word_raises_on_natural_key_collision(db_session):
+    db_session.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    existing = Vocab(
+        kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general", status="available"
+    )
+    editable = Vocab(
+        kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general",
+        status="assigned", assigned_batch=1,
+    )
+    db_session.add_all([existing, editable])
+    db_session.commit()
+
+    with pytest.raises(batch_service.BatchServiceError):
+        batch_service.edit_word(
+            db_session, batch_n=1, vocab_id=editable.id,
+            kanji_form="時間", hiragana_form="じかん", meaning="time",
+        )
+    # session must still be usable after the rollback
+    assert db_session.get(Vocab, editable.id).kanji_form == "愛犬"
+
+
 def test_eligible_replacements_excludes_future_kanji_words(db_session):
     db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=2))
     _seed_kanji(db_session, "行", 1)

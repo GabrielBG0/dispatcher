@@ -3,6 +3,7 @@ import type {
   BatchDetail,
   BulkRemoveResult,
   BulkReplaceResult,
+  EditWordPayload,
   GenerateBatchResult,
   JishoWordSuggestion,
   KanjiWordOptions,
@@ -62,6 +63,9 @@ export const importJishoWord = (batchN: number, suggestion: JishoWordSuggestion)
     meaning: suggestion.meaning,
     part_of_speech: suggestion.part_of_speech,
   });
+
+export const editWord = (batchN: number, vocabId: number, payload: EditWordPayload) =>
+  apiPost<{ ok: boolean }>(`/api/batches/${batchN}/words/${vocabId}/edit`, payload);
 
 export const finalizeBatch = (batchN: number) =>
   apiPost<{ batch_number: number; status: string }>(`/api/batches/${batchN}/finalize`);

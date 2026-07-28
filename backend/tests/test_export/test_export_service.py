@@ -49,22 +49,23 @@ def _seed_finalized_batch(db):
 def test_export_vocab_combined(db_session):
     _seed_finalized_batch(db_session)
     files = export_service.export_vocab(db_session, batch_n=1, split_by_pos=False)
-    assert set(files) == {"Japanese Complete Vocab.tsv"}
-    lines = files["Japanese Complete Vocab.tsv"].strip("\n").split("\n")
+    assert set(files) == {"Japanese Complete Vocab - Batch 1.tsv"}
+    lines = files["Japanese Complete Vocab - Batch 1.tsv"].strip("\n").split("\n")
     assert len(lines) == 2  # only batch 1's two words, not the batch-2 one
 
 
 def test_export_vocab_split_by_pos(db_session):
     _seed_finalized_batch(db_session)
     files = export_service.export_vocab(db_session, batch_n=1, split_by_pos=True)
-    assert set(files) == {"Japanese Vocabulary.tsv"}
-    assert files["Japanese Vocabulary.tsv"].count("\n") == 2
+    assert set(files) == {"Japanese Vocabulary - Batch 1.tsv"}
+    assert files["Japanese Vocabulary - Batch 1.tsv"].count("\n") == 2
 
 
 def test_export_kanji_readings_only_includes_needs_reading_rows(db_session):
     _seed_finalized_batch(db_session)
-    content = export_service.export_kanji_readings(db_session, batch_n=1)
-    lines = content.strip("\n").split("\n")
+    files = export_service.export_kanji_readings(db_session, batch_n=1)
+    assert set(files) == {"Japanese Kanji - Batch 1.tsv"}
+    lines = files["Japanese Kanji - Batch 1.tsv"].strip("\n").split("\n")
     assert len(lines) == 1
     assert lines[0].startswith("愛犬\tあいけん")
 
@@ -84,7 +85,7 @@ def test_export_vocab_tags_seen_in_class_fallback_words(db_session):
     db_session.commit()
 
     files = export_service.export_vocab(db_session, batch_n=1, split_by_pos=False)
-    content = files["Japanese Complete Vocab.tsv"]
+    content = files["Japanese Complete Vocab - Batch 1.tsv"]
     assert "seen_in_class_fallback" in content
 
 
@@ -93,6 +94,70 @@ def test_export_rejects_non_finalized_batch(db_session):
     db_session.commit()
     with pytest.raises(export_service.ExportServiceError):
         export_service.export_vocab(db_session, batch_n=2, split_by_pos=False)
+
+
+def test_get_export_preview_renders_cards_and_decks(db_session):
+    _seed_finalized_batch(db_session)
+    db_session.add(
+        Vocab(
+            kanji_form="食べる", hiragana_form="たべる", meaning="to eat", part_of_speech="verb",
+            status="assigned", assigned_batch=1, needs_kanji_reading=False,
+        )
+    )
+    db_session.commit()
+
+    words = {w.kanji_form: w for w in export_service.get_export_preview(db_session, batch_n=1, split_by_pos=True)}
+
+    reading_word = words["愛犬"]
+    assert reading_word.vocab_card.front == "愛犬（あいけん）"
+    assert reading_word.vocab_card.back == "pet dog"
+    assert reading_word.vocab_card.deck == "Japanese Vocabulary"
+    assert reading_word.covers_target_kanji == ["愛"]
+    assert reading_word.kanji_reading_card is not None
+    assert reading_word.kanji_reading_card.front == "愛犬"
+    assert reading_word.kanji_reading_card.back == "あいけん"
+    assert reading_word.kanji_reading_card.deck == "Japanese Kanji"
+
+    no_reading_word = words["時間"]
+    assert no_reading_word.covers_target_kanji == []
+    assert no_reading_word.kanji_reading_card is None
+
+    verb_word = words["食べる"]
+    assert verb_word.vocab_card.deck == "Japanese Verbs"
+
+
+def test_get_export_preview_combined_deck_name(db_session):
+    _seed_finalized_batch(db_session)
+    words = export_service.get_export_preview(db_session, batch_n=1, split_by_pos=False)
+    assert all(w.vocab_card.deck == "Japanese Complete Vocab" for w in words)
+
+
+def test_get_export_preview_front_formatting_branches(db_session):
+    db_session.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    db_session.add(
+        Vocab(
+            kanji_form="いつも", hiragana_form="いつも", meaning="always", part_of_speech="adverb",
+            status="assigned", assigned_batch=1,
+        )
+    )
+    db_session.add(
+        Vocab(
+            kanji_form="時計", hiragana_form="とけい", meaning="clock", part_of_speech="general",
+            status="assigned", assigned_batch=1, usually_kana=True,
+        )
+    )
+    db_session.commit()
+
+    words = {w.kanji_form: w for w in export_service.get_export_preview(db_session, batch_n=1)}
+    assert words["いつも"].vocab_card.front == "いつも"  # kana-only: no parenthetical
+    assert words["時計"].vocab_card.front == "とけい（時計）"  # usually_kana: reading leads
+
+
+def test_get_export_preview_rejects_non_finalized_batch(db_session):
+    db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
+    db_session.commit()
+    with pytest.raises(export_service.ExportServiceError):
+        export_service.get_export_preview(db_session, batch_n=2)
 
 
 def test_build_kanji_pdf_pages_includes_only_this_batchs_words(db_session):

@@ -7,6 +7,7 @@ import math
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -781,6 +782,57 @@ def toggle_reading(db: Session, batch_n: int, vocab_id: int) -> bool:
     vocab.needs_kanji_reading = not vocab.needs_kanji_reading
     db.commit()
     return vocab.needs_kanji_reading
+
+
+def edit_word(
+    db: Session,
+    batch_n: int,
+    vocab_id: int,
+    *,
+    kanji_form: str | None = None,
+    hiragana_form: str | None = None,
+    meaning: str | None = None,
+    part_of_speech: str | None = None,
+    usually_kana: bool | None = None,
+) -> None:
+    """Corrects a word's own fields (front text, meaning, part-of-speech
+    that drives which deck it exports into, kana display) after the fact --
+    e.g. a bad part-of-speech guess sent it to the wrong Anki deck, or bad
+    source data produced a malformed front. Unlike every other mutator in
+    this module, this is allowed on a finalized batch: that's the point,
+    since these mistakes are usually only spotted once the export preview
+    is in front of you. It edits the underlying Vocab row (shared master
+    data, not a batch-local copy) and does not touch batch membership or
+    the KanjiCoverage snapshot a finalized batch already froze -- editing
+    kanji_form on a word covering a target kanji can desync that snapshot,
+    which callers should surface (see ExportPreviewWord.covers_target_kanji)
+    rather than this function guarding against.
+    """
+    batch = db.get(Batch, batch_n)
+    if batch is None:
+        raise BatchServiceError(f"batch {batch_n} does not exist")
+    vocab = db.query(Vocab).filter(Vocab.id == vocab_id, Vocab.assigned_batch == batch_n).one_or_none()
+    if vocab is None:
+        raise BatchServiceError(f"vocab {vocab_id} is not assigned to batch {batch_n}")
+
+    if kanji_form is not None:
+        vocab.kanji_form = kanji_form
+    if hiragana_form is not None:
+        vocab.hiragana_form = hiragana_form
+    if meaning is not None:
+        vocab.meaning = meaning
+    if part_of_speech is not None:
+        vocab.part_of_speech = part_of_speech
+    if usually_kana is not None:
+        vocab.usually_kana = usually_kana
+
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise BatchServiceError(
+            "another word already has this kanji form, hiragana form, and meaning combination"
+        ) from exc
 
 
 def swap_word(db: Session, batch_n: int, old_vocab_id: int, new_vocab_id: int) -> None:

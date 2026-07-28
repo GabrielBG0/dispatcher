@@ -15,12 +15,12 @@ card_formatter's display to kana-form-first (e.g. "ある（有る）" instead o
 "有る（ある）") so the card still signals the conventional spelling while
 no longer being a plain-kana duplicate.
 
-Matching a row's stored `meaning` against Jisho's senses (via English
-definition overlap) is what picks the right homophone -- e.g. 殻 "shell" vs
-空 "empty" vs the から "from" particle -- for a given reading. Ambiguous
-cases (no confident match, or more than one candidate kanji reaches the
-match threshold) are left untouched and printed for manual review, per the
-principle that a wrong kanji is worse than a missing one in a study tool.
+Matching logic (which reading, which stored meaning wins which candidate
+kanji) lives in app.enrichment.kana_kanji, shared with the in-app
+"Kana-only word kanji forms" enrichment job (POST
+/api/imports/enrich/kana-kanji-forms) -- this script is for a careful,
+narrated first pass with dry-run/limit before trusting the job to run over
+the whole table unattended.
 
 Usage (from backend/):
     uv run python scripts/backfill_vocab_kanji_form.py [--dry-run] [--limit N]
@@ -28,64 +28,16 @@ Usage (from backend/):
 
 import argparse
 import asyncio
-import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.db import SessionLocal  # noqa: E402
-from app.enrichment.jisho_client import JishoClient, JishoWordResult, JishoWordSense  # noqa: E402
+from app.enrichment.jisho_client import JishoClient  # noqa: E402
+from app.enrichment.kana_kanji import KanaKanjiOutcome, find_kanji_form  # noqa: E402
 from app.kanji_utils import extract_kanji  # noqa: E402
 from app.models.vocab import Vocab  # noqa: E402
-
-_LEADING_TAG_RE = re.compile(r"^\([^)]*\)\s*")
-_KANA_TAG_RE = re.compile(r"usually.*kana", re.IGNORECASE)
-
-_MATCH_THRESHOLD = 0.6
-
-
-def _normalize_meaning(text: str) -> set[str]:
-    text = _LEADING_TAG_RE.sub("", text)
-    text = text.replace(".", ",")
-    text = re.sub(r"\d+\s*-\s*", "", text)
-    return {p.strip().lower() for p in re.split(r"[,/]", text) if p.strip()}
-
-
-def _is_usually_kana(sense: JishoWordSense) -> bool:
-    return any(_KANA_TAG_RE.search(tag) for tag in sense.tags)
-
-
-def _best_matching_sense(row_meaning_tokens: set[str], result: JishoWordResult) -> tuple[float, bool]:
-    """Best (Jaccard overlap, is_usually_kana) across this entry's senses.
-    is_usually_kana reflects the specific sense that produced the best
-    score, since the tag can sit on one sense of a multi-sense entry.
-
-    Jaccard (intersection / union) rather than intersection / candidate-size:
-    a candidate sense phrased as a single generic word (e.g. just
-    "together") would otherwise score a perfect 1.0 overlap-of-candidate
-    ratio against any row meaning containing that word, out-scoring the
-    real, richer-worded match -- that's exactly how いっしょ nearly matched
-    to 一所 (an obscure sense literally just "together") over 一緒 (the
-    actual common word, whose matching sense has other words alongside).
-    Jaccard penalizes that by also counting what's in the row meaning but
-    NOT in the candidate, so a thin one-word sense can't win purely on
-    having a small denominator."""
-    best_score = 0.0
-    best_is_kana = False
-    for sense in result.senses:
-        cand_tokens = {d.strip().lower() for d in sense.english_definitions if d.strip()}
-        if not cand_tokens:
-            continue
-        union = row_meaning_tokens | cand_tokens
-        if not union:
-            continue
-        overlap = row_meaning_tokens & cand_tokens
-        score = len(overlap) / len(union)
-        if score > best_score:
-            best_score = score
-            best_is_kana = _is_usually_kana(sense)
-    return best_score, best_is_kana
 
 
 async def backfill(dry_run: bool, limit: int | None) -> None:
@@ -110,47 +62,33 @@ async def backfill(dry_run: bool, limit: int | None) -> None:
                 skipped_no_match += 1
                 continue
 
-            row_tokens = _normalize_meaning(row.meaning) if row.meaning else set()
+            result = find_kanji_form(row.hiragana_form, row.meaning or "", results)
 
-            candidates = [
-                r
-                for r in results
-                if r.reading == row.hiragana_form and r.word and extract_kanji(r.word)
-            ]
-            if not candidates:
+            if result.outcome is KanaKanjiOutcome.NO_KANJI_CANDIDATE:
                 unchanged_no_kanji_word += 1
                 continue
-
-            if not row_tokens:
+            if result.outcome is KanaKanjiOutcome.NO_STORED_MEANING:
                 print(f"  [skip: no stored meaning to disambiguate] {row.hiragana_form}")
                 skipped_no_match += 1
                 continue
-
-            scored = [(c, *_best_matching_sense(row_tokens, c)) for c in candidates]
-            passing = [(c, ratio, is_kana) for c, ratio, is_kana in scored if ratio >= _MATCH_THRESHOLD]
-
-            if not passing:
+            if result.outcome is KanaKanjiOutcome.NO_CONFIDENT_MATCH:
                 skipped_no_match += 1
                 continue
-
-            distinct_words = {c.word for c, _, _ in passing}
-            if len(distinct_words) > 1:
+            if result.outcome is KanaKanjiOutcome.AMBIGUOUS:
                 print(
                     f"  [skip: ambiguous] {row.hiragana_form} (meaning={row.meaning!r}) -> "
-                    f"candidates {[c.word for c, _, _ in passing]}"
+                    f"candidates {result.candidate_words}"
                 )
                 skipped_ambiguous += 1
                 continue
 
-            new_kanji_form, _, is_usually_kana = passing[0]
-            new_kanji_form = new_kanji_form.word
-            kana_note = " [usually kana]" if is_usually_kana else ""
+            kana_note = " [usually kana]" if result.usually_kana else ""
             print(
-                f"  {row.hiragana_form}: kanji_form {row.kanji_form!r} -> {new_kanji_form!r}{kana_note}"
+                f"  {row.hiragana_form}: kanji_form {row.kanji_form!r} -> {result.kanji_form!r}{kana_note}"
             )
             if not dry_run:
-                row.kanji_form = new_kanji_form
-                row.usually_kana = is_usually_kana
+                row.kanji_form = result.kanji_form
+                row.usually_kana = result.usually_kana
             updated += 1
 
         if not dry_run:

@@ -14,7 +14,7 @@ TAGS = "jlpt::n3 source::n3_supplement"
 # Anki as a word the student already knew, not a fresh import.
 FALLBACK_TAG = "seen_in_class_fallback"
 
-_POS_FILE_NAMES = {
+POS_FILE_NAMES = {
     "verb": "Japanese Verbs.tsv",
     "adjective": "Japanese Adjectives.tsv",
     "adverb": "Japanese Adverbs.tsv",
@@ -55,11 +55,11 @@ def export_vocab_tsv_combined(rows: list[VocabExportRow]) -> str:
 def export_vocab_tsv_split_by_pos(rows: list[VocabExportRow]) -> dict[str, str]:
     by_pos: dict[str, list[VocabExportRow]] = {}
     for row in rows:
-        pos = row.part_of_speech if row.part_of_speech in _POS_FILE_NAMES else "general"
+        pos = row.part_of_speech if row.part_of_speech in POS_FILE_NAMES else "general"
         by_pos.setdefault(pos, []).append(row)
 
     return {
-        _POS_FILE_NAMES[pos]: "".join(_row_line(r) for r in pos_rows)
+        POS_FILE_NAMES[pos]: "".join(_row_line(r) for r in pos_rows)
         for pos, pos_rows in by_pos.items()
         if pos_rows
     }

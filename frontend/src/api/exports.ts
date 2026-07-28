@@ -1,11 +1,14 @@
 import { apiGet } from "./client";
-import type { PdfWarning } from "./types";
+import type { ExportPreviewWord, PdfWarning } from "./types";
 
 export const getVocabTsv = (batchN: number, splitByPos: boolean) =>
   apiGet<Record<string, string>>(`/api/exports/${batchN}/vocab-tsv?split_by_pos=${splitByPos}`);
 
 export const getKanjiTsv = (batchN: number) =>
   apiGet<Record<string, string>>(`/api/exports/${batchN}/kanji-tsv`);
+
+export const getExportPreview = (batchN: number, splitByPos: boolean) =>
+  apiGet<ExportPreviewWord[]>(`/api/exports/${batchN}/preview?split_by_pos=${splitByPos}`);
 
 export const getPdfWarnings = (batchN: number) => apiGet<PdfWarning[]>(`/api/exports/${batchN}/pdf/warnings`);
 

@@ -23,10 +23,35 @@ def get_vocab_tsv(batch_n: int, split_by_pos: bool = Query(default=False), db: S
 @router.get("/{batch_n}/kanji-tsv")
 def get_kanji_tsv(batch_n: int, db: Session = Depends(get_db)) -> dict:
     try:
-        content = export_service.export_kanji_readings(db, batch_n)
+        files = export_service.export_kanji_readings(db, batch_n)
     except export_service.ExportServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    return {"Japanese Kanji.tsv": content}
+    return files
+
+
+@router.get("/{batch_n}/preview")
+def get_export_preview(
+    batch_n: int, split_by_pos: bool = Query(default=True), db: Session = Depends(get_db)
+) -> list[dict]:
+    try:
+        words = export_service.get_export_preview(db, batch_n, split_by_pos=split_by_pos)
+    except export_service.ExportServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return [
+        {
+            "vocab_id": w.vocab_id,
+            "kanji_form": w.kanji_form,
+            "hiragana_form": w.hiragana_form,
+            "meaning": w.meaning,
+            "part_of_speech": w.part_of_speech,
+            "usually_kana": w.usually_kana,
+            "needs_kanji_reading": w.needs_kanji_reading,
+            "covers_target_kanji": w.covers_target_kanji,
+            "vocab_card": w.vocab_card.__dict__,
+            "kanji_reading_card": w.kanji_reading_card.__dict__ if w.kanji_reading_card else None,
+        }
+        for w in words
+    ]
 
 
 @router.get("/{batch_n}/pdf")

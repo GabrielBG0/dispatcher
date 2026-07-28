@@ -158,6 +158,159 @@ async def test_run_vocab_word_enrichment_tracks_jisho_misses(session_factory):
     db.close()
 
 
+SOU_WORDS_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "僧",
+            "is_common": True,
+            "jlpt": [],
+            "japanese": [{"word": "僧", "reading": "そう"}],
+            "senses": [{"english_definitions": ["monk", "priest"], "parts_of_speech": ["Noun"]}],
+        },
+        {
+            "slug": "然う",
+            "is_common": True,
+            "jlpt": [],
+            "japanese": [{"word": "然う", "reading": "そう"}],
+            "senses": [{"english_definitions": ["in that way", "thus"], "parts_of_speech": ["Adverb"]}],
+        },
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_run_kana_kanji_form_enrichment_matches_by_stored_meaning(session_factory):
+    # The spec's motivating example: our DB has kanji_form="そう" (kana-only)
+    # for a word that's really 僧, distinguishable from other そう homophones
+    # by the stored meaning.
+    db = session_factory()
+    db.add(
+        Vocab(
+            kanji_form="そう", hiragana_form="そう", meaning="1 - monk / priest",
+            part_of_speech="general", status="available",
+        )
+    )
+    db.add(Vocab(kanji_form="時間", hiragana_form="じかん", meaning="time", status="available"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_kana_kanji", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=SOU_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_kana_kanji_form_enrichment(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["status"] == "completed"
+    assert status["total"] == 1  # 時間 already has kanji, excluded from the kana-only set
+    assert status["completed"] == 1
+    assert status["not_found"] == 0
+
+    db = session_factory()
+    sou = db.query(Vocab).filter(Vocab.hiragana_form == "そう").one()
+    assert sou.kanji_form == "僧"
+    assert sou.usually_kana is False
+    assert "jisho" in sou.source
+    db.close()
+
+
+ARU_WORDS_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "有る",
+            "is_common": True,
+            "jlpt": [],
+            "japanese": [{"word": "有る", "reading": "ある"}],
+            "senses": [
+                {
+                    "english_definitions": ["to exist", "to be"],
+                    "parts_of_speech": ["Verb"],
+                    "tags": ["Usually written using kana alone"],
+                }
+            ],
+        }
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_run_kana_kanji_form_enrichment_flags_usually_kana(session_factory):
+    db = session_factory()
+    db.add(Vocab(kanji_form="ある", hiragana_form="ある", meaning="to exist, to be", status="available"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_kana_kanji", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=ARU_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_kana_kanji_form_enrichment(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    db = session_factory()
+    aru = db.query(Vocab).filter(Vocab.hiragana_form == "ある").one()
+    assert aru.kanji_form == "有る"
+    assert aru.usually_kana is True
+    db.close()
+
+
+KARA_AMBIGUOUS_WORDS_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "殻",
+            "is_common": True,
+            "jlpt": [],
+            "japanese": [{"word": "殻", "reading": "から"}],
+            "senses": [{"english_definitions": ["shell"], "parts_of_speech": ["Noun"]}],
+        },
+        {
+            "slug": "空",
+            "is_common": True,
+            "jlpt": [],
+            "japanese": [{"word": "空", "reading": "から"}],
+            "senses": [{"english_definitions": ["shell"], "parts_of_speech": ["Noun"]}],
+        },
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_run_kana_kanji_form_enrichment_leaves_ambiguous_rows_untouched(session_factory):
+    db = session_factory()
+    db.add(Vocab(kanji_form="から", hiragana_form="から", meaning="shell", status="available"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_kana_kanji", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=KARA_AMBIGUOUS_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_kana_kanji_form_enrichment(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["status"] == "completed"
+    assert status["not_found"] == 1  # ambiguous -- left for manual review, not guessed at
+
+    db = session_factory()
+    kara = db.query(Vocab).filter(Vocab.hiragana_form == "から").one()
+    assert kara.kanji_form == "から"  # untouched
+    db.close()
+
+
 KANJI_HTML = """
 <div class="kanji-details__main-meanings">love, affection</div>
 <div class="kanji-details__main-readings">

@@ -113,11 +113,95 @@ export interface PdfWarning {
   detail: string;
 }
 
+export interface ExportPreviewCard {
+  front: string;
+  back: string;
+  deck: string;
+  tags: string;
+}
+
+export interface ExportPreviewWord {
+  vocab_id: number;
+  kanji_form: string;
+  hiragana_form: string;
+  meaning: string;
+  part_of_speech: string;
+  usually_kana: boolean;
+  needs_kanji_reading: boolean;
+  covers_target_kanji: string[];
+  vocab_card: ExportPreviewCard;
+  kanji_reading_card: ExportPreviewCard | null;
+}
+
+export interface EditWordPayload {
+  kanji_form?: string;
+  hiragana_form?: string;
+  meaning?: string;
+  part_of_speech?: string;
+  usually_kana?: boolean;
+}
+
 export interface BatchSummary {
   batch_number: number;
   status: string;
   weekly_target_used: number;
   word_count: number;
+}
+
+export interface VocabListItem {
+  id: number;
+  kanji_form: string;
+  hiragana_form: string;
+  meaning: string;
+  part_of_speech: string;
+  status: string;
+  assigned_batch: number | null;
+  usually_kana: boolean;
+  source: string;
+}
+
+export interface VocabListResponse {
+  total: number;
+  items: VocabListItem[];
+}
+
+export interface KanjiCandidate {
+  word: string;
+  definitions: string[];
+  meaning: string;
+  score: number;
+  usually_kana: boolean;
+}
+
+export interface UpdateVocabPayload {
+  kanji_form?: string;
+  hiragana_form?: string;
+  meaning?: string;
+  usually_kana?: boolean;
+  part_of_speech?: string;
+}
+
+export interface DuplicateVocabRow {
+  id: number;
+  meaning: string;
+  status: string;
+  assigned_batch: number | null;
+  source: string;
+}
+
+export interface DuplicateGroup {
+  kanji_form: string;
+  hiragana_form: string;
+  similarity: number;
+  suggested_keep_id: number;
+  auto_resolvable: boolean;
+  reason: string;
+  rows: DuplicateVocabRow[];
+}
+
+export interface ResolveDuplicatesResult {
+  kept: number;
+  deleted: number[];
 }
 
 export interface DashboardOverview {
