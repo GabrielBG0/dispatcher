@@ -82,6 +82,184 @@ async def test_run_vocab_word_enrichment_fills_blank_meanings(session_factory):
     db.close()
 
 
+def test_pos_from_jisho_does_not_misclassify_adverb_as_verb():
+    # Regression: "verb" is a substring of "adverb", and _POS_PRIORITY checks
+    # verb first -- a naive `in` check misclassified every adverb-only tag
+    # as a verb. Must use word-boundary matching instead.
+    assert jobs.pos_from_jisho(["Adverb"]) == "adverb"
+    assert jobs.pos_from_jisho(["Ichidan verb"]) == "verb"
+    assert jobs.pos_from_jisho(["na-adjective"]) == "adjective"
+    assert jobs.pos_from_jisho(["Noun"]) == "general"
+
+
+WIKIPEDIA_AND_REAL_SENSE_WORDS_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "様子",
+            "is_common": True,
+            "jlpt": ["jlpt-n3"],
+            "japanese": [{"word": "様子", "reading": "ようす"}],
+            "senses": [
+                {"english_definitions": ["Wikipedia blurb, not a real sense"], "parts_of_speech": ["Wikipedia definition"]},
+                {"english_definitions": ["state", "condition", "appearance"], "parts_of_speech": ["Noun"]},
+            ],
+        }
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_run_vocab_meaning_standardization_excludes_wikipedia_senses(session_factory):
+    db = session_factory()
+    db.add(
+        Vocab(
+            kanji_form="様子", hiragana_form="ようす", meaning="(noun) state, condition",
+            part_of_speech="general", status="available", source="jlpt_n3_vocabulary.xls",
+        )
+    )
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_standardize_meanings", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=WIKIPEDIA_AND_REAL_SENSE_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_vocab_meaning_standardization(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    db = session_factory()
+    yousu = db.query(Vocab).filter(Vocab.kanji_form == "様子").one()
+    assert yousu.meaning == "state / condition / appearance"  # the Wikipedia sense never appears
+    assert yousu.part_of_speech == "general"
+    db.close()
+
+
+DUPLICATE_WORD_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "浴びる",
+            "is_common": True,
+            "jlpt": ["jlpt-n3"],
+            "japanese": [{"word": "浴びる", "reading": "あびる"}],
+            "senses": [
+                {
+                    "english_definitions": ["to bathe in", "to take (e.g. a shower)"],
+                    "parts_of_speech": ["Ichidan verb"],
+                },
+            ],
+        }
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_run_vocab_meaning_standardization_survives_duplicate_row_conflict(session_factory):
+    # Regression (production crash): two DB rows for the same word -- an
+    # unresolved near-duplicate pair dedupe_service left alone because the
+    # old meaning text on each looked different enough to pass as a distinct
+    # sense -- both get re-fetched here and both resolve to the exact same
+    # canonical Jisho text. The second write then collides with the
+    # (kanji_form, hiragana_form, meaning) unique constraint; that must not
+    # crash the job or take the rest of the run down with it.
+    db = session_factory()
+    db.add(
+        Vocab(
+            kanji_form="浴びる", hiragana_form="あびる", meaning="(transitive) to bathe, to shower",
+            part_of_speech="general", status="available", source="jlpt_n3_vocabulary.xls",
+        )
+    )
+    db.add(
+        Vocab(
+            kanji_form="浴びる", hiragana_form="あびる", meaning="to take a shower, to bask in",
+            part_of_speech="general", status="available", source="jlpt_n3_vocabulary.xls",
+        )
+    )
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_standardize_meanings", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=DUPLICATE_WORD_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_vocab_meaning_standardization(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["status"] == "completed"  # must not crash on the collision
+    assert status["total"] == 2
+    assert status["completed"] == 2
+    assert status["not_found"] == 1  # the row that lost the conflict
+
+    db = session_factory()
+    rows = db.query(Vocab).filter(Vocab.kanji_form == "浴びる").order_by(Vocab.id).all()
+    standardized = [r for r in rows if r.meaning == "to bathe in / to take (e.g. a shower)"]
+    conflicted = [r for r in rows if "jisho_duplicate_conflict" in r.source]
+    assert len(standardized) == 1  # the winner got the canonical text
+    assert len(conflicted) == 1  # the loser kept its old meaning, flagged for manual dedupe
+    db.close()
+
+
+@pytest.mark.asyncio
+async def test_run_vocab_meaning_standardization_overwrites_non_jisho_meanings(session_factory):
+    db = session_factory()
+    db.add(
+        Vocab(
+            kanji_form="旅行", hiragana_form="りょこう", meaning="(noun) trip, journey",
+            part_of_speech="general", status="available", source="jlpt_n3_vocabulary.xls",
+        )
+    )
+    # Already numbered senses -- looks like a prior Jisho run, must be skipped.
+    db.add(
+        Vocab(
+            kanji_form="掛ける", hiragana_form="かける", meaning="1 - to hang up. 2 - to sit",
+            part_of_speech="verb", status="available", source="jisho",
+        )
+    )
+    # Single sense with 2+ slashes -- also already Jisho-shaped, must be skipped.
+    db.add(
+        Vocab(
+            kanji_form="僧", hiragana_form="そう", meaning="monk / priest / clergyman",
+            part_of_speech="general", status="available", source="jisho",
+        )
+    )
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_standardize_meanings", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_vocab_meaning_standardization(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["status"] == "completed"
+    assert status["total"] == 1  # only the non-standardized row needed re-fetching
+    assert status["completed"] == 1
+    assert status["not_found"] == 0
+
+    db = session_factory()
+    ryokou = db.query(Vocab).filter(Vocab.kanji_form == "旅行").one()
+    assert ryokou.meaning == "travel / trip"  # overwritten with the standardized form
+    assert "jisho_standardized" in ryokou.source
+    kakeru = db.query(Vocab).filter(Vocab.kanji_form == "掛ける").one()
+    assert kakeru.meaning == "1 - to hang up. 2 - to sit"  # untouched, already standardized
+    sou = db.query(Vocab).filter(Vocab.kanji_form == "僧").one()
+    assert sou.meaning == "monk / priest / clergyman"  # untouched, already standardized
+    db.close()
+
+
 MULTI_SENSE_WORDS_RESPONSE = {
     "meta": {"status": 200},
     "data": [

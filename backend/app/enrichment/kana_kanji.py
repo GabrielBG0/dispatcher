@@ -85,6 +85,24 @@ def best_matching_sense(row_meaning_tokens: set[str], result: JishoWordResult) -
     return best_score, best_is_kana
 
 
+_SENSE_ONE_MARKER_RE = re.compile(r"1\s*-")
+_SENSE_TWO_MARKER_RE = re.compile(r"2\s*-")
+
+
+def is_meaning_already_standardized(meaning: str) -> bool:
+    """True when `meaning` already looks like format_meaning_groups' own
+    output shape -- either numbered senses ("1 - ... 2 - ...") or a single
+    sense's definitions slash-joined with 2+ slashes. A lone "/" isn't
+    trusted on its own since non-Jisho meaning text (e.g. the xls import's
+    "(noun) foo, bar" style) can contain one incidentally; 2+ slashes is a
+    much stronger signal the row already went through the formatter."""
+    if not meaning:
+        return False
+    if _SENSE_ONE_MARKER_RE.search(meaning) and _SENSE_TWO_MARKER_RE.search(meaning):
+        return True
+    return meaning.count("/") >= 2
+
+
 def format_meaning_groups(sense_definitions: list[list[str]], limit: int = 2) -> str:
     """Same "1 - .../ 2 - ..." formatting run_vocab_word_enrichment writes
     into Vocab.meaning (see enrichment/jobs.py:format_meaning) -- kept here

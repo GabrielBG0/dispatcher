@@ -54,6 +54,13 @@ def start_vocab_word_enrichment(background_tasks: BackgroundTasks) -> dict:
     return {"job_id": job_id}
 
 
+@router.post("/enrich/vocab-meaning-standardization")
+def start_vocab_meaning_standardization(background_tasks: BackgroundTasks) -> dict:
+    job_id = jobs.create_job("jisho_standardize_meanings", total=0)
+    background_tasks.add_task(jobs.run_vocab_meaning_standardization, job_id)
+    return {"job_id": job_id}
+
+
 @router.post("/enrich/kana-kanji-forms")
 def start_kana_kanji_form_enrichment(background_tasks: BackgroundTasks) -> dict:
     job_id = jobs.create_job("jisho_kana_kanji", total=0)

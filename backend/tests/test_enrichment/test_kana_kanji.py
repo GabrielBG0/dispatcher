@@ -3,6 +3,7 @@ from app.enrichment.kana_kanji import (
     KanaKanjiOutcome,
     find_kanji_form,
     format_meaning_groups,
+    is_meaning_already_standardized,
     rank_candidates,
 )
 
@@ -142,3 +143,25 @@ def test_format_meaning_groups_matches_jobs_format_meaning():
     assert format_meaning_groups([["to hang up"], ["to sit"], ["to spend"]]) == "1 - to hang up. 2 - to sit"
     assert format_meaning_groups([["monk", "priest"]]) == "monk / priest"
     assert format_meaning_groups([]) == ""
+
+
+def test_is_meaning_already_standardized_recognizes_numbered_senses():
+    assert is_meaning_already_standardized("1 - to hang up. 2 - to sit") is True
+
+
+def test_is_meaning_already_standardized_recognizes_two_or_more_slashes():
+    assert is_meaning_already_standardized("cover / covering / dust jacket") is True
+
+
+def test_is_meaning_already_standardized_does_not_trust_a_single_slash():
+    # A lone "/" isn't strong enough evidence -- non-Jisho meaning text can
+    # contain one incidentally (e.g. "parents/guardians" written by hand),
+    # and a genuine single-sense Jisho entry with only two synonyms ("monk /
+    # priest") is indistinguishable from that case on slash count alone.
+    assert is_meaning_already_standardized("parents/guardians") is False
+    assert is_meaning_already_standardized("monk / priest") is False
+
+
+def test_is_meaning_already_standardized_false_for_old_xls_style_and_blank():
+    assert is_meaning_already_standardized("(noun) one's nature, custom, tradition") is False
+    assert is_meaning_already_standardized("") is False

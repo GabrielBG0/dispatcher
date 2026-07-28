@@ -53,6 +53,16 @@ class JishoKanjiResult:
     on_yomi: list[str]
 
 
+def _is_wikipedia_sense(sense: dict) -> bool:
+    # Jisho merges in DBpedia/Wikipedia-derived senses for some entries
+    # (mostly proper nouns / place names, e.g. 東京証券取引所) marked by
+    # parts_of_speech == ["Wikipedia definition"] -- confirmed by direct
+    # inspection of the live API. These are encyclopedia blurbs, not
+    # vocabulary definitions, so they're dropped before a caller ever sees
+    # them rather than filtered ad hoc at each call site.
+    return any("wikipedia" in pos.lower() for pos in sense.get("parts_of_speech", []))
+
+
 def _retry_config():
     return retry(
         retry=retry_if_exception_type(_RETRYABLE),
@@ -105,6 +115,7 @@ class JishoClient:
                     tags=s.get("tags", []),
                 )
                 for s in entry.get("senses", [])
+                if not _is_wikipedia_sense(s)
             ]
             results.append(
                 JishoWordResult(

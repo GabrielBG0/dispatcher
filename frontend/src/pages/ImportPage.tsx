@@ -4,6 +4,7 @@ import {
   startKanaKanjiFormEnrichment,
   startKanjiMeaningEnrichment,
   startKanjivgEnrichment,
+  startVocabMeaningStandardization,
   startVocabWordEnrichment,
   uploadAnkiExport,
   uploadKanjiSchedule,
@@ -276,6 +277,17 @@ export default function ImportPage() {
         <EnrichmentJobButton
           label="Kana-only word kanji forms (Jisho)"
           start={startKanaKanjiFormEnrichment}
+        />
+        <p style={{ color: "#666", fontSize: "0.88rem" }}>
+          The button below OVERWRITES existing meaning text on rows that don't yet look like a Jisho-formatted
+          meaning (numbered "1 - ... 2 - ..." senses, or a single sense with 2+ "/"-joined synonyms) -- use it to
+          standardize meanings left over from the original vocab list import. Also re-derives each word's category
+          (verb/adjective/adverb/vocab) from the same Jisho lookup, and never pulls in Wikipedia-sourced
+          definitions.
+        </p>
+        <EnrichmentJobButton
+          label="Standardize vocab meanings (Jisho)"
+          start={startVocabMeaningStandardization}
         />
       </section>
 

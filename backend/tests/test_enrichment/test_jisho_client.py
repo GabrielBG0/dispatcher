@@ -74,6 +74,50 @@ async def test_search_words_parses_response():
         await client.aclose()
 
 
+WIKIPEDIA_SENSE_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "東京証券取引所",
+            "is_common": True,
+            "jlpt": [],
+            "japanese": [{"word": "東京証券取引所", "reading": "とうきょうしょうけんとりひきじょ"}],
+            "senses": [
+                {
+                    "english_definitions": ["Tokyo Stock Exchange", "TSE"],
+                    "parts_of_speech": ["Noun"],
+                },
+                {
+                    "english_definitions": ["Tokyo Stock Exchange"],
+                    "parts_of_speech": ["Wikipedia definition"],
+                },
+            ],
+        }
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_search_words_excludes_wikipedia_sourced_senses():
+    # Real jisho.org response shape (confirmed by direct inspection): senses
+    # merged in from Wikipedia/DBpedia carry parts_of_speech == ["Wikipedia
+    # definition"] instead of a real grammatical tag. These are encyclopedia
+    # blurbs, not vocabulary definitions, and must never reach a caller.
+    client = JishoClient(min_delay_seconds=0)
+    try:
+        with respx.mock(assert_all_called=True) as mock:
+            mock.get("https://jisho.org/api/v1/search/words").mock(
+                return_value=httpx.Response(200, json=WIKIPEDIA_SENSE_RESPONSE)
+            )
+            results = await client.search_words("東京証券取引所")
+
+        assert len(results) == 1
+        assert len(results[0].senses) == 1  # the Wikipedia-definition sense was dropped
+        assert results[0].senses[0].english_definitions == ["Tokyo Stock Exchange", "TSE"]
+    finally:
+        await client.aclose()
+
+
 @pytest.mark.asyncio
 async def test_fetch_kanji_parses_readings_and_meanings():
     client = JishoClient(min_delay_seconds=0)
