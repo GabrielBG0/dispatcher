@@ -233,6 +233,18 @@ Works on any batch, though it's meant for finalized ones:
 - **Kanji reading deck** — one TSV, `Japanese Kanji - Batch N.tsv`,
   `kanji\treading\ttags`, containing only the words flagged
   `needs_kanji_reading` in that batch.
+- **Deck sync (reading ↔ vocab order)** — both TSVs are sorted so a fresh
+  Anki import lines the two decks up: `needs_kanji_reading` words first,
+  then other target-linked words, then filler, alphabetically by hiragana
+  reading within each group (with "split by part of speech" checked, this
+  ordering applies within each of the four vocab files instead of across
+  one combined list). Since the kanji-reading deck only ever contains
+  `needs_kanji_reading` words, it ends up as the leading run of the
+  combined vocab deck — so studying both decks at the same new-card pace
+  never surfaces a kanji reading before its word's meaning card. This only
+  holds for a fresh import with the deck's new-card order left at "order
+  added"; re-importing notes that already exist in Anki won't reposition
+  them.
 - **Weekly kanji PDF** — one page per target kanji: stroke-order diagram
   (from KanjiVG), on'yomi/kun'yomi readings, and meanings, for handing out
   or presenting in class. **Check for missing data** first — it lists any

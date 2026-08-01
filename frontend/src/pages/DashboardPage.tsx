@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { deleteBatch } from "../api/batches";
 import { ApiError } from "../api/client";
 import { getConfig, putConfig, type StudyConfigPayload } from "../api/config";
 import { getOverview } from "../api/dashboard";
@@ -92,6 +93,7 @@ function StudyConfigCard({ onSaved }: { onSaved: () => void }) {
 export default function DashboardPage() {
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [deletingBatch, setDeletingBatch] = useState<number | null>(null);
 
   function load() {
     getOverview()
@@ -100,6 +102,22 @@ export default function DashboardPage() {
   }
 
   useEffect(load, []);
+
+  async function handleDelete(batchN: number) {
+    if (!confirm(`Delete draft batch ${batchN}? Its words will be released back to available.`)) {
+      return;
+    }
+    setDeletingBatch(batchN);
+    setError(null);
+    try {
+      await deleteBatch(batchN);
+      load();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to delete batch");
+    } finally {
+      setDeletingBatch(null);
+    }
+  }
 
   return (
     <div>
@@ -160,6 +178,7 @@ export default function DashboardPage() {
                     <th>Status</th>
                     <th>Weekly target</th>
                     <th>Words</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -171,6 +190,17 @@ export default function DashboardPage() {
                       </td>
                       <td>{b.weekly_target_used}</td>
                       <td>{b.word_count}</td>
+                      <td>
+                        {b.status === "draft" && (
+                          <button
+                            className="danger"
+                            disabled={deletingBatch === b.batch_number}
+                            onClick={() => handleDelete(b.batch_number)}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

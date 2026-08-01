@@ -30,10 +30,28 @@ class VocabExportRow:
     part_of_speech: str
     usually_kana: bool = False
     used_seen_in_class_fallback: bool = False
+    # Both default False (a plain filler word); needs_kanji_reading implies
+    # is_target_linked, but not the reverse (a target-linked word with an
+    # orphan kanji still gets no reading card -- see README's needs_kanji_reading
+    # rule). Used only to order rows so the reading deck ends up as the
+    # leading run of the vocab deck -- see study_order_key.
+    is_target_linked: bool = False
+    needs_kanji_reading: bool = False
 
 
 def tags_for_row(row: VocabExportRow) -> str:
     return f"{TAGS} {FALLBACK_TAG}" if row.used_seen_in_class_fallback else TAGS
+
+
+def study_order_key(row: VocabExportRow) -> tuple:
+    """Sort key shared by the vocab and kanji-reading TSV exports so that,
+    on a fresh Anki import (new-card order left at "order added"), the
+    reading deck is exactly the leading run of the vocab deck -- letting a
+    student pace new-card introduction across both decks in lockstep instead
+    of hitting a kanji reading before its meaning card.
+    """
+    tier = 0 if row.needs_kanji_reading else 1 if row.is_target_linked else 2
+    return (tier, row.hiragana_form, row.kanji_form)
 
 
 def _row_line(row: VocabExportRow) -> str:
@@ -49,7 +67,7 @@ def _row_line(row: VocabExportRow) -> str:
 
 
 def export_vocab_tsv_combined(rows: list[VocabExportRow]) -> str:
-    return "".join(_row_line(r) for r in rows)
+    return "".join(_row_line(r) for r in sorted(rows, key=study_order_key))
 
 
 def export_vocab_tsv_split_by_pos(rows: list[VocabExportRow]) -> dict[str, str]:
@@ -59,7 +77,7 @@ def export_vocab_tsv_split_by_pos(rows: list[VocabExportRow]) -> dict[str, str]:
         by_pos.setdefault(pos, []).append(row)
 
     return {
-        POS_FILE_NAMES[pos]: "".join(_row_line(r) for r in pos_rows)
+        POS_FILE_NAMES[pos]: "".join(_row_line(r) for r in sorted(pos_rows, key=study_order_key))
         for pos, pos_rows in by_pos.items()
         if pos_rows
     }

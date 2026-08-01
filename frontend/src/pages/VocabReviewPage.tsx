@@ -5,12 +5,21 @@ import type { KanjiCandidate, VocabListItem } from "../api/types";
 
 const PAGE_SIZE = 25;
 
+// Matches backend's extract_kanji() range (app/kanji_utils.py) -- used
+// client-side only to decide whether "No kanji form exists" makes sense
+// for the word's current (possibly edited) kanji_form.
+const CJK_PATTERN = /[一-鿿㐀-䶿豈-﫿]/;
+
 function VocabReviewRow({
   item,
+  showAll,
   onResolved,
+  onSaved,
 }: {
   item: VocabListItem;
+  showAll: boolean;
   onResolved: (id: number) => void;
+  onSaved: (id: number, updated: { kanji_form: string; hiragana_form: string; meaning: string; usually_kana: boolean }) => void;
 }) {
   const [kanjiForm, setKanjiForm] = useState(item.kanji_form);
   const [hiraganaForm, setHiraganaForm] = useState(item.hiragana_form);
@@ -57,14 +66,16 @@ function VocabReviewRow({
     setError(null);
     setIsDuplicateError(false);
     try {
-      await updateVocab(item.id, {
+      const updated = await updateVocab(item.id, {
         kanji_form: kanjiForm,
         hiragana_form: hiraganaForm,
         meaning,
         usually_kana: usuallyKana,
       });
-      if (kanjiForm !== hiraganaForm) {
+      if (!showAll && CJK_PATTERN.test(updated.kanji_form)) {
         onResolved(item.id); // no longer kana-only -- drops out of the review queue on its own
+      } else {
+        onSaved(item.id, updated); // resets the row's dirty baseline to the saved values
       }
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "Save failed";
@@ -83,7 +94,7 @@ function VocabReviewRow({
     setError(null);
     try {
       await confirmKanaOnly(item.id);
-      onResolved(item.id);
+      if (!showAll) onResolved(item.id); // drops out of the kana-only queue; in "all vocab" search it just stays put
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to confirm");
     } finally {
@@ -109,7 +120,9 @@ function VocabReviewRow({
     <div className="word-row" style={{ flexDirection: "column", alignItems: "stretch", gap: "0.5rem" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
         <div className="word-main">
-          <span className="word-kanji">{item.hiragana_form}</span>{" "}
+          <span className="word-kanji">
+            {item.kanji_form !== item.hiragana_form ? `${item.kanji_form} (${item.hiragana_form})` : item.hiragana_form}
+          </span>{" "}
           <span className="pill">{item.status}</span>
           {item.assigned_batch !== null && <span className="pill"> batch {item.assigned_batch}</span>}
         </div>
@@ -158,9 +171,11 @@ function VocabReviewRow({
         <button onClick={handleSave} disabled={saveBusy || !dirty}>
           {saveBusy ? "Saving…" : "Save"}
         </button>
-        <button onClick={handleConfirmNoKanji} disabled={confirmBusy}>
-          {confirmBusy ? "…" : "No kanji form exists"}
-        </button>
+        {!CJK_PATTERN.test(kanjiForm) && (
+          <button onClick={handleConfirmNoKanji} disabled={confirmBusy}>
+            {confirmBusy ? "…" : "No kanji form exists"}
+          </button>
+        )}
         <button onClick={handleDelete} disabled={deleteBusy} className="danger">
           {deleteBusy ? "Deleting…" : "Delete entry"}
         </button>
@@ -209,6 +224,7 @@ export default function VocabReviewPage() {
   const [offset, setOffset] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -216,7 +232,13 @@ export default function VocabReviewPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await listVocab({ kanaOnly: true, search: search || undefined, limit: PAGE_SIZE, offset });
+      const result = await listVocab({
+        kanaOnly: !showAll,
+        includeReviewed: showAll,
+        search: search || undefined,
+        limit: PAGE_SIZE,
+        offset,
+      });
       setItems(result.items);
       setTotal(result.total);
     } catch (err) {
@@ -229,17 +251,26 @@ export default function VocabReviewPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offset, search]);
+  }, [offset, search, showAll]);
 
   function handleResolved(id: number) {
     setItems((prev) => prev.filter((i) => i.id !== id));
     setTotal((prev) => Math.max(0, prev - 1));
   }
 
+  function handleSaved(id: number, updated: { kanji_form: string; hiragana_form: string; meaning: string; usually_kana: boolean }) {
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, ...updated } : i)));
+  }
+
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
     setOffset(0);
     setSearch(searchInput.trim());
+  }
+
+  function handleShowAllChange(checked: boolean) {
+    setShowAll(checked);
+    setOffset(0);
   }
 
   const page = Math.floor(offset / PAGE_SIZE) + 1;
@@ -252,19 +283,27 @@ export default function VocabReviewPage() {
         Words still spelled with kana only (no real kanji recorded) -- left behind after the "Kana-only word
         kanji forms" enrichment job in Import couldn't confidently resolve them on its own. For each word, look
         up Jisho's candidate spellings and pick one, edit the meaning directly, or confirm the word is genuinely
-        kana-only so it stops showing up here.
+        kana-only so it stops showing up here. Check "search all vocabulary" to find and edit any word instead.
       </p>
 
       <form onSubmit={handleSearchSubmit} className="upload-row">
         <input
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search reading or meaning…"
+          placeholder="Search reading, kanji, or meaning…"
           style={{ flex: 1 }}
         />
         <button type="submit">Search</button>
+        <label style={{ fontSize: "0.85rem", color: "#666", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+          <input
+            type="checkbox"
+            checked={showAll}
+            onChange={(e) => handleShowAllChange(e.target.checked)}
+          />
+          search all vocabulary
+        </label>
         <span>
-          {total} word{total === 1 ? "" : "s"} to review
+          {total} word{total === 1 ? "" : "s"} {showAll ? "match" : "to review"}
         </span>
       </form>
 
@@ -273,8 +312,18 @@ export default function VocabReviewPage() {
 
       <div className="word-list">
         {!loading &&
-          items.map((item) => <VocabReviewRow key={item.id} item={item} onResolved={handleResolved} />)}
-        {!loading && items.length === 0 && <p>No unresolved kana-only words match this search.</p>}
+          items.map((item) => (
+            <VocabReviewRow
+              key={item.id}
+              item={item}
+              showAll={showAll}
+              onResolved={handleResolved}
+              onSaved={handleSaved}
+            />
+          ))}
+        {!loading && items.length === 0 && (
+          <p>{showAll ? "No vocab words match this search." : "No unresolved kana-only words match this search."}</p>
+        )}
       </div>
 
       {total > PAGE_SIZE && (

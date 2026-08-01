@@ -72,3 +72,5 @@ export const finalizeBatch = (batchN: number) =>
 
 export const unfinalizeBatch = (batchN: number) =>
   apiPost<{ batch_number: number; status: string }>(`/api/batches/${batchN}/unfinalize`);
+
+export const deleteBatch = (batchN: number) => apiDelete<{ ok: boolean }>(`/api/batches/${batchN}`);

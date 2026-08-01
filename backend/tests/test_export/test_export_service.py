@@ -89,6 +89,65 @@ def test_export_vocab_tags_seen_in_class_fallback_words(db_session):
     assert "seen_in_class_fallback" in content
 
 
+def test_export_vocab_reading_deck_is_leading_run_of_vocab_deck(db_session):
+    db_session.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    ai = Kanji(kanji="愛")
+    db_session.add(ai)
+    db_session.flush()
+    db_session.add(KanjiCoverage(kanji_id=ai.id, coverage_source="n3_batch", batch_number=1))
+    db_session.add(
+        Vocab(
+            kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general",
+            status="assigned", assigned_batch=1, needs_kanji_reading=False,
+        )
+    )
+    db_session.add(
+        Vocab(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet dog", part_of_speech="general",
+            status="assigned", assigned_batch=1, needs_kanji_reading=True,
+        )
+    )
+    # usually_kana row in the reading-deck tier -- its vocab front reads
+    # hiragana-first ("あいねこ（愛猫）") while the reading front stays plain
+    # kanji_form ("愛猫"), so alignment must hold on the underlying word, not
+    # on matching rendered text.
+    db_session.add(
+        Vocab(
+            kanji_form="愛猫", hiragana_form="あいねこ", meaning="pet cat", part_of_speech="general",
+            status="assigned", assigned_batch=1, needs_kanji_reading=True, usually_kana=True,
+        )
+    )
+    # Target-linked (contains 愛) but not needing a reading card -- e.g. it
+    # has an orphan kanji. Should sort after the reading-deck words but
+    # still ahead of the plain filler.
+    db_session.add(
+        Vocab(
+            kanji_form="愛情", hiragana_form="あいじょう", meaning="affection", part_of_speech="general",
+            status="assigned", assigned_batch=1, needs_kanji_reading=False,
+        )
+    )
+    db_session.commit()
+
+    vocab_files = export_service.export_vocab(db_session, batch_n=1, split_by_pos=False)
+    vocab_fronts = [
+        line.split("\t")[0]
+        for line in vocab_files["Japanese Complete Vocab - Batch 1.tsv"].strip("\n").split("\n")
+    ]
+    reading_files = export_service.export_kanji_readings(db_session, batch_n=1)
+    reading_fronts = [
+        line.split("\t")[0] for line in reading_files["Japanese Kanji - Batch 1.tsv"].strip("\n").split("\n")
+    ]
+
+    assert reading_fronts == ["愛犬", "愛猫"]
+    # Structural leading-run check: each reading-deck word's kanji_form
+    # shows up in the corresponding vocab-deck row at the same position,
+    # regardless of how that row's front is rendered.
+    assert all(reading_fronts[i] in vocab_fronts[i] for i in range(len(reading_fronts)))
+    assert vocab_fronts == [
+        "愛犬（あいけん）", "あいねこ（愛猫）", "愛情（あいじょう）", "時間（じかん）",
+    ]
+
+
 def test_export_rejects_non_finalized_batch(db_session):
     db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
     db_session.commit()

@@ -1,3 +1,4 @@
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -49,6 +50,8 @@ async def get_kanji_candidates(
         candidates = await vocab_service.get_kanji_candidates(db, vocab_id, client, reading=reading)
     except vocab_service.VocabServiceError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except httpx.TransportError as exc:
+        raise HTTPException(status_code=502, detail="Could not reach jisho.org -- check your network connection and try again.") from exc
     finally:
         await client.aclose()
     return {

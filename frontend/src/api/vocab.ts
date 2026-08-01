@@ -31,7 +31,7 @@ export const getKanjiCandidates = (vocabId: number, reading?: string) => {
 };
 
 export const updateVocab = (vocabId: number, payload: UpdateVocabPayload) =>
-  apiPatch<{ id: number; kanji_form: string; hiragana_form: string; meaning: string }>(
+  apiPatch<{ id: number; kanji_form: string; hiragana_form: string; meaning: string; usually_kana: boolean }>(
     `/api/vocab/${vocabId}`,
     payload,
   );

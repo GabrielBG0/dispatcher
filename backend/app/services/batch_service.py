@@ -871,6 +871,22 @@ def finalize_batch(db: Session, batch_n: int) -> None:
     db.commit()
 
 
+def delete_batch(db: Session, batch_n: int) -> None:
+    """Deletes a draft batch outright. Every word assigned to it is released
+    back the same way remove_word would (available, or restored to
+    seen_in_class if that's what it was) so nothing is left dangling on a
+    since-deleted batch_number. Refuses on a finalized batch -- that would
+    silently discard KanjiCoverage history that later skip-ahead checks
+    depend on; unfinalize first if a finalized batch truly needs to go away.
+    """
+    _require_draft_batch(db, batch_n)
+    vocab_ids = [v.id for v in db.query(Vocab).filter(Vocab.assigned_batch == batch_n).all()]
+    for vocab_id in vocab_ids:
+        _take_out_of_batch(db, batch_n, vocab_id, exclude=False)
+    db.delete(db.get(Batch, batch_n))
+    db.commit()
+
+
 def unfinalize_batch(db: Session, batch_n: int) -> None:
     """Rolls back exactly the coverage rows this batch's finalization added
     -- not a blanket coverage wipe -- and returns the batch to draft. Vocab

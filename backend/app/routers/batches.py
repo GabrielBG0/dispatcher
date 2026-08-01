@@ -210,6 +210,15 @@ def swap_word(batch_n: int, vocab_id: int, replacement_vocab_id: int, db: Sessio
     return {"ok": True}
 
 
+@router.delete("/{batch_n}")
+def delete_batch(batch_n: int, db: Session = Depends(get_db)) -> dict:
+    try:
+        batch_service.delete_batch(db, batch_n)
+    except batch_service.BatchServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True}
+
+
 @router.post("/{batch_n}/finalize")
 def finalize(batch_n: int, db: Session = Depends(get_db)) -> dict:
     try:

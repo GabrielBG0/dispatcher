@@ -52,8 +52,21 @@ def _batch_vocab_rows(db: Session, batch_n: int) -> list[Vocab]:
     return db.query(Vocab).filter(Vocab.assigned_batch == batch_n).all()
 
 
+def _target_kanji_chars(db: Session, batch_n: int) -> set[str]:
+    # Reads the frozen coverage snapshot a finalized batch locked in, not the
+    # (possibly since-shifted) live schedule -- mirrors build_kanji_pdf_pages.
+    return {
+        k.kanji
+        for k in db.query(Kanji)
+        .join(KanjiCoverage, KanjiCoverage.kanji_id == Kanji.id)
+        .filter(KanjiCoverage.coverage_source == "n3_batch", KanjiCoverage.batch_number == batch_n)
+        .all()
+    }
+
+
 def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str]:
     _require_finalized_batch(db, batch_n)
+    target_kanji_chars = _target_kanji_chars(db, batch_n)
     rows = [
         VocabExportRow(
             kanji_form=v.kanji_form,
@@ -62,6 +75,8 @@ def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str
             part_of_speech=v.part_of_speech,
             usually_kana=v.usually_kana,
             used_seen_in_class_fallback=is_seen_in_class_fallback(v),
+            is_target_linked=bool(extract_kanji(v.kanji_form) & target_kanji_chars),
+            needs_kanji_reading=v.needs_kanji_reading,
         )
         for v in _batch_vocab_rows(db, batch_n)
     ]
@@ -81,6 +96,8 @@ def export_kanji_readings(db: Session, batch_n: int) -> dict[str, str]:
             meaning=v.meaning,
             part_of_speech=v.part_of_speech,
             used_seen_in_class_fallback=is_seen_in_class_fallback(v),
+            is_target_linked=True,
+            needs_kanji_reading=True,
         )
         for v in _batch_vocab_rows(db, batch_n)
         if v.needs_kanji_reading
@@ -128,17 +145,7 @@ def get_export_preview(db: Session, batch_n: int, split_by_pos: bool = True) -> 
     you rather than the raw fields.
     """
     _require_finalized_batch(db, batch_n)
-
-    # Mirrors build_kanji_pdf_pages: reads the frozen coverage snapshot a
-    # finalized batch locked in, not the (possibly since-shifted) live
-    # schedule.
-    target_kanji_chars = {
-        k.kanji
-        for k in db.query(Kanji)
-        .join(KanjiCoverage, KanjiCoverage.kanji_id == Kanji.id)
-        .filter(KanjiCoverage.coverage_source == "n3_batch", KanjiCoverage.batch_number == batch_n)
-        .all()
-    }
+    target_kanji_chars = _target_kanji_chars(db, batch_n)
 
     words: list[ExportPreviewWord] = []
     for v in _batch_vocab_rows(db, batch_n):

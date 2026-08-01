@@ -102,6 +102,13 @@ no live network calls in the suite.
 - Batches are **draft** until finalized. Finalizing marks selected words
   `assigned` and records kanji coverage for future skip-ahead checks;
   un-finalizing reverses both.
+- **Export row order**: the vocab and kanji-reading TSVs share one sort key
+  (`export/vocab_tsv.py::study_order_key`) — `needs_kanji_reading` words
+  first, then other target-linked words, then filler, alphabetically by
+  hiragana reading within each tier — so the reading deck (which only ever
+  contains `needs_kanji_reading` words) comes out as the leading run of the
+  vocab deck on a fresh Anki import. Both exporters must keep using the same
+  key or the decks drift out of sync.
 
 ### Frontend (frontend/src/)
 

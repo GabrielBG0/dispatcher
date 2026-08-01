@@ -13,7 +13,29 @@ def test_combined_export_has_one_line_per_row_with_tags():
     content = export_vocab_tsv_combined(ROWS)
     lines = content.strip("\n").split("\n")
     assert len(lines) == 4
-    assert lines[0] == "例えば（たとえば）\tfor example\tjlpt::n3 source::n3_supplement"
+    # None of ROWS is target-linked, so all fall in the filler tier and sort
+    # by hiragana_form: うつくしい, じかん, たとえば, わかる.
+    assert lines[0] == "美しい（うつくしい）\tbeautiful\tjlpt::n3 source::n3_supplement"
+
+
+def test_combined_export_orders_target_linked_before_filler_then_alphabetically():
+    rows = [
+        VocabExportRow(kanji_form="時計", hiragana_form="とけい", meaning="clock", part_of_speech="general"),
+        VocabExportRow(
+            kanji_form="愛犬", hiragana_form="あいけん", meaning="pet dog", part_of_speech="general",
+            is_target_linked=True, needs_kanji_reading=True,
+        ),
+        VocabExportRow(kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general"),
+        VocabExportRow(
+            kanji_form="愛情", hiragana_form="あいじょう", meaning="affection", part_of_speech="general",
+            is_target_linked=True, needs_kanji_reading=False,
+        ),
+    ]
+    content = export_vocab_tsv_combined(rows)
+    fronts = [line.split("\t")[0] for line in content.strip("\n").split("\n")]
+    # needs_kanji_reading first, then target-linked-but-orphan, then filler;
+    # alphabetical (by hiragana_form) within each tier.
+    assert fronts == ["愛犬（あいけん）", "愛情（あいじょう）", "時間（じかん）", "時計（とけい）"]
 
 
 def test_split_by_pos_produces_four_files():
