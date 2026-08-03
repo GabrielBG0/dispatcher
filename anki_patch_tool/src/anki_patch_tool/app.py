@@ -17,11 +17,12 @@ from anki_patch_tool.parser import Row, parse_export_tsv
 
 AUTO_MODEL = "Auto (detect from deck)"
 
+ANKICONNECT_CODE = "2055492159"
 ANKICONNECT_INSTALL_MSG = (
     "Could not connect to Anki.\n\n"
     "1. Make sure Anki is open.\n"
     "2. Install the AnkiConnect add-on: in Anki, go to "
-    "Tools → Add-ons → Get Add-ons..., paste in the code 2055492159, "
+    f"Tools → Add-ons → Get Add-ons..., paste in the code {ANKICONNECT_CODE}, "
     "then restart Anki.\n"
     "3. Click 'Retry connection' below."
 )
@@ -263,6 +264,43 @@ class ResolveDialog(tk.Toplevel):
         self.destroy()
 
 
+class AnkiConnectHelpDialog(tk.Toplevel):
+    """Shown when Anki can't be reached. Includes a "Copy code" button since
+    the AnkiConnect add-on code is a fiddly number to retype by hand into
+    Anki's "Get Add-ons..." dialog.
+    """
+
+    def __init__(self, parent: tk.Widget, on_retry) -> None:
+        super().__init__(parent)
+        self.title("Not connected to Anki")
+        self.transient(parent)
+        self.grab_set()
+        self.resizable(False, False)
+
+        body = ttk.Frame(self, padding=14)
+        body.pack(fill="both", expand=True)
+
+        ttk.Label(body, text=ANKICONNECT_INSTALL_MSG, justify="left", wraplength=420).pack(anchor="w")
+
+        code_row = ttk.Frame(body)
+        code_row.pack(fill="x", pady=(10, 0))
+        ttk.Label(code_row, text="Add-on code:").pack(side="left")
+        code_entry = ttk.Entry(code_row, width=14)
+        code_entry.insert(0, ANKICONNECT_CODE)
+        code_entry.configure(state="readonly")
+        code_entry.pack(side="left", padx=(6, 6))
+        ttk.Button(code_row, text="Copy code", command=self._copy_code).pack(side="left")
+
+        btns = ttk.Frame(body)
+        btns.pack(fill="x", pady=(14, 0))
+        ttk.Button(btns, text="Retry connection", command=lambda: (on_retry(), self.destroy())).pack(side="left")
+        ttk.Button(btns, text="Close", command=self.destroy).pack(side="right")
+
+    def _copy_code(self) -> None:
+        self.clipboard_clear()
+        self.clipboard_append(ANKICONNECT_CODE)
+
+
 class App(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
@@ -359,7 +397,7 @@ class App(tk.Tk):
                 pass
         else:
             self.status_var.set("Not connected to Anki.")
-            messagebox.showwarning("Not connected", ANKICONNECT_INSTALL_MSG)
+            AnkiConnectHelpDialog(self, on_retry=self._check_connection)
 
     # -- file pickers ---------------------------------------------------------
     def _pick_old(self) -> None:
