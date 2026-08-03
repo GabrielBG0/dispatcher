@@ -228,11 +228,18 @@ Works on any batch, though it's meant for finalized ones:
   `Japanese Adverbs - Batch N.tsv` / `Japanese Vocabulary - Batch N.tsv`
   files, named to match the existing Anki deck structure with the batch
   number appended. Each row is `front\tback\ttags`, e.g. `例えば（たとえば）\tfor
-  example\tjlpt::n3 source::n3_supplement`; kana-only words use just the
-  kana as the front (no redundant reading in parentheses).
+  example\tjlpt::n3 source::n3_supplement batch::N`; kana-only words use just
+  the kana as the front (no redundant reading in parentheses). Every row's
+  tags include a `batch::N` tag recording which weekly batch it was exported
+  in.
 - **Kanji reading deck** — one TSV, `Japanese Kanji - Batch N.tsv`,
   `kanji\treading\ttags`, containing only the words flagged
-  `needs_kanji_reading` in that batch.
+  `needs_kanji_reading` in that batch. If the same kanji spelling has more
+  than one valid reading among selected words (e.g. 度 as たび vs. ど), those
+  rows are merged into a single card so the deck never has two notes with an
+  identical front and no way to tell them apart — the back lists every
+  reading with the same numbered-sense style used for multi-sense meanings
+  (`1 - たび. 2 - ど`).
 - **Deck sync (reading ↔ vocab order)** — both TSVs are sorted so a fresh
   Anki import lines the two decks up: `needs_kanji_reading` words first,
   then other target-linked words, then filler, alphabetically by hiragana

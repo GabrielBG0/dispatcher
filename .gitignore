@@ -11,8 +11,15 @@ backend/data/
 node_modules/
 frontend/dist/
 
+# Anki patch tool build output
+anki_patch_tool/build/
+anki_patch_tool/dist/
+anki_patch_tool/*.spec
+
 # Editors / OS
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
+
+comparation files/*

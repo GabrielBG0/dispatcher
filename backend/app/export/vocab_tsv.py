@@ -37,10 +37,19 @@ class VocabExportRow:
     # leading run of the vocab deck -- see study_order_key.
     is_target_linked: bool = False
     needs_kanji_reading: bool = False
+    # Which weekly batch this word was assigned/exported in -- None for rows
+    # built outside the batch export flow (most tests), which don't care
+    # about batch tagging and keep exactly TAGS/FALLBACK_TAG as before.
+    batch_number: int | None = None
 
 
 def tags_for_row(row: VocabExportRow) -> str:
-    return f"{TAGS} {FALLBACK_TAG}" if row.used_seen_in_class_fallback else TAGS
+    tags = TAGS
+    if row.used_seen_in_class_fallback:
+        tags += f" {FALLBACK_TAG}"
+    if row.batch_number is not None:
+        tags += f" batch::{row.batch_number}"
+    return tags
 
 
 def study_order_key(row: VocabExportRow) -> tuple:

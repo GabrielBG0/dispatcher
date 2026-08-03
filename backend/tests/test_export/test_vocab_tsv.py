@@ -1,4 +1,4 @@
-from app.export.vocab_tsv import VocabExportRow, export_vocab_tsv_combined, export_vocab_tsv_split_by_pos
+from app.export.vocab_tsv import VocabExportRow, export_vocab_tsv_combined, export_vocab_tsv_split_by_pos, tags_for_row
 
 
 ROWS = [
@@ -61,3 +61,15 @@ def test_unknown_pos_falls_back_to_general():
     row = VocabExportRow(kanji_form="あ", hiragana_form="あ", meaning="ah", part_of_speech="interjection")
     files = export_vocab_tsv_split_by_pos([row])
     assert set(files) == {"Japanese Vocabulary.tsv"}
+
+
+def test_tags_for_row_includes_batch_number_when_set():
+    row = VocabExportRow(
+        kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general", batch_number=5
+    )
+    assert tags_for_row(row) == "jlpt::n3 source::n3_supplement batch::5"
+
+
+def test_tags_for_row_omits_batch_tag_when_not_set():
+    row = VocabExportRow(kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general")
+    assert tags_for_row(row) == "jlpt::n3 source::n3_supplement"

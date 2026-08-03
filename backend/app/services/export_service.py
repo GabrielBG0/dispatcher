@@ -77,6 +77,7 @@ def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str
             used_seen_in_class_fallback=is_seen_in_class_fallback(v),
             is_target_linked=bool(extract_kanji(v.kanji_form) & target_kanji_chars),
             needs_kanji_reading=v.needs_kanji_reading,
+            batch_number=batch_n,
         )
         for v in _batch_vocab_rows(db, batch_n)
     ]
@@ -98,6 +99,7 @@ def export_kanji_readings(db: Session, batch_n: int) -> dict[str, str]:
             used_seen_in_class_fallback=is_seen_in_class_fallback(v),
             is_target_linked=True,
             needs_kanji_reading=True,
+            batch_number=batch_n,
         )
         for v in _batch_vocab_rows(db, batch_n)
         if v.needs_kanji_reading
@@ -160,6 +162,7 @@ def get_export_preview(db: Session, batch_n: int, split_by_pos: bool = True) -> 
                 part_of_speech=v.part_of_speech,
                 usually_kana=v.usually_kana,
                 used_seen_in_class_fallback=is_seen_in_class_fallback(v),
+                batch_number=batch_n,
             )
         )
 
