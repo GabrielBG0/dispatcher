@@ -30,21 +30,32 @@ from app.enrichment.kana_kanji import (
     is_meaning_already_standardized,
 )
 from app.enrichment.kanjivg_client import build_stroke_index, download_archive, stroke_paths_to_json
-from app.kanji_utils import extract_kanji
+from app.kanji_utils import extract_kanji, strip_affix_marker
 from app.models.enrichment_job import EnrichmentJob
 from app.models.kanji import Kanji
 from app.models.vocab import Vocab
 
 SessionFactory = Callable[[], Session]
 
-# Priority order matters: a Jisho sense can carry multiple POS tags at once
-# (e.g. ["Noun", "Suru verb"] for 旅行), so this checks by category priority
-# across *all* tags rather than tag-by-tag, verb taking precedence over noun.
+# Priority order matters: a Jisho sense can carry multiple POS tags at once,
+# so this checks by category priority across *all* tags rather than
+# tag-by-tag.
 _POS_PRIORITY = [
     ("verb", "verb"),
     ("adjective", "adjective"),
     ("adverb", "adverb"),
 ]
+
+# A "Noun" tag with no accompanying real verb-conjugation tag means the word
+# only *takes* suru to become a verb (e.g. 集中, 集合, 旅行, 勉強 are all
+# tagged ["Noun", "Suru verb"] by Jisho, sometimes with "Transitive"/
+# "Intransitive" alongside describing that derived する form) -- the headword
+# itself is a noun, not a verb. Genuine verbs (Godan/Ichidan/Kuru/irregular,
+# or a suru verb whose headword already ends in する, e.g. 愛する -> "Suru
+# verb - special class") never carry a "Noun" tag, so checking for those
+# conjugation-class tags before trusting "verb" only suppresses the false
+# positive without touching real verb entries.
+_TRUE_VERB_CONJUGATION_TAGS = ["godan", "ichidan", "kuru verb", "irregular verb", "special class"]
 
 
 def create_job(job_type: str, total: int, session_factory: SessionFactory = SessionLocal) -> int:
@@ -89,15 +100,26 @@ def format_meaning(senses: list[JishoWordSense], limit: int = 2) -> str:
     return format_meaning_groups([s.english_definitions for s in senses], limit=limit)
 
 
+def _tag_matches(keyword: str, lowered_tags: list[str]) -> bool:
+    # Word-boundary match, not plain substring -- "verb" is a substring
+    # of "adverb", so a naive `in` check here misclassified every
+    # adverb-only tag (e.g. "Adverb") as a verb because "verb" is
+    # checked first in priority order.
+    pattern = re.compile(rf"\b{re.escape(keyword)}\b")
+    return any(pattern.search(tag) for tag in lowered_tags)
+
+
 def pos_from_jisho(parts_of_speech: list[str]) -> str:
     lowered_tags = [t.lower() for t in parts_of_speech]
+    is_noun = _tag_matches("noun", lowered_tags)
+    only_suru_derived_verb_tags = is_noun and not any(
+        _tag_matches(keyword, lowered_tags) for keyword in _TRUE_VERB_CONJUGATION_TAGS
+    )
+
     for keyword, mapped in _POS_PRIORITY:
-        # Word-boundary match, not plain substring -- "verb" is a substring
-        # of "adverb", so a naive `in` check here misclassified every
-        # adverb-only tag (e.g. "Adverb") as a verb because "verb" is
-        # checked first in priority order.
-        pattern = re.compile(rf"\b{re.escape(keyword)}\b")
-        if any(pattern.search(tag) for tag in lowered_tags):
+        if keyword == "verb" and only_suru_derived_verb_tags:
+            continue
+        if _tag_matches(keyword, lowered_tags):
             return mapped
     return "general"
 
@@ -124,12 +146,14 @@ async def run_vocab_word_enrichment(
 
         for row in rows:
             try:
-                results = await client.search_words(row.kanji_form)
+                lookup_kanji_form = strip_affix_marker(row.kanji_form)
+                lookup_hiragana_form = strip_affix_marker(row.hiragana_form)
+                results = await client.search_words(lookup_kanji_form)
                 match = next(
                     (
                         r
                         for r in results
-                        if r.word == row.kanji_form and (not r.reading or r.reading == row.hiragana_form)
+                        if r.word == lookup_kanji_form and (not r.reading or r.reading == lookup_hiragana_form)
                     ),
                     results[0] if results else None,
                 )
@@ -195,12 +219,14 @@ async def run_vocab_meaning_standardization(
 
         for row in rows:
             try:
-                results = await client.search_words(row.kanji_form)
+                lookup_kanji_form = strip_affix_marker(row.kanji_form)
+                lookup_hiragana_form = strip_affix_marker(row.hiragana_form)
+                results = await client.search_words(lookup_kanji_form)
                 match = next(
                     (
                         r
                         for r in results
-                        if r.word == row.kanji_form and (not r.reading or r.reading == row.hiragana_form)
+                        if r.word == lookup_kanji_form and (not r.reading or r.reading == lookup_hiragana_form)
                     ),
                     results[0] if results else None,
                 )

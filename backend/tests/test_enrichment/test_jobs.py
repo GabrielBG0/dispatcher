@@ -75,10 +75,58 @@ async def test_run_vocab_word_enrichment_fills_blank_meanings(session_factory):
     db = session_factory()
     ryokou = db.query(Vocab).filter(Vocab.kanji_form == "旅行").one()
     assert ryokou.meaning == "travel / trip"  # single sense, no numbering
-    assert ryokou.part_of_speech == "verb"  # "Suru verb" maps to verb
+    assert ryokou.part_of_speech == "general"  # Noun + Suru verb is a noun, not a verb
     assert ryokou.jlpt_level == "jlpt-n4"
     jikan = db.query(Vocab).filter(Vocab.kanji_form == "時間").one()
     assert jikan.meaning == "time"  # untouched, already had a meaning
+    db.close()
+
+
+AFFIX_WORDS_RESPONSE = {
+    "meta": {"status": 200},
+    "data": [
+        {
+            "slug": "的",
+            "is_common": True,
+            "jlpt": ["jlpt-n3"],
+            "japanese": [{"word": "的", "reading": "てき"}],
+            "senses": [{"english_definitions": ["-like", "typical of"], "parts_of_speech": ["Suffix"]}],
+        }
+    ],
+}
+
+
+@pytest.mark.asyncio
+async def test_run_vocab_word_enrichment_strips_affix_marker_for_the_jisho_query(session_factory):
+    # Suffix/prefix rows are marked with a leading/trailing "~" in the source
+    # vocab list (e.g. "~的" = the suffix -teki) -- Jisho's word search
+    # doesn't recognize the literal marker, so the query must go out for the
+    # stripped form while the marker stays on the stored row.
+    db = session_factory()
+    db.add(Vocab(kanji_form="~的", hiragana_form="~てき", meaning="", part_of_speech="general", status="available"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_words", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        route = mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=AFFIX_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_vocab_word_enrichment(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    assert route.calls.last.request.url.params["keyword"] == "的"  # marker stripped for the query
+
+    status = jobs.get_job(job_id, session_factory=session_factory)
+    assert status["not_found"] == 0
+
+    db = session_factory()
+    teki = db.query(Vocab).filter(Vocab.kanji_form == "~的").one()
+    assert teki.kanji_form == "~的"  # marker preserved on the stored row
+    assert teki.hiragana_form == "~てき"
+    assert teki.meaning == "-like / typical of"
     db.close()
 
 
@@ -90,6 +138,22 @@ def test_pos_from_jisho_does_not_misclassify_adverb_as_verb():
     assert jobs.pos_from_jisho(["Ichidan verb"]) == "verb"
     assert jobs.pos_from_jisho(["na-adjective"]) == "adjective"
     assert jobs.pos_from_jisho(["Noun"]) == "general"
+
+
+def test_pos_from_jisho_treats_noun_plus_suru_as_a_noun():
+    # Regression: 集中, 集合, 勉強, 旅行 etc. are tagged ["Noun", "Suru verb"]
+    # (sometimes with "Transitive"/"Intransitive" too) because the headword
+    # can take a following する -- the headword itself is a noun, not a verb,
+    # so these must land in the "general" (vocab) category, not "verb".
+    assert jobs.pos_from_jisho(["Noun", "Suru verb"]) == "general"
+    assert jobs.pos_from_jisho(["Noun", "Suru verb", "Transitive verb"]) == "general"
+    assert jobs.pos_from_jisho(["Noun", "Suru verb", "Intransitive verb"]) == "general"
+    # But a suru verb whose own headword already ends in する (e.g. 愛する)
+    # is a genuine verb and must still be classified as one.
+    assert jobs.pos_from_jisho(["Suru verb - special class", "Transitive verb"]) == "verb"
+    # A true conjugated verb tag alongside "Noun" (unlikely in practice, but
+    # should still win) must still classify as a verb.
+    assert jobs.pos_from_jisho(["Noun", "Godan verb with 'u' ending"]) == "verb"
 
 
 WIKIPEDIA_AND_REAL_SENSE_WORDS_RESPONSE = {
@@ -135,6 +199,32 @@ async def test_run_vocab_meaning_standardization_excludes_wikipedia_senses(sessi
     yousu = db.query(Vocab).filter(Vocab.kanji_form == "様子").one()
     assert yousu.meaning == "state / condition / appearance"  # the Wikipedia sense never appears
     assert yousu.part_of_speech == "general"
+    db.close()
+
+
+@pytest.mark.asyncio
+async def test_run_vocab_meaning_standardization_strips_affix_marker_for_the_jisho_query(session_factory):
+    db = session_factory()
+    db.add(Vocab(kanji_form="~的", hiragana_form="~てき", meaning="", part_of_speech="general", status="available"))
+    db.commit()
+    db.close()
+
+    job_id = jobs.create_job("jisho_standardize_meanings", total=0, session_factory=session_factory)
+
+    with respx.mock(assert_all_called=True) as mock:
+        route = mock.get("https://jisho.org/api/v1/search/words").mock(
+            return_value=httpx.Response(200, json=AFFIX_WORDS_RESPONSE)
+        )
+        client = JishoClient(min_delay_seconds=0)
+        await jobs.run_vocab_meaning_standardization(job_id, session_factory=session_factory, client=client)
+        await client.aclose()
+
+    assert route.calls.last.request.url.params["keyword"] == "的"  # marker stripped for the query
+
+    db = session_factory()
+    teki = db.query(Vocab).filter(Vocab.kanji_form == "~的").one()
+    assert teki.kanji_form == "~的"  # marker preserved on the stored row
+    assert teki.meaning == "-like / typical of"
     db.close()
 
 

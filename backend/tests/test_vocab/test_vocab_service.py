@@ -36,6 +36,21 @@ def test_list_vocab_kana_only_filters_out_rows_with_real_kanji(db_session):
     assert result.items[0].hiragana_form == "そう"
 
 
+def test_list_vocab_missing_meaning_filters_out_rows_with_a_meaning(db_session):
+    db_session.add_all(
+        [
+            _vocab(kanji_form="旅行", hiragana_form="りょこう", meaning=""),
+            _vocab(kanji_form="時間", hiragana_form="じかん", meaning="time"),
+        ]
+    )
+    db_session.commit()
+
+    result = vocab_service.list_vocab(db_session, missing_meaning=True)
+
+    assert result.total == 1
+    assert result.items[0].hiragana_form == "りょこう"
+
+
 def test_list_vocab_search_matches_meaning_or_reading(db_session):
     db_session.add_all(
         [

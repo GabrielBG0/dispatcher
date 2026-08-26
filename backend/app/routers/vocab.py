@@ -13,6 +13,7 @@ router = APIRouter(prefix="/api/vocab", tags=["vocab"])
 @router.get("")
 def list_vocab(
     kana_only: bool = False,
+    missing_meaning: bool = False,
     include_reviewed: bool = False,
     search: str | None = None,
     limit: int = Query(50, ge=1, le=200),
@@ -20,7 +21,13 @@ def list_vocab(
     db: Session = Depends(get_db),
 ) -> dict:
     result = vocab_service.list_vocab(
-        db, kana_only=kana_only, include_reviewed=include_reviewed, search=search, limit=limit, offset=offset
+        db,
+        kana_only=kana_only,
+        missing_meaning=missing_meaning,
+        include_reviewed=include_reviewed,
+        search=search,
+        limit=limit,
+        offset=offset,
     )
     return {
         "total": result.total,

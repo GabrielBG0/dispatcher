@@ -43,6 +43,7 @@ def list_vocab(
     db: Session,
     *,
     kana_only: bool = False,
+    missing_meaning: bool = False,
     include_reviewed: bool = False,
     search: str | None = None,
     limit: int = 50,
@@ -54,6 +55,10 @@ def list_vocab(
         query = query.filter(
             or_(Vocab.hiragana_form.ilike(like), Vocab.meaning.ilike(like), Vocab.kanji_form.ilike(like))
         )
+    if missing_meaning:
+        # Same "still blank" convention the enrichment jobs use (app/enrichment/jobs.py)
+        # for picking rows a backfill job hasn't (yet) filled in.
+        query = query.filter(Vocab.meaning == "")
     query = query.order_by(Vocab.id)
 
     if kana_only:

@@ -578,7 +578,14 @@ async def search_jisho_word_suggestions(db: Session, batch_n: int, kanji: str) -
 
     client = JishoClient()
     try:
-        results = await client.search_words(kanji)
+        # A bare keyword search on Jisho's words API ranks by relevance, which
+        # in practice surfaces almost exclusively words *starting with*
+        # `kanji` (e.g. 史 -> 史学, 史上, 史跡) and omits words that merely
+        # contain it (e.g. 日本史, 世界史) -- confirmed by direct testing
+        # against the live API. Wrapping the keyword in `*...*` wildcards
+        # switches it to a substring match, which is what "words containing
+        # this kanji" needs.
+        results = await client.search_words(f"*{kanji}*")
     except Exception as exc:  # noqa: BLE001 - re-raised as a BatchServiceError, not swallowed
         raise BatchServiceError(f"Could not reach Jisho: {exc}") from exc
     finally:

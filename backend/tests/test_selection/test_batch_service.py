@@ -940,7 +940,13 @@ async def test_search_jisho_word_suggestions_prefers_n3_tier_and_excludes_local_
         ],
     }
     with respx.mock(assert_all_called=True) as mock:
-        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        # The keyword must be wildcarded (`*投*`, not bare `投`) -- a bare
+        # keyword only matches words *starting with* the kanji on Jisho's
+        # API, silently missing words like 日本史/世界史 that merely contain
+        # it (confirmed by direct testing against the live API).
+        mock.get("https://jisho.org/api/v1/search/words", params={"keyword": "*投*"}).mock(
+            return_value=httpx.Response(200, json=response)
+        )
         suggestions = await batch_service.search_jisho_word_suggestions(db_session, batch_n=1, kanji="投")
 
     forms = [s.kanji_form for s in suggestions]

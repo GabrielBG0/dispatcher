@@ -110,6 +110,25 @@ def test_list_vocab_kana_only(client):
     assert body["items"][0]["hiragana_form"] == "そう"
 
 
+def test_list_vocab_missing_meaning(client):
+    test_client, session_local = client
+    db = session_local()
+    db.add_all(
+        [
+            Vocab(kanji_form="旅行", hiragana_form="りょこう", meaning=""),
+            Vocab(kanji_form="時間", hiragana_form="じかん", meaning="time"),
+        ]
+    )
+    db.commit()
+    db.close()
+
+    resp = test_client.get("/api/vocab", params={"missing_meaning": True})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["total"] == 1
+    assert body["items"][0]["hiragana_form"] == "りょこう"
+
+
 def test_confirm_kana_only_removes_row_from_default_queue(client):
     test_client, session_local = client
     db = session_local()

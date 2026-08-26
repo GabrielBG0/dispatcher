@@ -5,6 +5,8 @@ import type { KanjiCandidate, VocabListItem } from "../api/types";
 
 const PAGE_SIZE = 25;
 
+type QueueMode = "kana_only" | "missing_meaning" | "all";
+
 // Matches backend's extract_kanji() range (app/kanji_utils.py) -- used
 // client-side only to decide whether "No kanji form exists" makes sense
 // for the word's current (possibly edited) kanji_form.
@@ -12,12 +14,12 @@ const CJK_PATTERN = /[一-鿿㐀-䶿豈-﫿]/;
 
 function VocabReviewRow({
   item,
-  showAll,
+  mode,
   onResolved,
   onSaved,
 }: {
   item: VocabListItem;
-  showAll: boolean;
+  mode: QueueMode;
   onResolved: (id: number) => void;
   onSaved: (id: number, updated: { kanji_form: string; hiragana_form: string; meaning: string; usually_kana: boolean }) => void;
 }) {
@@ -72,8 +74,11 @@ function VocabReviewRow({
         meaning,
         usually_kana: usuallyKana,
       });
-      if (!showAll && CJK_PATTERN.test(updated.kanji_form)) {
-        onResolved(item.id); // no longer kana-only -- drops out of the review queue on its own
+      const noLongerMatchesQueue =
+        (mode === "kana_only" && CJK_PATTERN.test(updated.kanji_form)) ||
+        (mode === "missing_meaning" && updated.meaning.trim() !== "");
+      if (noLongerMatchesQueue) {
+        onResolved(item.id); // no longer matches the active filter -- drops out of the queue on its own
       } else {
         onSaved(item.id, updated); // resets the row's dirty baseline to the saved values
       }
@@ -94,7 +99,7 @@ function VocabReviewRow({
     setError(null);
     try {
       await confirmKanaOnly(item.id);
-      if (!showAll) onResolved(item.id); // drops out of the kana-only queue; in "all vocab" search it just stays put
+      if (mode === "kana_only") onResolved(item.id); // drops out of the kana-only queue; other views leave it in place
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to confirm");
     } finally {
@@ -224,7 +229,7 @@ export default function VocabReviewPage() {
   const [offset, setOffset] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
-  const [showAll, setShowAll] = useState(false);
+  const [mode, setMode] = useState<QueueMode>("kana_only");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -233,8 +238,9 @@ export default function VocabReviewPage() {
     setError(null);
     try {
       const result = await listVocab({
-        kanaOnly: !showAll,
-        includeReviewed: showAll,
+        kanaOnly: mode === "kana_only",
+        missingMeaning: mode === "missing_meaning",
+        includeReviewed: mode === "all",
         search: search || undefined,
         limit: PAGE_SIZE,
         offset,
@@ -251,7 +257,7 @@ export default function VocabReviewPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offset, search, showAll]);
+  }, [offset, search, mode]);
 
   function handleResolved(id: number) {
     setItems((prev) => prev.filter((i) => i.id !== id));
@@ -268,8 +274,8 @@ export default function VocabReviewPage() {
     setSearch(searchInput.trim());
   }
 
-  function handleShowAllChange(checked: boolean) {
-    setShowAll(checked);
+  function handleModeChange(next: QueueMode) {
+    setMode(next);
     setOffset(0);
   }
 
@@ -280,10 +286,16 @@ export default function VocabReviewPage() {
     <section className="card">
       <h2>Vocab review</h2>
       <p style={{ color: "#666", fontSize: "0.88rem", marginTop: 0 }}>
-        Words still spelled with kana only (no real kanji recorded) -- left behind after the "Kana-only word
-        kanji forms" enrichment job in Import couldn't confidently resolve them on its own. For each word, look
-        up Jisho's candidate spellings and pick one, edit the meaning directly, or confirm the word is genuinely
-        kana-only so it stops showing up here. Check "search all vocabulary" to find and edit any word instead.
+        {mode === "kana_only" &&
+          `Words still spelled with kana only (no real kanji recorded) -- left behind after the "Kana-only word
+          kanji forms" enrichment job in Import couldn't confidently resolve them on its own. For each word, look
+          up Jisho's candidate spellings and pick one, edit the meaning directly, or confirm the word is genuinely
+          kana-only so it stops showing up here.`}
+        {mode === "missing_meaning" &&
+          `Words with no meaning recorded at all -- left behind after the vocab meaning enrichment job in Import
+          couldn't confidently fill them in. Edit the meaning directly, or look up Jisho's candidate spellings to
+          fill in both the kanji form and meaning together.`}
+        {mode === "all" && `Search and edit any vocab word.`}
       </p>
 
       <form onSubmit={handleSearchSubmit} className="upload-row">
@@ -295,15 +307,15 @@ export default function VocabReviewPage() {
         />
         <button type="submit">Search</button>
         <label style={{ fontSize: "0.85rem", color: "#666", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-          <input
-            type="checkbox"
-            checked={showAll}
-            onChange={(e) => handleShowAllChange(e.target.checked)}
-          />
-          search all vocabulary
+          show
+          <select value={mode} onChange={(e) => handleModeChange(e.target.value as QueueMode)}>
+            <option value="kana_only">kana-only queue</option>
+            <option value="missing_meaning">missing meaning</option>
+            <option value="all">all vocabulary</option>
+          </select>
         </label>
         <span>
-          {total} word{total === 1 ? "" : "s"} {showAll ? "match" : "to review"}
+          {total} word{total === 1 ? "" : "s"} {mode === "all" ? "match" : "to review"}
         </span>
       </form>
 
@@ -316,13 +328,19 @@ export default function VocabReviewPage() {
             <VocabReviewRow
               key={item.id}
               item={item}
-              showAll={showAll}
+              mode={mode}
               onResolved={handleResolved}
               onSaved={handleSaved}
             />
           ))}
         {!loading && items.length === 0 && (
-          <p>{showAll ? "No vocab words match this search." : "No unresolved kana-only words match this search."}</p>
+          <p>
+            {mode === "all"
+              ? "No vocab words match this search."
+              : mode === "missing_meaning"
+                ? "No words with a missing meaning match this search."
+                : "No unresolved kana-only words match this search."}
+          </p>
         )}
       </div>
 

@@ -109,6 +109,16 @@ no live network calls in the suite.
   contains `needs_kanji_reading` words) comes out as the leading run of the
   vocab deck on a fresh Anki import. Both exporters must keep using the same
   key or the decks drift out of sync.
+- **Affix marker**: a leading or trailing `~` in `kanji_form`/`hiragana_form`
+  (e.g. `~的`/`~てき`) marks a bound suffix/prefix in the source vocab list,
+  not a free word — the marker itself must stay in the stored fields since
+  it's meaningful for a learner to see. Jisho's word-search API doesn't
+  recognize the literal `~`, so any code querying Jisho by `kanji_form` must
+  strip it first via `kanji_utils.strip_affix_marker` (confirmed by direct
+  testing: `~化` returns zero results, `化` returns the intended entry).
+  Both vocab-meaning enrichment jobs (`run_vocab_word_enrichment`,
+  `run_vocab_meaning_standardization` in `enrichment/jobs.py`) do this;
+  any future kanji_form-based Jisho lookup needs the same treatment.
 
 ### Frontend (frontend/src/)
 

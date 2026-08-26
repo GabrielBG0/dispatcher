@@ -9,6 +9,7 @@ import type {
 
 export interface ListVocabParams {
   kanaOnly?: boolean;
+  missingMeaning?: boolean;
   includeReviewed?: boolean;
   search?: string;
   limit?: number;
@@ -18,6 +19,7 @@ export interface ListVocabParams {
 export function listVocab(params: ListVocabParams = {}) {
   const query = new URLSearchParams();
   if (params.kanaOnly !== undefined) query.set("kana_only", String(params.kanaOnly));
+  if (params.missingMeaning !== undefined) query.set("missing_meaning", String(params.missingMeaning));
   if (params.includeReviewed !== undefined) query.set("include_reviewed", String(params.includeReviewed));
   if (params.search) query.set("search", params.search);
   if (params.limit !== undefined) query.set("limit", String(params.limit));
