@@ -7,6 +7,9 @@ export const getVocabTsv = (batchN: number, splitByPos: boolean) =>
 export const getKanjiTsv = (batchN: number) =>
   apiGet<Record<string, string>>(`/api/exports/${batchN}/kanji-tsv`);
 
+export const getVocabTxt = (batchN: number, cumulative = false) =>
+  apiGet<Record<string, string>>(`/api/exports/${batchN}/vocab-txt?cumulative=${cumulative}`);
+
 export const getExportPreview = (batchN: number, splitByPos: boolean) =>
   apiGet<ExportPreviewWord[]>(`/api/exports/${batchN}/preview?split_by_pos=${splitByPos}`);
 

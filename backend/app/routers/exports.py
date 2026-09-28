@@ -20,6 +20,20 @@ def get_vocab_tsv(batch_n: int, split_by_pos: bool = Query(default=False), db: S
     return files
 
 
+@router.get("/{batch_n}/vocab-txt")
+def get_vocab_txt(
+    batch_n: int, cumulative: bool = Query(default=False), db: Session = Depends(get_db)
+) -> dict:
+    try:
+        if cumulative:
+            files = export_service.export_vocab_japanese_txt_cumulative(db, batch_n)
+        else:
+            files = export_service.export_vocab_japanese_txt(db, batch_n)
+    except export_service.ExportServiceError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return files
+
+
 @router.get("/{batch_n}/kanji-tsv")
 def get_kanji_tsv(batch_n: int, db: Session = Depends(get_db)) -> dict:
     try:

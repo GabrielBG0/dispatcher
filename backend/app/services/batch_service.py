@@ -285,6 +285,7 @@ class BatchWordDetail:
     usually_kana: bool
     covers_target_kanji: list[str]
     used_seen_in_class_fallback: bool
+    source: str
 
 
 @dataclass
@@ -329,6 +330,7 @@ def get_batch_detail(db: Session, batch_n: int) -> BatchDetail:
                 usually_kana=v.usually_kana,
                 covers_target_kanji=covers,
                 used_seen_in_class_fallback=is_seen_in_class_fallback(v),
+                source=v.source,
             )
         )
 
@@ -627,6 +629,102 @@ async def search_jisho_word_suggestions(db: Session, batch_n: int, kanji: str) -
             )
         )
     return suggestions
+
+
+async def auto_add_jisho_words(db: Session, batch_n: int, target_kanji: set[str]) -> int:
+    """For every kanji in `target_kanji`, searches Jisho for N3-tagged words
+    containing it that aren't already in the local vocab list (matched by
+    kanji_form only, same convention as search_jisho_word_suggestions's
+    dedup) and inserts each as a fresh, unassigned Vocab row (status=
+    "available", source="jisho") -- an ordinary candidate for the next
+    select_batch pass to pick up like any other word, no special-cased
+    "always include" (it still loses every frequency tie-break against a
+    word with real BCCWJ data, so it surfaces only when the local list
+    genuinely runs short for that kanji). Still subject to the skip-ahead
+    guard: a word is dropped if it also contains a kanji scheduled for a
+    later batch. "Every N3 word for this kanji" is bounded by whatever
+    Jisho's un-paginated words-search API returns for `*kanji*` -- in
+    practice its first results page, same ceiling search_jisho_word_suggestions
+    runs into. Individual per-kanji Jisho failures are swallowed (one bad
+    lookup shouldn't abort the rest of the batch's supplement, same pattern
+    as enrichment/jobs.py) rather than raised -- this runs as a silent part
+    of every draft generation, not a foreground user action. Returns the
+    number of new Vocab rows inserted.
+    """
+    if not target_kanji:
+        return 0
+
+    schedule = _load_schedule(db)
+    coverage = _load_coverage(db)
+    future_kanji = {k for k, b in schedule.items() if b > batch_n} - coverage
+
+    existing_forms = {v.kanji_form for v in db.query(Vocab).all()}
+    inserted_forms: set[str] = set()
+    added = 0
+
+    client = JishoClient()
+    try:
+        for kanji in sorted(target_kanji):
+            try:
+                results = await client.search_words(f"*{kanji}*")
+            except Exception:  # noqa: BLE001 - one bad kanji lookup shouldn't abort the rest
+                continue
+
+            for r in results:
+                if not (r.word and len(r.word) > 1 and kanji in r.word and r.senses):
+                    continue
+                if "jlpt-n3" not in r.jlpt:
+                    continue
+                if r.word in existing_forms or r.word in inserted_forms:
+                    continue
+                if frozenset(extract_kanji(r.word)) & future_kanji:
+                    continue
+                db.add(
+                    Vocab(
+                        kanji_form=r.word,
+                        hiragana_form=r.reading or r.word,
+                        meaning=format_meaning(r.senses),
+                        part_of_speech=pos_from_jisho(r.senses[0].parts_of_speech),
+                        jlpt_level="jlpt-n3",
+                        status="available",
+                        source="jisho",
+                    )
+                )
+                inserted_forms.add(r.word)
+                added += 1
+    finally:
+        await client.aclose()
+
+    if added:
+        try:
+            db.commit()
+        except IntegrityError:
+            db.rollback()
+            raise
+    return added
+
+
+async def regenerate_draft_with_jisho_supplement(
+    db: Session, batch_n: int, today: date
+) -> tuple[SelectionResult, int]:
+    """The actual entry point behind "Generate/Regenerate draft": runs the
+    normal generate_draft_batch, then supplements the candidate pool with
+    Jisho N3 words for this batch's target kanji (auto_add_jisho_words) and
+    regenerates once more so they're considered like any other candidate.
+    Regenerating a second time unconditionally is safe here specifically
+    because this call always starts from a fresh generate -- there's no
+    manual draft edit in between that a second regenerate could clobber
+    (generate_draft_batch itself already documents why regenerating wipes
+    prior assignment).
+    """
+    result = generate_draft_batch(db, batch_n, today)
+    schedule = _load_schedule(db)
+    coverage = _load_coverage(db)
+    target_kanji = _load_target_kanji(schedule, coverage, batch_n)
+    added = await auto_add_jisho_words(db, batch_n, target_kanji)
+    if added:
+        result = generate_draft_batch(db, batch_n, today)
+    return result, added
 
 
 def import_and_include_jisho_word(

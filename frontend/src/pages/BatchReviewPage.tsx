@@ -241,6 +241,7 @@ export default function BatchReviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [swapTarget, setSwapTarget] = useState<number | null>(null);
   const [addPickId, setAddPickId] = useState<number | "">("");
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -287,6 +288,7 @@ export default function BatchReviewPage() {
     setJustReplacedIds(new Set());
     setSelectedKanji(null);
     setKanjiOptions(null);
+    setSelectedIds(new Set());
     load(batchN);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchN]);
@@ -422,13 +424,17 @@ export default function BatchReviewPage() {
 
   async function handleGenerate() {
     setError(null);
+    setGenerating(true);
     try {
       const result = await generateDraft(batchN);
       setGenerateResult(result);
       setJustReplacedIds(new Set());
+      setSelectedIds(new Set());
       await load(batchN);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to generate draft");
+    } finally {
+      setGenerating(false);
     }
   }
 
@@ -463,7 +469,13 @@ export default function BatchReviewPage() {
         if (vocabIds.length === 1) {
           await removeWord(batchN, vocabIds[0], exclude);
         } else {
-          await bulkRemoveWords(batchN, vocabIds, exclude);
+          const { removed_vocab_ids } = await bulkRemoveWords(batchN, vocabIds, exclude);
+          if (removed_vocab_ids.length < vocabIds.length) {
+            setNotice(
+              `${vocabIds.length - removed_vocab_ids.length} of ${vocabIds.length} selected word(s) were no ` +
+                "longer in this batch and were skipped; the list has been refreshed.",
+            );
+          }
         }
       } else if (vocabIds.length === 1) {
         const result = await replaceWord(batchN, vocabIds[0], exclude);
@@ -472,7 +484,15 @@ export default function BatchReviewPage() {
       } else {
         const { results } = await bulkReplaceWords(batchN, vocabIds, exclude);
         const missing = results.filter((r) => !r.added).length;
-        if (missing > 0) setNotice(`${missing} of ${results.length} word(s) had no eligible replacement available.`);
+        if (results.length < vocabIds.length) {
+          setNotice(
+            `${vocabIds.length - results.length} of ${vocabIds.length} selected word(s) were no longer in this ` +
+              "batch and were skipped" +
+              (missing > 0 ? `; ${missing} of the rest had no eligible replacement available.` : "."),
+          );
+        } else if (missing > 0) {
+          setNotice(`${missing} of ${results.length} word(s) had no eligible replacement available.`);
+        }
         setJustReplacedIds(new Set(results.filter((r) => r.added).map((r) => r.added!.vocab_id)));
       }
       setSelectedIds(new Set());
@@ -548,7 +568,12 @@ export default function BatchReviewPage() {
     }
   }
 
-  const isFinalized = detail?.status === "finalized" || detail?.status === "exported";
+  // `detail` can briefly hold a previous batch's data after the number
+  // input changes but before its fetch resolves -- gate every render-time
+  // read through this so a stale finalized/draft batch never gets shown
+  // under the newly-selected batch number.
+  const currentDetail = detail?.batch_number === batchN ? detail : null;
+  const isFinalized = currentDetail?.status === "finalized" || currentDetail?.status === "exported";
 
   useEffect(() => {
     if (isFinalized) {
@@ -602,15 +627,17 @@ export default function BatchReviewPage() {
     : [];
   const readingPreviewWords = sortedPreviewWords.filter((w) => w.kanji_reading_card !== null);
 
-  const isDraft = detail?.status === "draft";
-  const targetLinkedCount = detail?.words.filter((w) => w.is_target_linked).length ?? 0;
-  const fillerCount = (detail?.words.length ?? 0) - targetLinkedCount;
-  const assignedIds = new Set(detail?.words.map((w) => w.vocab_id));
+  const isDraft = currentDetail?.status === "draft";
+  const targetLinkedCount = currentDetail?.words.filter((w) => w.is_target_linked).length ?? 0;
+  const fillerCount = (currentDetail?.words.length ?? 0) - targetLinkedCount;
+  const assignedIds = new Set(currentDetail?.words.map((w) => w.vocab_id));
   const availableForAdd = replacements.filter((r) => !assignedIds.has(r.vocab_id));
   const candidateLabel = (r: ReplacementCandidate) =>
     `${r.kanji_form}（${r.hiragana_form}）${r.usually_kana ? " · usu. kana" : ""}`;
-  const sortedWords = detail
-    ? [...detail.words].sort((a, b) => Number(justReplacedIds.has(b.vocab_id)) - Number(justReplacedIds.has(a.vocab_id)))
+  const sortedWords = currentDetail
+    ? [...currentDetail.words].sort(
+        (a, b) => Number(justReplacedIds.has(b.vocab_id)) - Number(justReplacedIds.has(a.vocab_id)),
+      )
     : [];
 
   return (
@@ -626,17 +653,27 @@ export default function BatchReviewPage() {
             onChange={(e) => setBatchN(Number(e.target.value) || 1)}
             style={{ width: "5rem" }}
           />
-          <button className="primary" onClick={handleGenerate} disabled={detail !== null && !isDraft}>
-            {detail ? "Regenerate draft" : "Generate draft"}
+          <button
+            className="primary"
+            onClick={handleGenerate}
+            disabled={generating || (currentDetail !== null && !isDraft)}
+          >
+            {generating ? "Generating…" : currentDetail ? "Regenerate draft" : "Generate draft"}
           </button>
-          {detail?.status === "draft" && <button onClick={handleFinalize}>Finalize</button>}
-          {detail?.status === "finalized" && (
+          {currentDetail?.status === "draft" && <button onClick={handleFinalize}>Finalize</button>}
+          {currentDetail?.status === "finalized" && (
             <button className="danger" onClick={handleUnfinalize}>
               Un-finalize
             </button>
           )}
-          {detail && <span className="pill">{detail.status}</span>}
+          {currentDetail && <span className="pill">{currentDetail.status}</span>}
         </div>
+        {generating && (
+          <p style={{ color: "#666", fontSize: "0.85rem" }}>
+            Selecting words and searching Jisho for extra N3 vocabulary on this batch's target kanji — this can
+            take up to half a minute…
+          </p>
+        )}
         {error && <div className="error-box">{error}</div>}
         {notice && <div className="warning-box">{notice}</div>}
         {loading && <p>Loading…</p>}
@@ -653,6 +690,10 @@ export default function BatchReviewPage() {
             <div className="stat-tile">
               <div className="value">{generateResult.selected_count}</div>
               <div className="label">words selected</div>
+            </div>
+            <div className="stat-tile">
+              <div className="value">{generateResult.jisho_words_added}</div>
+              <div className="label">new words found on Jisho</div>
             </div>
             <div className="stat-tile">
               <span className={`pill ${generateResult.behind_pace ? "behind" : "ok"}`}>
@@ -679,7 +720,7 @@ export default function BatchReviewPage() {
         </section>
       )}
 
-      {detail && isFinalized && (
+      {currentDetail && isFinalized && (
         <section className="card">
           <div className="upload-row" style={{ justifyContent: "space-between" }}>
             <h3 style={{ marginTop: 0 }}>Export preview — vocab cards</h3>
@@ -779,7 +820,7 @@ export default function BatchReviewPage() {
         </section>
       )}
 
-      {detail && isFinalized && (
+      {currentDetail && isFinalized && (
         <section className="card">
           <h3 style={{ marginTop: 0 }}>Export preview — kanji reading cards</h3>
           <p style={{ marginTop: "-0.5rem", color: "#666", fontSize: "0.85rem" }}>
@@ -833,16 +874,16 @@ export default function BatchReviewPage() {
         </section>
       )}
 
-      {detail && (
+      {currentDetail && (
         <>
           <section className="card">
-            <h3 style={{ marginTop: 0 }}>Target kanji coverage ({detail.target_kanji.length})</h3>
+            <h3 style={{ marginTop: 0 }}>Target kanji coverage ({currentDetail.target_kanji.length})</h3>
             <p style={{ marginTop: "-0.5rem", color: "#666", fontSize: "0.85rem" }}>
               Click a kanji to see and adjust the words covering it.
             </p>
             <div className="target-kanji-grid">
-              {detail.target_kanji.map((k) => {
-                const count = detail.target_kanji_coverage[k]?.length ?? 0;
+              {currentDetail.target_kanji.map((k) => {
+                const count = currentDetail.target_kanji_coverage[k]?.length ?? 0;
                 return (
                   <div
                     key={k}
@@ -944,7 +985,7 @@ export default function BatchReviewPage() {
 
           <section className="card">
             <h3 style={{ marginTop: 0 }}>
-              Words ({detail.words.length}) — {targetLinkedCount} target-linked, {fillerCount} filler
+              Words ({currentDetail.words.length}) — {targetLinkedCount} target-linked, {fillerCount} filler
             </h3>
 
             {isDraft && (
@@ -998,6 +1039,7 @@ export default function BatchReviewPage() {
                     <div className="word-meaning">{w.meaning || "(no meaning yet)"}</div>
                   </div>
                   {w.used_seen_in_class_fallback && <span className="pill fallback">already seen in class</span>}
+                  {w.source === "jisho" && <span className="pill kana">not in your list (Jisho)</span>}
                   {w.usually_kana && <span className="pill kana">usu. kana</span>}
                   {justReplacedIds.has(w.vocab_id) && <span className="pill ok">new</span>}
                   <span className={`pill ${w.is_target_linked ? "ok" : ""}`}>
@@ -1038,7 +1080,7 @@ export default function BatchReviewPage() {
                   )}
                 </div>
               ))}
-              {detail.words.length === 0 && <p style={{ color: "#666" }}>No words assigned yet.</p>}
+              {currentDetail.words.length === 0 && <p style={{ color: "#666" }}>No words assigned yet.</p>}
             </div>
           </section>
         </>
@@ -1068,7 +1110,7 @@ export default function BatchReviewPage() {
         </div>
       )}
 
-      {!detail && !loading && (
+      {!currentDetail && !loading && (
         <p style={{ color: "#666" }}>No batch {batchN} yet — click "Generate draft" to create one.</p>
       )}
     </div>

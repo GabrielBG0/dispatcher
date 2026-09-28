@@ -61,6 +61,108 @@ def test_export_vocab_split_by_pos(db_session):
     assert files["Japanese Vocabulary - Batch 1.tsv"].count("\n") == 2
 
 
+def test_export_vocab_japanese_txt_is_front_only_one_per_line(db_session):
+    _seed_finalized_batch(db_session)
+    files = export_service.export_vocab_japanese_txt(db_session, batch_n=1)
+    assert set(files) == {"Japanese Vocab - Batch 1.txt"}
+    lines = files["Japanese Vocab - Batch 1.txt"].strip("\n").split("\n")
+    assert lines == ["愛犬（あいけん）", "時間（じかん）"]
+    for line in lines:
+        assert "\t" not in line  # no meaning/tags columns, just the word
+
+
+def test_export_vocab_japanese_txt_rejects_non_finalized_batch(db_session):
+    db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
+    db_session.commit()
+    with pytest.raises(export_service.ExportServiceError):
+        export_service.export_vocab_japanese_txt(db_session, batch_n=2)
+
+
+def test_export_vocab_japanese_txt_cumulative_includes_all_prior_weeks(db_session):
+    db_session.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    db_session.add(Batch(batch_number=2, status="finalized", weekly_target_used=126))
+
+    ai = Kanji(kanji="愛")
+    db_session.add(ai)
+    inu = Kanji(kanji="犬")
+    db_session.add(inu)
+    db_session.flush()
+    db_session.add(KanjiCoverage(kanji_id=ai.id, coverage_source="n3_batch", batch_number=1))
+    db_session.add(KanjiCoverage(kanji_id=inu.id, coverage_source="n3_batch", batch_number=2))
+
+    db_session.add(
+        Vocab(
+            kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general",
+            status="assigned", assigned_batch=1, needs_kanji_reading=False,
+        )
+    )
+    db_session.add(
+        Vocab(
+            kanji_form="犬", hiragana_form="いぬ", meaning="dog", part_of_speech="general",
+            status="assigned", assigned_batch=2, needs_kanji_reading=True,
+        )
+    )
+    db_session.commit()
+
+    files = export_service.export_vocab_japanese_txt_cumulative(db_session, up_to_batch_n=2)
+    assert set(files) == {"Japanese Vocab - Cumulative through Week 2.txt"}
+    content = files["Japanese Vocab - Cumulative through Week 2.txt"]
+
+    # This week's (week 2's) kanji section leads the file.
+    assert content.index("犬") < content.index("=== Week 1 ===")
+    assert "=== This week's kanji (Week 2) ===" in content
+    assert "=== Week 1 ===" in content
+    assert "=== Week 2 ===" in content
+    assert content.index("=== Week 1 ===") < content.index("=== Week 2 ===")
+    assert "時間（じかん）" in content
+    assert "犬" in content
+
+    # Each week's own section also lists that week's kanji, not just week 2's.
+    week1_section = content.split("=== Week 1 ===")[1].split("=== Week 2 ===")[0]
+    assert "Kanji: 愛" in week1_section
+    week2_section = content.split("=== Week 2 ===")[1]
+    assert "Kanji: 犬" in week2_section
+
+
+def test_export_vocab_japanese_txt_cumulative_week_with_no_target_kanji(db_session):
+    db_session.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    db_session.add(
+        Vocab(
+            kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general",
+            status="assigned", assigned_batch=1, needs_kanji_reading=False,
+        )
+    )
+    db_session.commit()
+
+    files = export_service.export_vocab_japanese_txt_cumulative(db_session, up_to_batch_n=1)
+    content = files["Japanese Vocab - Cumulative through Week 1.txt"]
+    assert "Kanji: (none)" in content
+
+
+def test_export_vocab_japanese_txt_cumulative_skips_unfinalized_earlier_weeks(db_session):
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(Batch(batch_number=2, status="finalized", weekly_target_used=126))
+    db_session.add(
+        Vocab(
+            kanji_form="時間", hiragana_form="じかん", meaning="time", part_of_speech="general",
+            status="assigned", assigned_batch=2, needs_kanji_reading=False,
+        )
+    )
+    db_session.commit()
+
+    files = export_service.export_vocab_japanese_txt_cumulative(db_session, up_to_batch_n=2)
+    content = files["Japanese Vocab - Cumulative through Week 2.txt"]
+    assert "=== Week 1 ===" not in content
+    assert "=== Week 2 ===" in content
+
+
+def test_export_vocab_japanese_txt_cumulative_rejects_non_finalized_batch(db_session):
+    db_session.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
+    db_session.commit()
+    with pytest.raises(export_service.ExportServiceError):
+        export_service.export_vocab_japanese_txt_cumulative(db_session, up_to_batch_n=2)
+
+
 def test_export_kanji_readings_only_includes_needs_reading_rows(db_session):
     _seed_finalized_batch(db_session)
     files = export_service.export_kanji_readings(db_session, batch_n=1)

@@ -26,6 +26,7 @@ export interface GenerateBatchResult {
   behind_pace: boolean;
   selected_count: number;
   target_kanji_coverage: Record<string, number[]>;
+  jisho_words_added: number;
   warnings: {
     kind: string;
     detail: string;
@@ -45,6 +46,7 @@ export interface BatchWord {
   usually_kana: boolean;
   covers_target_kanji: string[];
   used_seen_in_class_fallback: boolean;
+  source: string;
 }
 
 export interface BatchDetail {

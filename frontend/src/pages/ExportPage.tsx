@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ApiError } from "../api/client";
-import { downloadTextFile, getKanjiTsv, getPdfWarnings, getVocabTsv, pdfDownloadUrl } from "../api/exports";
+import { downloadTextFile, getKanjiTsv, getPdfWarnings, getVocabTsv, getVocabTxt, pdfDownloadUrl } from "../api/exports";
 import type { PdfWarning } from "../api/types";
 
 export default function ExportPage() {
@@ -9,6 +9,8 @@ export default function ExportPage() {
   const [error, setError] = useState<string | null>(null);
   const [pdfWarnings, setPdfWarnings] = useState<PdfWarning[] | null>(null);
   const [busy, setBusy] = useState(false);
+  const [cumulativeTxt, setCumulativeTxt] = useState(false);
+  const [weekListBusy, setWeekListBusy] = useState(false);
 
   async function handleVocabDownload() {
     setError(null);
@@ -37,6 +39,21 @@ export default function ExportPage() {
       setError(err instanceof ApiError ? err.message : "Failed to export kanji reading TSV");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleVocabTxtDownload() {
+    setError(null);
+    setWeekListBusy(true);
+    try {
+      const files = await getVocabTxt(batchN, cumulativeTxt);
+      for (const [filename, content] of Object.entries(files)) {
+        downloadTextFile(filename, content);
+      }
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to export the Japanese-only vocab list");
+    } finally {
+      setWeekListBusy(false);
     }
   }
 
@@ -75,6 +92,29 @@ export default function ExportPage() {
           </label>
           <button className="primary" onClick={handleVocabDownload} disabled={busy}>
             Download vocab TSV{splitByPos ? "s" : ""}
+          </button>
+        </div>
+      </section>
+
+      <section className="card">
+        <h3 style={{ marginTop: 0 }}>Japanese-only vocab list (.txt)</h3>
+        <p style={{ color: "#666", marginTop: 0 }}>
+          Plain-text word list for the batch above (kanji/kana only, no meanings or tags) -- for a study
+          handout, not Anki import.
+        </p>
+        <div className="upload-row">
+          <label>
+            <input
+              type="checkbox"
+              checked={cumulativeTxt}
+              onChange={(e) => setCumulativeTxt(e.target.checked)}
+            />{" "}
+            include every week up to this one, in one file (with this week's kanji listed first)
+          </label>
+        </div>
+        <div className="upload-row">
+          <button className="primary" onClick={handleVocabTxtDownload} disabled={weekListBusy}>
+            Download .txt
           </button>
         </div>
       </section>

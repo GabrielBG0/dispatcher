@@ -79,6 +79,27 @@ def export_vocab_tsv_combined(rows: list[VocabExportRow]) -> str:
     return "".join(_row_line(r) for r in sorted(rows, key=study_order_key))
 
 
+def _japanese_only_line(row: VocabExportRow) -> str:
+    card = format_vocab_card(
+        VocabCardFields(
+            kanji_form=row.kanji_form,
+            hiragana_form=row.hiragana_form,
+            meaning=row.meaning,
+            usually_kana=row.usually_kana,
+        )
+    )
+    return f"{card.front}\n"
+
+
+def export_vocab_txt_japanese_only(rows: list[VocabExportRow]) -> str:
+    """Plain-text, Japanese-only word list (one word per line, no meaning/
+    tags/tab columns) -- for a study handout or a quick read-through, not for
+    Anki import. Shares study_order_key with the TSV exports so the ordering
+    a student sees here matches the deck they study from.
+    """
+    return "".join(_japanese_only_line(r) for r in sorted(rows, key=study_order_key))
+
+
 def export_vocab_tsv_split_by_pos(rows: list[VocabExportRow]) -> dict[str, str]:
     by_pos: dict[str, list[VocabExportRow]] = {}
     for row in rows:

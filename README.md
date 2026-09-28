@@ -232,6 +232,19 @@ Works on any batch, though it's meant for finalized ones:
   the kana as the front (no redundant reading in parentheses). Every row's
   tags include a `batch::N` tag recording which weekly batch it was exported
   in.
+- **Japanese-only vocab list (.txt)** — a plain-text word list for the
+  entered batch (`Japanese Vocab - Batch N.txt`), one word per line in the
+  same order as the vocab TSV, with just the word (kanji_form with hiragana
+  in parentheses, or plain kana for a kana-only word) — no meaning, tags, or
+  tab columns. For a study handout or quick read-through, not Anki import.
+  Check "include every week up to this one" to instead download a single
+  cumulative file (`Japanese Vocab - Cumulative through Week N.txt`)
+  covering every finalized week from week 1 through the entered week, with
+  a leading section listing that week's own target kanji first, followed by
+  one `=== Week N ===` section per week -- each with its own `Kanji:` line
+  (that week's target kanji, or `(none)`) before its `Vocab:` word list.
+  Weeks that were never finalized are skipped rather than blocking the
+  export.
 - **Kanji reading deck** — one TSV, `Japanese Kanji - Batch N.tsv`,
   `kanji\treading\ttags`, containing only the words flagged
   `needs_kanji_reading` in that batch. If the same kanji spelling has more
@@ -269,7 +282,7 @@ whenever the backend is running.
 | Import | `POST /api/imports/vocab-list`, `/kanji-schedule`, `/anki-export`; `POST /api/imports/enrich/{vocab-words,kana-kanji-forms,kanji-meanings,kanjivg}`; `GET /api/imports/jobs/{id}` |
 | Vocab | `GET /api/vocab`; `PATCH /api/vocab/{id}`; `GET /api/vocab/{id}/kanji-candidates`; `POST /api/vocab/{id}/confirm-kana-only`; `GET /api/vocab/duplicates`; `POST /api/vocab/duplicates/resolve` |
 | Batches | `POST /api/batches/{n}/generate`; `GET /api/batches/{n}`; `GET /api/batches/{n}/eligible-replacements`; `POST/DELETE /api/batches/{n}/words/{vocab_id}`; `POST .../toggle-reading`, `.../swap`; `POST /api/batches/{n}/finalize`, `/unfinalize` |
-| Export | `GET /api/exports/{n}/vocab-tsv`, `/kanji-tsv`, `/pdf`, `/pdf/warnings` |
+| Export | `GET /api/exports/{n}/vocab-tsv`, `/vocab-txt`, `/kanji-tsv`, `/pdf`, `/pdf/warnings` |
 | Config | `GET/PUT /api/config` |
 | Dashboard | `GET /api/dashboard/overview` |
 

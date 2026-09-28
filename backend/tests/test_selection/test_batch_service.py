@@ -1124,4 +1124,147 @@ def test_import_and_include_jisho_word_does_not_persist_when_include_fails(db_se
         )
 
     db_session.rollback()
+
+
+@pytest.mark.asyncio
+async def test_auto_add_jisho_words_inserts_new_n3_words_and_skips_known_or_non_n3(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.add(
+        Vocab(kanji_form="投資", hiragana_form="とうし", meaning="investment", part_of_speech="noun", status="available")
+    )
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [
+            _jisho_word("投", "とう", ["jlpt-n3"], False, "throw", "Noun"),  # bare kanji, must be dropped
+            _jisho_word("投票", "とうひょう", ["jlpt-n3"], True, "voting", "Suru verb"),
+            _jisho_word("投資", "とうし", ["jlpt-n3"], True, "investment", "Suru verb"),  # already local
+            _jisho_word("投影", "とうえい", ["jlpt-n1"], True, "projection", "Noun"),  # not n3, must be dropped
+        ],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words", params={"keyword": "*投*"}).mock(
+            return_value=httpx.Response(200, json=response)
+        )
+        added = await batch_service.auto_add_jisho_words(db_session, batch_n=1, target_kanji={"投"})
+
+    assert added == 1
+    vocab = db_session.query(Vocab).filter(Vocab.kanji_form == "投票").one()
+    assert vocab.hiragana_form == "とうひょう"
+    assert vocab.status == "available"
+    assert vocab.source == "jisho"
+    assert vocab.jlpt_level == "jlpt-n3"
+    assert db_session.query(Vocab).filter(Vocab.kanji_form == "投影").count() == 0
+
+
+@pytest.mark.asyncio
+async def test_auto_add_jisho_words_respects_skip_ahead_guard(db_session):
+    # 投票 pairs this batch's 投 with 票, scheduled for a later batch and not
+    # yet known -- it must not be inserted even though it's N3 and new.
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=2))
+    _seed_kanji(db_session, "投", 1)
+    _seed_kanji(db_session, "票", 9)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [_jisho_word("投票", "とうひょう", ["jlpt-n3"], True, "voting", "Suru verb")],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        added = await batch_service.auto_add_jisho_words(db_session, batch_n=1, target_kanji={"投"})
+
+    assert added == 0
+    assert db_session.query(Vocab).filter(Vocab.kanji_form == "投票").count() == 0
+
+
+@pytest.mark.asyncio
+async def test_auto_add_jisho_words_returns_zero_for_no_target_kanji(db_session):
+    added = await batch_service.auto_add_jisho_words(db_session, batch_n=1, target_kanji=set())
+    assert added == 0
+
+
+@pytest.mark.asyncio
+async def test_auto_add_jisho_words_tolerates_a_failed_lookup_for_one_kanji(db_session):
+    # new_card_weeks=1 packs both kanji into a single output batch (see
+    # test_generate_draft_assigns_words_and_creates_batch_row) -- otherwise
+    # the default 16-week packing could split them across batches, making
+    # one look like a "future" kanji relative to the other.
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=1))
+    _seed_kanji(db_session, "投", 1)
+    _seed_kanji(db_session, "愛", 1)
+    db_session.add(Batch(batch_number=1, status="draft", weekly_target_used=126))
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [_jisho_word("愛犬", "あいけん", ["jlpt-n3"], True, "pet dog", "Noun")],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words", params={"keyword": "*投*"}).mock(
+            return_value=httpx.Response(500)
+        )
+        mock.get("https://jisho.org/api/v1/search/words", params={"keyword": "*愛*"}).mock(
+            return_value=httpx.Response(200, json=response)
+        )
+        added = await batch_service.auto_add_jisho_words(db_session, batch_n=1, target_kanji={"投", "愛"})
+
+    assert added == 1
+    assert db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬").count() == 1
+
+
+@pytest.mark.asyncio
+async def test_regenerate_draft_with_jisho_supplement_makes_new_words_available_for_selection(db_session):
+    # No local vocab at all for 投 -- weekly_target (pacing floor, 7 words/
+    # day * 7 = 49 by default) can't be met by the empty local pool, so the
+    # single Jisho-sourced word must get pulled in during the second
+    # generate pass.
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27)))
+    _seed_kanji(db_session, "投", 1)
+    db_session.commit()
+
+    response = {
+        "meta": {"status": 200},
+        "data": [_jisho_word("投票", "とうひょう", ["jlpt-n3"], True, "voting", "Suru verb")],
+    }
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words", params={"keyword": "*投*"}).mock(
+            return_value=httpx.Response(200, json=response)
+        )
+        result, added = await batch_service.regenerate_draft_with_jisho_supplement(
+            db_session, batch_n=1, today=date(2026, 7, 27)
+        )
+
+    assert added == 1
+    vocab = db_session.query(Vocab).filter(Vocab.kanji_form == "投票").one()
+    assert vocab.status == "assigned"
+    assert vocab.assigned_batch == 1
+    assert vocab.id in {w.vocab_id for w in result.selected}
+
+
+@pytest.mark.asyncio
+async def test_regenerate_draft_with_jisho_supplement_skips_second_pass_when_nothing_added(db_session):
+    db_session.add(StudyConfig(start_date=date(2026, 7, 27), new_card_weeks=1))
+    _seed_kanji(db_session, "愛", 1)
+    _seed_kanji(db_session, "犬", 1)
+    db_session.add(
+        Vocab(kanji_form="愛犬", hiragana_form="あいけん", meaning="pet", part_of_speech="general", status="available")
+    )
+    db_session.commit()
+
+    response = {"meta": {"status": 200}, "data": []}
+    with respx.mock(assert_all_called=True) as mock:
+        mock.get("https://jisho.org/api/v1/search/words").mock(return_value=httpx.Response(200, json=response))
+        result, added = await batch_service.regenerate_draft_with_jisho_supplement(
+            db_session, batch_n=1, today=date(2026, 7, 27)
+        )
+
+    assert added == 0
+    assert {w.vocab_id for w in result.selected} == {
+        v.id for v in db_session.query(Vocab).filter(Vocab.kanji_form == "愛犬")
+    }
     assert db_session.query(Vocab).filter(Vocab.kanji_form == "投票").count() == 0

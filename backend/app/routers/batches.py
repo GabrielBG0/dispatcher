@@ -20,9 +20,11 @@ def _replacement_dict(r: batch_service.ReplacementCandidate | None) -> dict | No
 
 
 @router.post("/{batch_n}/generate")
-def generate_draft(batch_n: int, db: Session = Depends(get_db)) -> dict:
+async def generate_draft(batch_n: int, db: Session = Depends(get_db)) -> dict:
     try:
-        result = batch_service.generate_draft_batch(db, batch_n, today=date.today())
+        result, jisho_words_added = await batch_service.regenerate_draft_with_jisho_supplement(
+            db, batch_n, today=date.today()
+        )
     except batch_service.BatchServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -34,6 +36,7 @@ def generate_draft(batch_n: int, db: Session = Depends(get_db)) -> dict:
         "selected_count": len(result.selected),
         "target_kanji_coverage": result.target_kanji_coverage,
         "warnings": [w.__dict__ for w in result.warnings],
+        "jisho_words_added": jisho_words_added,
     }
 
 

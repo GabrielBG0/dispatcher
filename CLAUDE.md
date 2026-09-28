@@ -119,6 +119,18 @@ no live network calls in the suite.
   Both vocab-meaning enrichment jobs (`run_vocab_word_enrichment`,
   `run_vocab_meaning_standardization` in `enrichment/jobs.py`) do this;
   any future kanji_form-based Jisho lookup needs the same treatment.
+- **Jisho auto-supplement on batch generation**: every `POST
+  /api/batches/{n}/generate` call (`batch_service.regenerate_draft_with_jisho_supplement`)
+  searches Jisho for N3-tagged words on every target kanji not already in
+  the local vocab list, inserts them as ordinary `available`/`source="jisho"`
+  Vocab rows, and regenerates once more so they compete for selection like
+  any other candidate (no BCCWJ frequency data, so they still lose every
+  tie-break against a list word — they only actually get selected when the
+  local list runs short for that kanji). This makes every generate/regenerate
+  call take noticeably longer (one throttled Jisho request per target
+  kanji, ~0.5s each). `source` is now returned on `BatchWordDetail` and
+  shown as a "not in your list (Jisho)" pill on the Batch Review word list,
+  distinct from the existing "already seen in class" pill.
 
 ### Frontend (frontend/src/)
 

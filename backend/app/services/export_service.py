@@ -15,6 +15,7 @@ from app.export.vocab_tsv import (
     VocabExportRow,
     export_vocab_tsv_combined,
     export_vocab_tsv_split_by_pos,
+    export_vocab_txt_japanese_only,
     tags_for_row,
 )
 from app.kanji_utils import extract_kanji
@@ -86,6 +87,64 @@ def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str
     else:
         files = {"Japanese Complete Vocab.tsv": export_vocab_tsv_combined(rows)}
     return {_with_batch_suffix(name, batch_n): content for name, content in files.items()}
+
+
+def _japanese_only_rows(db: Session, batch_n: int) -> list[VocabExportRow]:
+    target_kanji_chars = _target_kanji_chars(db, batch_n)
+    return [
+        VocabExportRow(
+            kanji_form=v.kanji_form,
+            hiragana_form=v.hiragana_form,
+            meaning=v.meaning,
+            part_of_speech=v.part_of_speech,
+            usually_kana=v.usually_kana,
+            is_target_linked=bool(extract_kanji(v.kanji_form) & target_kanji_chars),
+            needs_kanji_reading=v.needs_kanji_reading,
+        )
+        for v in _batch_vocab_rows(db, batch_n)
+    ]
+
+
+def export_vocab_japanese_txt(db: Session, batch_n: int) -> dict[str, str]:
+    """Plain-text word list for one week/batch: Japanese only (no meaning,
+    no tags), one word per line -- for a study handout, not Anki import.
+    """
+    _require_finalized_batch(db, batch_n)
+    content = export_vocab_txt_japanese_only(_japanese_only_rows(db, batch_n))
+    return {_with_batch_suffix("Japanese Vocab.txt", batch_n): content}
+
+
+def export_vocab_japanese_txt_cumulative(db: Session, up_to_batch_n: int) -> dict[str, str]:
+    """One file covering every finalized week from week 1 through
+    up_to_batch_n -- "all the weeks up until now" -- with a section for
+    up_to_batch_n's own target kanji (the current week's kanji) leading the
+    file, followed by each week's own target kanji plus its Japanese-only
+    word list in its own section. Weeks that don't exist or were never
+    finalized are skipped rather than erroring, so a gap in an earlier week
+    doesn't block export.
+    """
+    _require_finalized_batch(db, up_to_batch_n)
+    this_weeks_kanji = sorted(_target_kanji_chars(db, up_to_batch_n))
+
+    finalized_batch_numbers = [
+        b.batch_number
+        for b in db.query(Batch)
+        .filter(Batch.batch_number <= up_to_batch_n, Batch.status.in_(("finalized", "exported")))
+        .order_by(Batch.batch_number)
+        .all()
+    ]
+
+    sections = [f"=== This week's kanji (Week {up_to_batch_n}) ===", *this_weeks_kanji]
+    for batch_n in finalized_batch_numbers:
+        week_kanji = sorted(_target_kanji_chars(db, batch_n))
+        sections.append("")
+        sections.append(f"=== Week {batch_n} ===")
+        sections.append(f"Kanji: {' '.join(week_kanji) if week_kanji else '(none)'}")
+        sections.append("Vocab:")
+        sections.append(export_vocab_txt_japanese_only(_japanese_only_rows(db, batch_n)).rstrip("\n"))
+
+    content = "\n".join(sections) + "\n"
+    return {f"Japanese Vocab - Cumulative through Week {up_to_batch_n}.txt": content}
 
 
 def export_kanji_readings(db: Session, batch_n: int) -> dict[str, str]:
