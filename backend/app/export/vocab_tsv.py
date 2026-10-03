@@ -58,9 +58,13 @@ def study_order_key(row: VocabExportRow) -> tuple:
     reading deck is exactly the leading run of the vocab deck -- letting a
     student pace new-card introduction across both decks in lockstep instead
     of hitting a kanji reading before its meaning card.
+
+    batch_number leads the key so a cumulative (multi-week) export comes out
+    week by week; in a single-batch export every row shares one batch number,
+    so it's a no-op there.
     """
     tier = 0 if row.needs_kanji_reading else 1 if row.is_target_linked else 2
-    return (tier, row.hiragana_form, row.kanji_form)
+    return (row.batch_number or 0, tier, row.hiragana_form, row.kanji_form)
 
 
 def _row_line(row: VocabExportRow) -> str:

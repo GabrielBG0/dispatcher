@@ -108,7 +108,14 @@ no live network calls in the suite.
   hiragana reading within each tier — so the reading deck (which only ever
   contains `needs_kanji_reading` words) comes out as the leading run of the
   vocab deck on a fresh Anki import. Both exporters must keep using the same
-  key or the decks drift out of sync.
+  key or the decks drift out of sync. The key leads with `batch_number`, so
+  cumulative (multi-week, `?cumulative=true`) exports come out week by week;
+  there the reading deck is an order-preserving subsequence of the vocab
+  deck rather than its leading run. Cumulative exports build rows per week
+  (each week's own target kanji and `batch::N` tag), never from a union of
+  all weeks' target kanji. All cumulative exports (vocab/kanji TSV, .txt,
+  PDF) also take `from_batch` (default 1) to export an arbitrary week range
+  `from_batch..n`, via `export_service._finalized_batch_numbers_through`.
 - **Affix marker**: a leading or trailing `~` in `kanji_form`/`hiragana_form`
   (e.g. `~的`/`~てき`) marks a bound suffix/prefix in the source vocab list,
   not a free word — the marker itself must stay in the stored fields since

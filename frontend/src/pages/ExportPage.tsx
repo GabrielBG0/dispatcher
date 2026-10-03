@@ -5,18 +5,23 @@ import type { PdfWarning } from "../api/types";
 
 export default function ExportPage() {
   const [batchN, setBatchN] = useState(1);
+  // Start week for every "multiple weeks" export below; batchN is the end week.
+  const [fromBatch, setFromBatch] = useState(1);
   const [splitByPos, setSplitByPos] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pdfWarnings, setPdfWarnings] = useState<PdfWarning[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [cumulativeTxt, setCumulativeTxt] = useState(false);
+  const [cumulativeVocab, setCumulativeVocab] = useState(false);
+  const [cumulativeKanji, setCumulativeKanji] = useState(false);
+  const [cumulativePdf, setCumulativePdf] = useState(false);
   const [weekListBusy, setWeekListBusy] = useState(false);
 
   async function handleVocabDownload() {
     setError(null);
     setBusy(true);
     try {
-      const files = await getVocabTsv(batchN, splitByPos);
+      const files = await getVocabTsv(batchN, splitByPos, cumulativeVocab, fromBatch);
       for (const [filename, content] of Object.entries(files)) {
         downloadTextFile(filename, content);
       }
@@ -31,7 +36,7 @@ export default function ExportPage() {
     setError(null);
     setBusy(true);
     try {
-      const files = await getKanjiTsv(batchN);
+      const files = await getKanjiTsv(batchN, cumulativeKanji, fromBatch);
       for (const [filename, content] of Object.entries(files)) {
         downloadTextFile(filename, content);
       }
@@ -46,7 +51,7 @@ export default function ExportPage() {
     setError(null);
     setWeekListBusy(true);
     try {
-      const files = await getVocabTxt(batchN, cumulativeTxt);
+      const files = await getVocabTxt(batchN, cumulativeTxt, fromBatch);
       for (const [filename, content] of Object.entries(files)) {
         downloadTextFile(filename, content);
       }
@@ -60,7 +65,7 @@ export default function ExportPage() {
   async function handleCheckPdfWarnings() {
     setError(null);
     try {
-      setPdfWarnings(await getPdfWarnings(batchN));
+      setPdfWarnings(await getPdfWarnings(batchN, cumulativePdf, fromBatch));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to check PDF warnings");
     }
@@ -76,9 +81,29 @@ export default function ExportPage() {
             type="number"
             min={1}
             value={batchN}
-            onChange={(e) => setBatchN(Number(e.target.value) || 1)}
+            onChange={(e) => {
+              setBatchN(Number(e.target.value) || 1);
+              setPdfWarnings(null);
+            }}
             style={{ width: "5rem" }}
           />
+        </div>
+        <div className="upload-row">
+          <label>Multi-week exports start at week</label>
+          <input
+            type="number"
+            min={1}
+            max={batchN}
+            value={fromBatch}
+            onChange={(e) => {
+              setFromBatch(Number(e.target.value) || 1);
+              setPdfWarnings(null);
+            }}
+            style={{ width: "5rem" }}
+          />
+          <span style={{ color: "#666" }}>
+            (used when a "multiple weeks" box is checked: weeks {fromBatch}–{batchN})
+          </span>
         </div>
         {error && <div className="error-box">{error}</div>}
       </section>
@@ -89,6 +114,14 @@ export default function ExportPage() {
           <label>
             <input type="checkbox" checked={splitByPos} onChange={(e) => setSplitByPos(e.target.checked)} />{" "}
             split by part of speech
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={cumulativeVocab}
+              onChange={(e) => setCumulativeVocab(e.target.checked)}
+            />{" "}
+            include multiple weeks (week {fromBatch} to {batchN}), in one file
           </label>
           <button className="primary" onClick={handleVocabDownload} disabled={busy}>
             Download vocab TSV{splitByPos ? "s" : ""}
@@ -109,7 +142,8 @@ export default function ExportPage() {
               checked={cumulativeTxt}
               onChange={(e) => setCumulativeTxt(e.target.checked)}
             />{" "}
-            include every week up to this one, in one file (with this week's kanji listed first)
+            include multiple weeks (week {fromBatch} to {batchN}), in one file (with week {batchN}'s kanji listed
+            first)
           </label>
         </div>
         <div className="upload-row">
@@ -121,16 +155,39 @@ export default function ExportPage() {
 
       <section className="card">
         <h3 style={{ marginTop: 0 }}>Kanji reading deck</h3>
-        <button className="primary" onClick={handleKanjiDownload} disabled={busy}>
-          Download kanji-reading TSV
-        </button>
+        <div className="upload-row">
+          <label>
+            <input
+              type="checkbox"
+              checked={cumulativeKanji}
+              onChange={(e) => setCumulativeKanji(e.target.checked)}
+            />{" "}
+            include multiple weeks (week {fromBatch} to {batchN}), in one file
+          </label>
+          <button className="primary" onClick={handleKanjiDownload} disabled={busy}>
+            Download kanji-reading TSV
+          </button>
+        </div>
       </section>
 
       <section className="card">
         <h3 style={{ marginTop: 0 }}>Weekly kanji PDF</h3>
         <div className="upload-row">
+          <label>
+            <input
+              type="checkbox"
+              checked={cumulativePdf}
+              onChange={(e) => {
+                setCumulativePdf(e.target.checked);
+                setPdfWarnings(null);
+              }}
+            />{" "}
+            include multiple weeks (week {fromBatch} to {batchN}), in one file
+          </label>
+        </div>
+        <div className="upload-row">
           <button onClick={handleCheckPdfWarnings}>Check for missing data</button>
-          <a href={pdfDownloadUrl(batchN)}>
+          <a href={pdfDownloadUrl(batchN, cumulativePdf, fromBatch)}>
             <button className="primary">Download PDF</button>
           </a>
         </div>

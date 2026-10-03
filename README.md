@@ -270,6 +270,22 @@ Works on any batch, though it's meant for finalized ones:
   or presenting in class. **Check for missing data** first — it lists any
   target kanji still missing stroke data or reading/meaning enrichment
   before you download, so a gap in the PDF isn't a surprise mid-lesson.
+- **Cumulative ("every week up to this one") exports** — the vocab deck,
+  kanji reading deck, and PDF each have the same "include every week up to
+  this one" checkbox as the .txt list (`?cumulative=true` on
+  `vocab-tsv`, `kanji-tsv`, `pdf`, and `pdf/warnings`). Checked, it
+  produces one file covering every finalized week from week 1 through the
+  entered week (`… - Cumulative through Week N.tsv`,
+  `kanji_cumulative_through_week_N.pdf`), skipping never-finalized weeks.
+  Rows are ordered week by week, then by the usual deck-sync order within
+  each week, and each row keeps its own week's `batch::N` tag and its own
+  week's target-linked tiering. The PDF has one page per target kanji,
+  grouped by week, each still listing only that week's words; the missing
+  data check covers every week included. To export a range that doesn't
+  start at week 1, set **Multi-week exports start at week** at the top of
+  the page (`&from_batch=M`; must be between 1 and the entered week): the
+  multi-week files then cover weeks M through N only and are named
+  `… - Weeks M-N.tsv`/`.txt` and `kanji_weeks_M-N.pdf`.
 
 ## API
 

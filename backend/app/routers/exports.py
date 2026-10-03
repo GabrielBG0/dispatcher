@@ -12,9 +12,20 @@ router = APIRouter(prefix="/api/exports", tags=["exports"])
 
 
 @router.get("/{batch_n}/vocab-tsv")
-def get_vocab_tsv(batch_n: int, split_by_pos: bool = Query(default=False), db: Session = Depends(get_db)) -> dict:
+def get_vocab_tsv(
+    batch_n: int,
+    split_by_pos: bool = Query(default=False),
+    cumulative: bool = Query(default=False),
+    from_batch: int = Query(default=1),
+    db: Session = Depends(get_db),
+) -> dict:
     try:
-        files = export_service.export_vocab(db, batch_n, split_by_pos=split_by_pos)
+        if cumulative:
+            files = export_service.export_vocab_cumulative(
+                db, batch_n, split_by_pos=split_by_pos, from_batch_n=from_batch
+            )
+        else:
+            files = export_service.export_vocab(db, batch_n, split_by_pos=split_by_pos)
     except export_service.ExportServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return files
@@ -22,11 +33,14 @@ def get_vocab_tsv(batch_n: int, split_by_pos: bool = Query(default=False), db: S
 
 @router.get("/{batch_n}/vocab-txt")
 def get_vocab_txt(
-    batch_n: int, cumulative: bool = Query(default=False), db: Session = Depends(get_db)
+    batch_n: int,
+    cumulative: bool = Query(default=False),
+    from_batch: int = Query(default=1),
+    db: Session = Depends(get_db),
 ) -> dict:
     try:
         if cumulative:
-            files = export_service.export_vocab_japanese_txt_cumulative(db, batch_n)
+            files = export_service.export_vocab_japanese_txt_cumulative(db, batch_n, from_batch_n=from_batch)
         else:
             files = export_service.export_vocab_japanese_txt(db, batch_n)
     except export_service.ExportServiceError as exc:
@@ -35,9 +49,17 @@ def get_vocab_txt(
 
 
 @router.get("/{batch_n}/kanji-tsv")
-def get_kanji_tsv(batch_n: int, db: Session = Depends(get_db)) -> dict:
+def get_kanji_tsv(
+    batch_n: int,
+    cumulative: bool = Query(default=False),
+    from_batch: int = Query(default=1),
+    db: Session = Depends(get_db),
+) -> dict:
     try:
-        files = export_service.export_kanji_readings(db, batch_n)
+        if cumulative:
+            files = export_service.export_kanji_readings_cumulative(db, batch_n, from_batch_n=from_batch)
+        else:
+            files = export_service.export_kanji_readings(db, batch_n)
     except export_service.ExportServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return files
@@ -69,19 +91,38 @@ def get_export_preview(
 
 
 @router.get("/{batch_n}/pdf")
-def get_pdf(batch_n: int, db: Session = Depends(get_db)) -> FileResponse:
+def get_pdf(
+    batch_n: int,
+    cumulative: bool = Query(default=False),
+    from_batch: int = Query(default=1),
+    db: Session = Depends(get_db),
+) -> FileResponse:
+    if not cumulative:
+        filename = f"batch_{batch_n}_kanji.pdf"
+    elif from_batch == 1:
+        filename = f"kanji_cumulative_through_week_{batch_n}.pdf"
+    else:
+        filename = f"kanji_weeks_{from_batch}-{batch_n}.pdf"
     try:
-        output_path = Path(tempfile.gettempdir()) / f"dispatcher_batch_{batch_n}.pdf"
-        export_service.export_pdf(db, batch_n, output_path)
+        output_path = Path(tempfile.gettempdir()) / f"dispatcher_{filename}"
+        export_service.export_pdf(db, batch_n, output_path, cumulative=cumulative, from_batch_n=from_batch)
     except export_service.ExportServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    return FileResponse(output_path, media_type="application/pdf", filename=f"batch_{batch_n}_kanji.pdf")
+    return FileResponse(output_path, media_type="application/pdf", filename=filename)
 
 
 @router.get("/{batch_n}/pdf/warnings")
-def get_pdf_warnings(batch_n: int, db: Session = Depends(get_db)) -> list[dict]:
+def get_pdf_warnings(
+    batch_n: int,
+    cumulative: bool = Query(default=False),
+    from_batch: int = Query(default=1),
+    db: Session = Depends(get_db),
+) -> list[dict]:
     try:
-        _, warnings = export_service.build_kanji_pdf_pages(db, batch_n)
+        if cumulative:
+            _, warnings = export_service.build_kanji_pdf_pages_cumulative(db, batch_n, from_batch_n=from_batch)
+        else:
+            _, warnings = export_service.build_kanji_pdf_pages(db, batch_n)
     except export_service.ExportServiceError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return [w.__dict__ for w in warnings]

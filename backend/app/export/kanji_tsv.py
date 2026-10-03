@@ -31,18 +31,21 @@ def export_kanji_reading_tsv(rows: list[VocabExportRow]) -> str:
     for kanji_form, group in by_kanji_form.items():
         distinct_readings = sorted({r.hiragana_form for r in group})
         if len(distinct_readings) == 1:
-            row = group[0]
+            row = min(group, key=study_order_key)
             card = format_kanji_reading_card(
                 VocabCardFields(kanji_form=row.kanji_form, hiragana_form=row.hiragana_form, meaning=row.meaning)
             )
-            output.append((row, card.front, card.back, tags_for_row(row)))
+            # Same word in more than one week (cumulative export) -> keep
+            # every week's batch:: tag on the one card.
+            tags = tags_for_row(row) if len(group) == 1 else _merged_tags(group)
+            output.append((row, card.front, card.back, tags))
         else:
             back = format_meaning_groups([[reading] for reading in distinct_readings])
             # No single row represents a merged card -- sort it at the position
-            # of its alphabetically-first reading, so it never sorts later than
-            # any of the vocab meaning cards it corresponds to (kana ordering
-            # guarantees the earliest reading's position is <= the others').
-            sort_row = min(group, key=lambda r: r.hiragana_form)
+            # of its earliest row (earliest week, then alphabetically-first
+            # reading), so it never sorts later than any of the vocab meaning
+            # cards it corresponds to.
+            sort_row = min(group, key=study_order_key)
             output.append((sort_row, kanji_form, back, _merged_tags(group)))
 
     return "".join(

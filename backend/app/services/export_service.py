@@ -65,10 +65,50 @@ def _target_kanji_chars(db: Session, batch_n: int) -> set[str]:
     }
 
 
-def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str]:
-    _require_finalized_batch(db, batch_n)
+def _require_valid_range(db: Session, from_batch_n: int, up_to_batch_n: int) -> None:
+    """Cumulative exports cover weeks from_batch_n..up_to_batch_n; the end
+    week must itself be finalized, the start just has to be a sane bound.
+    """
+    if from_batch_n < 1 or from_batch_n > up_to_batch_n:
+        raise ExportServiceError(
+            f"invalid week range {from_batch_n}-{up_to_batch_n}: start week must be between 1 and {up_to_batch_n}"
+        )
+    _require_finalized_batch(db, up_to_batch_n)
+
+
+def _finalized_batch_numbers_through(db: Session, up_to_batch_n: int, from_batch_n: int = 1) -> list[int]:
+    """Every finalized week from from_batch_n through up_to_batch_n, in
+    order, for the cumulative exports. Weeks that don't exist or were never
+    finalized are skipped rather than erroring, so a gap in an earlier week
+    doesn't block export (each caller still requires up_to_batch_n itself to
+    be finalized).
+    """
+    return [
+        b.batch_number
+        for b in db.query(Batch)
+        .filter(
+            Batch.batch_number >= from_batch_n,
+            Batch.batch_number <= up_to_batch_n,
+            Batch.status.in_(("finalized", "exported")),
+        )
+        .order_by(Batch.batch_number)
+        .all()
+    ]
+
+
+def _cumulative_name(filename: str, up_to_batch_n: int, from_batch_n: int = 1) -> str:
+    stem, _, ext = filename.rpartition(".")
+    if from_batch_n == 1:
+        return f"{stem} - Cumulative through Week {up_to_batch_n}.{ext}"
+    return f"{stem} - Weeks {from_batch_n}-{up_to_batch_n}.{ext}"
+
+
+def _vocab_export_rows(db: Session, batch_n: int) -> list[VocabExportRow]:
+    # Target-linking is judged against each week's own target kanji, never a
+    # union across weeks, so a cumulative export tiers every row exactly as
+    # that week's single-batch export would.
     target_kanji_chars = _target_kanji_chars(db, batch_n)
-    rows = [
+    return [
         VocabExportRow(
             kanji_form=v.kanji_form,
             hiragana_form=v.hiragana_form,
@@ -82,11 +122,35 @@ def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str
         )
         for v in _batch_vocab_rows(db, batch_n)
     ]
+
+
+def _vocab_tsv_files(rows: list[VocabExportRow], split_by_pos: bool) -> dict[str, str]:
     if split_by_pos:
-        files = export_vocab_tsv_split_by_pos(rows)
-    else:
-        files = {"Japanese Complete Vocab.tsv": export_vocab_tsv_combined(rows)}
+        return export_vocab_tsv_split_by_pos(rows)
+    return {"Japanese Complete Vocab.tsv": export_vocab_tsv_combined(rows)}
+
+
+def export_vocab(db: Session, batch_n: int, split_by_pos: bool) -> dict[str, str]:
+    _require_finalized_batch(db, batch_n)
+    files = _vocab_tsv_files(_vocab_export_rows(db, batch_n), split_by_pos)
     return {_with_batch_suffix(name, batch_n): content for name, content in files.items()}
+
+
+def export_vocab_cumulative(
+    db: Session, up_to_batch_n: int, split_by_pos: bool, from_batch_n: int = 1
+) -> dict[str, str]:
+    """Vocab deck(s) covering every finalized week from from_batch_n through
+    up_to_batch_n, ordered week by week (see study_order_key). Each row keeps
+    its own week's batch:: tag.
+    """
+    _require_valid_range(db, from_batch_n, up_to_batch_n)
+    rows = [
+        row
+        for b in _finalized_batch_numbers_through(db, up_to_batch_n, from_batch_n)
+        for row in _vocab_export_rows(db, b)
+    ]
+    files = _vocab_tsv_files(rows, split_by_pos)
+    return {_cumulative_name(name, up_to_batch_n, from_batch_n): content for name, content in files.items()}
 
 
 def _japanese_only_rows(db: Session, batch_n: int) -> list[VocabExportRow]:
@@ -114,7 +178,7 @@ def export_vocab_japanese_txt(db: Session, batch_n: int) -> dict[str, str]:
     return {_with_batch_suffix("Japanese Vocab.txt", batch_n): content}
 
 
-def export_vocab_japanese_txt_cumulative(db: Session, up_to_batch_n: int) -> dict[str, str]:
+def export_vocab_japanese_txt_cumulative(db: Session, up_to_batch_n: int, from_batch_n: int = 1) -> dict[str, str]:
     """One file covering every finalized week from week 1 through
     up_to_batch_n -- "all the weeks up until now" -- with a section for
     up_to_batch_n's own target kanji (the current week's kanji) leading the
@@ -123,16 +187,10 @@ def export_vocab_japanese_txt_cumulative(db: Session, up_to_batch_n: int) -> dic
     finalized are skipped rather than erroring, so a gap in an earlier week
     doesn't block export.
     """
-    _require_finalized_batch(db, up_to_batch_n)
+    _require_valid_range(db, from_batch_n, up_to_batch_n)
     this_weeks_kanji = sorted(_target_kanji_chars(db, up_to_batch_n))
 
-    finalized_batch_numbers = [
-        b.batch_number
-        for b in db.query(Batch)
-        .filter(Batch.batch_number <= up_to_batch_n, Batch.status.in_(("finalized", "exported")))
-        .order_by(Batch.batch_number)
-        .all()
-    ]
+    finalized_batch_numbers = _finalized_batch_numbers_through(db, up_to_batch_n, from_batch_n)
 
     sections = [f"=== This week's kanji (Week {up_to_batch_n}) ===", *this_weeks_kanji]
     for batch_n in finalized_batch_numbers:
@@ -144,12 +202,11 @@ def export_vocab_japanese_txt_cumulative(db: Session, up_to_batch_n: int) -> dic
         sections.append(export_vocab_txt_japanese_only(_japanese_only_rows(db, batch_n)).rstrip("\n"))
 
     content = "\n".join(sections) + "\n"
-    return {f"Japanese Vocab - Cumulative through Week {up_to_batch_n}.txt": content}
+    return {_cumulative_name("Japanese Vocab.txt", up_to_batch_n, from_batch_n): content}
 
 
-def export_kanji_readings(db: Session, batch_n: int) -> dict[str, str]:
-    _require_finalized_batch(db, batch_n)
-    rows = [
+def _kanji_reading_rows(db: Session, batch_n: int) -> list[VocabExportRow]:
+    return [
         VocabExportRow(
             kanji_form=v.kanji_form,
             hiragana_form=v.hiragana_form,
@@ -163,8 +220,27 @@ def export_kanji_readings(db: Session, batch_n: int) -> dict[str, str]:
         for v in _batch_vocab_rows(db, batch_n)
         if v.needs_kanji_reading
     ]
-    content = export_kanji_reading_tsv(rows)
+
+
+def export_kanji_readings(db: Session, batch_n: int) -> dict[str, str]:
+    _require_finalized_batch(db, batch_n)
+    content = export_kanji_reading_tsv(_kanji_reading_rows(db, batch_n))
     return {_with_batch_suffix("Japanese Kanji.tsv", batch_n): content}
+
+
+def export_kanji_readings_cumulative(db: Session, up_to_batch_n: int, from_batch_n: int = 1) -> dict[str, str]:
+    """Kanji-reading deck covering every finalized week from from_batch_n
+    through up_to_batch_n, in the same week-by-week order as
+    export_vocab_cumulative.
+    """
+    _require_valid_range(db, from_batch_n, up_to_batch_n)
+    rows = [
+        row
+        for b in _finalized_batch_numbers_through(db, up_to_batch_n, from_batch_n)
+        for row in _kanji_reading_rows(db, b)
+    ]
+    content = export_kanji_reading_tsv(rows)
+    return {_cumulative_name("Japanese Kanji.tsv", up_to_batch_n, from_batch_n): content}
 
 
 @dataclass(frozen=True)
@@ -265,7 +341,27 @@ class PdfWarning:
 
 def build_kanji_pdf_pages(db: Session, batch_n: int) -> tuple[list[KanjiPageData], list[PdfWarning]]:
     _require_finalized_batch(db, batch_n)
+    return _kanji_pdf_pages_for_batch(db, batch_n)
 
+
+def build_kanji_pdf_pages_cumulative(
+    db: Session, up_to_batch_n: int, from_batch_n: int = 1
+) -> tuple[list[KanjiPageData], list[PdfWarning]]:
+    """PDF pages for every finalized week from from_batch_n through
+    up_to_batch_n, week by week; each kanji's word list still only shows its
+    own week's words.
+    """
+    _require_valid_range(db, from_batch_n, up_to_batch_n)
+    pages: list[KanjiPageData] = []
+    warnings: list[PdfWarning] = []
+    for b in _finalized_batch_numbers_through(db, up_to_batch_n, from_batch_n):
+        week_pages, week_warnings = _kanji_pdf_pages_for_batch(db, b)
+        pages.extend(week_pages)
+        warnings.extend(week_warnings)
+    return pages, warnings
+
+
+def _kanji_pdf_pages_for_batch(db: Session, batch_n: int) -> tuple[list[KanjiPageData], list[PdfWarning]]:
     # The schedule itself is a dynamically repacked view (see
     # batch_service._load_schedule) that can shift as coverage grows, so a
     # finalized batch's kanji list is read from the frozen record
@@ -310,7 +406,12 @@ def build_kanji_pdf_pages(db: Session, batch_n: int) -> tuple[list[KanjiPageData
     return pages, warnings
 
 
-def export_pdf(db: Session, batch_n: int, output_path) -> list[PdfWarning]:
-    pages, warnings = build_kanji_pdf_pages(db, batch_n)
+def export_pdf(
+    db: Session, batch_n: int, output_path, cumulative: bool = False, from_batch_n: int = 1
+) -> list[PdfWarning]:
+    if cumulative:
+        pages, warnings = build_kanji_pdf_pages_cumulative(db, batch_n, from_batch_n)
+    else:
+        pages, warnings = build_kanji_pdf_pages(db, batch_n)
     render_pdf(pages, output_path)
     return warnings

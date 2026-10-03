@@ -347,3 +347,112 @@ def test_build_kanji_pdf_pages_warns_on_missing_stroke_or_enrichment_data(db_ses
     kinds = {w.detail for w in warnings}
     assert "no KanjiVG stroke data cached" in kinds
     assert "no Jisho enrichment data" in kinds
+
+
+def _seed_three_weeks_with_gap(db):
+    """Weeks 1 and 3 finalized, week 2 still draft. Week 3's target kanji
+    (犬) also appears in a week-1 filler word (子犬), which must stay filler
+    in the cumulative export -- target-linking is per week, not a union.
+    """
+    db.add(Batch(batch_number=1, status="finalized", weekly_target_used=126))
+    db.add(Batch(batch_number=2, status="draft", weekly_target_used=126))
+    db.add(Batch(batch_number=3, status="finalized", weekly_target_used=126))
+
+    ai = Kanji(kanji="愛", meanings="love")
+    inu = Kanji(kanji="犬", meanings="dog")
+    db.add_all([ai, inu])
+    db.flush()
+    db.add(KanjiCoverage(kanji_id=ai.id, coverage_source="n3_batch", batch_number=1))
+    db.add(KanjiCoverage(kanji_id=inu.id, coverage_source="n3_batch", batch_number=3))
+
+    for kanji_form, hiragana, batch, needs_reading in [
+        ("時間", "じかん", 1, False),
+        ("愛犬", "あいけん", 1, True),
+        ("子犬", "こいぬ", 1, False),
+        ("時計", "とけい", 2, False),  # draft week -- excluded
+        ("犬", "いぬ", 3, True),
+        ("朝", "あさ", 3, False),
+    ]:
+        db.add(
+            Vocab(
+                kanji_form=kanji_form, hiragana_form=hiragana, meaning="m", part_of_speech="general",
+                status="assigned", assigned_batch=batch, needs_kanji_reading=needs_reading,
+            )
+        )
+    db.commit()
+
+
+def test_export_vocab_cumulative_orders_week_by_week_with_own_batch_tags(db_session):
+    _seed_three_weeks_with_gap(db_session)
+    files = export_service.export_vocab_cumulative(db_session, up_to_batch_n=3, split_by_pos=False)
+    assert set(files) == {"Japanese Complete Vocab - Cumulative through Week 3.tsv"}
+    lines = files["Japanese Complete Vocab - Cumulative through Week 3.tsv"].strip("\n").split("\n")
+    fronts = [line.split("\t")[0] for line in lines]
+    # Week 1 (reading tier, then filler alphabetical -- 子犬 stays filler),
+    # week 2 skipped, then week 3.
+    assert fronts == ["愛犬（あいけん）", "子犬（こいぬ）", "時間（じかん）", "犬（いぬ）", "朝（あさ）"]
+    assert all(line.endswith("batch::1") for line in lines[:3])
+    assert all(line.endswith("batch::3") for line in lines[3:])
+
+
+def test_export_vocab_cumulative_split_by_pos(db_session):
+    _seed_three_weeks_with_gap(db_session)
+    files = export_service.export_vocab_cumulative(db_session, up_to_batch_n=3, split_by_pos=True)
+    assert set(files) == {"Japanese Vocabulary - Cumulative through Week 3.tsv"}
+
+
+def test_export_kanji_readings_cumulative_matches_vocab_order(db_session):
+    _seed_three_weeks_with_gap(db_session)
+    files = export_service.export_kanji_readings_cumulative(db_session, up_to_batch_n=3)
+    assert set(files) == {"Japanese Kanji - Cumulative through Week 3.tsv"}
+    lines = files["Japanese Kanji - Cumulative through Week 3.tsv"].strip("\n").split("\n")
+    assert [line.split("\t")[0] for line in lines] == ["愛犬", "犬"]
+    assert lines[0].endswith("batch::1")
+    assert lines[1].endswith("batch::3")
+
+
+def test_build_kanji_pdf_pages_cumulative_pages_per_week(db_session):
+    _seed_three_weeks_with_gap(db_session)
+    pages, warnings = export_service.build_kanji_pdf_pages_cumulative(db_session, up_to_batch_n=3)
+    assert [p.kanji for p in pages] == ["愛", "犬"]
+    # Each kanji's word list only shows its own week's words: 犬 is week 3's
+    # target, so week 1's 愛犬/子犬 stay off its page.
+    assert {w.kanji_form for w in pages[1].words} == {"犬"}
+    assert {w.detail for w in warnings} == {"no KanjiVG stroke data cached"}
+
+
+def test_cumulative_exports_reject_non_finalized_batch(db_session):
+    _seed_three_weeks_with_gap(db_session)
+    with pytest.raises(export_service.ExportServiceError):
+        export_service.export_vocab_cumulative(db_session, up_to_batch_n=2, split_by_pos=False)
+    with pytest.raises(export_service.ExportServiceError):
+        export_service.export_kanji_readings_cumulative(db_session, up_to_batch_n=2)
+    with pytest.raises(export_service.ExportServiceError):
+        export_service.build_kanji_pdf_pages_cumulative(db_session, up_to_batch_n=2)
+
+
+def test_cumulative_exports_respect_start_week(db_session):
+    _seed_three_weeks_with_gap(db_session)
+
+    vocab = export_service.export_vocab_cumulative(db_session, up_to_batch_n=3, split_by_pos=False, from_batch_n=2)
+    assert set(vocab) == {"Japanese Complete Vocab - Weeks 2-3.tsv"}
+    fronts = [line.split("\t")[0] for line in vocab["Japanese Complete Vocab - Weeks 2-3.tsv"].strip("\n").split("\n")]
+    assert fronts == ["犬（いぬ）", "朝（あさ）"]  # week 1 excluded, draft week 2 skipped
+
+    kanji = export_service.export_kanji_readings_cumulative(db_session, up_to_batch_n=3, from_batch_n=3)
+    assert kanji["Japanese Kanji - Weeks 3-3.tsv"].startswith("犬\tいぬ")
+
+    pages, _ = export_service.build_kanji_pdf_pages_cumulative(db_session, up_to_batch_n=3, from_batch_n=2)
+    assert [p.kanji for p in pages] == ["犬"]
+
+    txt = export_service.export_vocab_japanese_txt_cumulative(db_session, up_to_batch_n=3, from_batch_n=2)
+    content = txt["Japanese Vocab - Weeks 2-3.txt"]
+    assert "=== Week 1 ===" not in content
+    assert "=== Week 3 ===" in content
+
+
+@pytest.mark.parametrize("from_batch_n", [0, 4])
+def test_cumulative_exports_reject_invalid_start_week(db_session, from_batch_n):
+    _seed_three_weeks_with_gap(db_session)
+    with pytest.raises(export_service.ExportServiceError):
+        export_service.export_vocab_cumulative(db_session, up_to_batch_n=3, split_by_pos=False, from_batch_n=from_batch_n)
